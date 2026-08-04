@@ -1,0 +1,68 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="140dp"
+    android:height="140dp"
+    android:viewportWidth="140"
+    android:viewportHeight="140">
+
+    <!-- Soft glowing background circle -->
+    <path
+        android:fillColor="#EEF2FF"
+        android:pathData="M20,70 C20,42.4 42.4,20 70,20 C97.6,20 120,42.4 120,70 C120,97.6 97.6,120 70,120 C42.4,120 20,97.6 20,70 Z" />
+
+    <!-- Wellness Heartbeat Pulse Line (Teal/Cyan) in the background -->
+    <path
+        android:strokeColor="#A5F3FC"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M25,75 L45,75 L52,55 L58,95 L65,70 L72,80 L80,75 L115,75" />
+
+    <!-- Stylized Fitness Figure (Dynamic pose of wellness and victory) -->
+    <!-- Head -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M62,35 C62,30.6 65.6,27 70,27 C74.4,27 78,30.6 78,35 C78,39.4 74.4,43 70,43 C65.6,43 62,39.4 62,35 Z" />
+
+    <!-- Torso / Body -->
+    <path
+        android:fillColor="#6366F1"
+        android:pathData="M60,48 L80,48 C83,48 85,51 84,54 L75,85 C74,88 71,90 68,90 L62,90 C59,90 56,88 55,85 L56,54 C55,51 57,48 60,48 Z" />
+
+    <!-- Athletic Arms raised in celebration/victory -->
+    <path
+        android:strokeColor="#818CF8"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M55,52 C45,45 42,32 50,22 M85,52 C95,45 98,32 90,22" />
+
+    <!-- Strong Athletic Legs -->
+    <path
+        android:strokeColor="#312E81"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M61,90 L52,118 M79,90 L88,118" />
+
+    <!-- Wrapping measuring tape (Neon Cyan / Transformation) -->
+    <path
+        android:strokeColor="#06B6D4"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M50,75 C60,83 80,83 90,75" />
+
+    <!-- Sparkles of motivation / health achievement -->
+    <!-- Spark 1 (Top Left) -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M32,32 L34,36 L38,37 L34,38 L32,42 L30,38 L26,37 L30,36 Z" />
+    <!-- Spark 2 (Top Right) -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M108,36 L110,40 L114,41 L110,42 L108,46 L106,42 L102,41 L106,40 Z" />
+    <!-- Spark 3 (Middle Right) -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M116,64 L117.5,67.5 L121,69 L117.5,70.5 L116,74 L114.5,70.5 L111,69 L114.5,67.5 Z" />
+</vector>

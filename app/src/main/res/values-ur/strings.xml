@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">FitTrain</string>
+    <string name="slogan">ہر کوئی ٹریننگ کر سکتا ہے</string>
+    <string name="get_started">شروع کریں</string>
+    <string name="register">رجسٹر کریں</string>
+    <string name="login">لاگ ان کریں</string>
+    
+    <!-- Onboarding 1 -->
+    <string name="onboarding_title_1">اپنے ہدف کو ٹریک کریں</string>
+    <string name="onboarding_desc_1">پریشان نہ ہوں اگر آپ کو اپنے مقاصد کا تعین کرنے میں پریشانی ہو۔ ہم آپ کے مقاصد کو طے کرنے اور ٹریک کرنے میں مدد کر سکتے ہیں۔</string>
+    
+    <!-- Onboarding 2 -->
+    <string name="onboarding_title_2">کیلوریز جلائیں</string>
+    <string name="onboarding_desc_2">آئیں جلتے رہیں، اپنے مقاصد حاصل کرنے کے لیے، یہ صرف عارضی طور پر درد دیتا ہے، اگر آپ نے اب ہار مان لی تو آپ ہمیشہ درد میں رہیں گے۔</string>
+    
+    <!-- Onboarding 3 -->
+    <string name="onboarding_title_3">اچھا کھائیں</string>
+    <string name="onboarding_desc_3">ہمارے ساتھ صحت مند طرز زندگی شروع کریں، ہم ہر روز آپ کی خوراک کا تعین کر سکتے ہیں، صحت مند کھانا مزے دار ہے۔</string>
+    
+    <!-- Onboarding 4 -->
+    <string name="onboarding_title_4">نیند کا معیار بہتر بنائیں</string>
+    <string name="onboarding_desc_4">ہمارے ساتھ اپنی نیند کے معیار کو بہتر بنائیں، اچھی کوالٹی کی نیند صبح کا موڈ اچھا بنا سکتی ہے۔</string>
+
+    <!-- Register -->
+    <string name="hey_there">ہیلو،</string>
+    <string name="create_account">اکاؤنٹ بنائیں</string>
+    <string name="first_name_hint">پہلا نام</string>
+    <string name="last_name_hint">آخری نام</string>
+    <string name="email_hint">ای میل</string>
+    <string name="password_hint">پاس ورڈ</string>
+    <string name="terms_agreement">جاری رکھ کر آپ ہماری پرائیویسی پالیسی اور استعمال کی شرائط کو قبول کرتے ہیں</string>
+    <string name="or_text">یا</string>
+    <string name="already_have_account">پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں</string>
+
+    <!-- Login -->
+    <string name="welcome_back">خوش آمدید</string>
+    <string name="forgot_password">پاس ورڈ بھول گئے؟</string>
+    <string name="remember_me">مجھے یاد رکھیں</string>
+    <string name="dont_have_account">ابھی اکاؤنٹ نہیں ہے؟ رجسٹر کریں</string>
+
+    <!-- Complete Profile -->
+    <string name="complete_profile_title">آئیں آپ کا پروفائل مکمل کریں</string>
+    <string name="complete_profile_subtitle">یہ ہمیں آپ کے بارے میں مزید جاننے میں مدد کرے گا!</string>
+    <string name="choose_gender">جنس منتخب کریں</string>
+    <string name="date_of_birth">تاریخ پیدائش</string>
+    <string name="your_weight">آپ کا وزن</string>
+    <string name="your_height">آپ کا قد</string>
+    <string name="next_btn">اگلا</string>
+
+    <!-- Goal Selection -->
+    <string name="what_is_goal">آپ کا مقصد کیا ہے؟</string>
+    <string name="goal_subtitle">یہ ہمیں آپ کے لیے بہترین پروگرام منتخب کرنے میں مدد کرے گا</string>
+    <string name="confirm_btn">تصدیق کریں</string>
+
+    <!-- Success -->
+    <string name="welcome_success">خوش آمدید، %1$s</string>
+    <string name="success_message">اب آپ بالکل تیار ہیں، آئیں مل کر اپنے مقاصد حاصل کریں</string>
+    <string name="go_to_home">ہوم پر جائیں</string>
+
+    <!-- Validation Errors -->
+    <string name="err_empty_field">یہ خانہ خالی نہیں ہو سکتا</string>
+    <string name="err_invalid_email">براہ کرم درست ای میل ایڈریس درج کریں</string>
+    <string name="err_short_password">پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے</string>
+    <string name="err_accept_terms">رجسٹر کرنے کے لیے آپ کو ہماری شرائط قبول کرنی ہوں گی</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">ہوم</string>
+    <string name="nav_workouts">ورزشیں</string>
+    <string name="nav_diet">ڈائٹ</string>
+    <string name="nav_profile">پروفائل</string>
+
+    <!-- Home Dashboard -->
+    <string name="home_hello">ہیلو، %1$s</string>
+    <string name="home_goal">مقصد: %1$s • لیول %2$d (%3$d XP)</string>
+    <string name="home_ai_task">آج کا اے آئی فٹنس ٹاسک</string>
+    <string name="home_workout_task">🏋️ ورزش: %1$s</string>
+    <string name="home_workout_rest">🏋️ ورزش: آرام کا دن</string>
+    <string name="home_diet_task">🥗 ڈائٹ: %1$s (%2$d کیلوریز)</string>
+    <string name="home_task_completed">مکمل ✓</string>
+    <string name="home_task_in_progress">جاری ہے</string>
+    <string name="home_btn_complete_tasks">آج کے کام مکمل کریں</string>
+    <string name="home_btn_completed_today">آج کے لیے مکمل! 🎉</string>
+    <string name="home_activity">آج کی سرگرمی</string>
+    <string name="home_steps">قدم</string>
+    <string name="home_steps_val">%1$s / 10,000</string>
+    <string name="home_steps_goal">قدموں کا ہدف حاصل کر لیا گیا! 🎉</string>
+    <string name="home_steps_percent">%1$d%% آج کا ہدف مکمل۔</string>
+    <string name="home_calories">کیلوریز</string>
+    <string name="home_calories_val">%1$s / 2,000 kcal</string>
+    <string name="home_calories_percent">%1$d%% کیلوریز جلائی گئیں۔</string>
+    <string name="home_water">پانی کا استعمال</string>
+    <string name="home_water_val">%1$s / 2,500 ml</string>
+    <string name="home_water_goal">پانی کا ہدف حاصل کر لیا گیا! 💧</string>
+    <string name="home_water_percent">%1$d%% پانی استعمال کیا گیا۔</string>
+    <string name="home_sleep">نیند</string>
+    <string name="home_sleep_val">%1$dh %2$dm / 8h</string>
+    <string name="home_sleep_goal">نیند کا ہدف حاصل کر لیا گیا! 😴</string>
+    <string name="home_sleep_percent">%1$d%% نیند کا ہدف۔</string>
+    <string name="home_bmi">باڈی ماس انڈیکس</string>
+    <string name="home_bmi_val">%1$s</string>
+    <string name="home_bmi_prompt">BMI کیلکولیٹ کرنے کے لیے قد اور وزن درج کریں</string>
+</resources>

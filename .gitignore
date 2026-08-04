@@ -1,0 +1,37 @@
+# Gradle files
+.gradle/
+build/
+app/build/
+
+# Local configuration files
+local.properties
+
+# Log files and dumps
+*.log
+logcat*.txt
+filtered_*.txt
+window_dump*.xml
+read_log.py
+AnalyzeLog.java
+AnalyzeLog.class
+
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+.navigation/
+captures/
+.externalNativeBuild
+.cxx/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Signing files
+*.jks
+*.keystore
+*.pepk
+
+# APK / Bundle outputs
+*.apk
+*.aab

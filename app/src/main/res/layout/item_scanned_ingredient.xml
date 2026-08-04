@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvIngredientName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:text="Ingredient Name" />
+
+            <TextView
+                android:id="@+id/tvConfidenceBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#E0F7FA"
+                android:textColor="#006064"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:text="✓ 95%"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvCategoryAndQty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp"
+                android:text="Category • Qty" />
+
+            <TextView
+                android:id="@+id/tvFreshnessBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fresh"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginVertical="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvIngredientCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:text="100 kcal"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvIngredientProtein"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="P: 5g"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvIngredientCarbs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="C: 10g"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvIngredientFat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="F: 2g"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvIngredientMicros"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="#555555"
+            android:textSize="12sp"
+            android:text="Fiber: 2g • Sugar: 1g • Sodium: 10mg" />
+
+        <TextView
+            android:id="@+id/tvIngredientVitsMins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#555555"
+            android:textSize="12sp"
+            android:text="Vitamins &amp; Minerals: None" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

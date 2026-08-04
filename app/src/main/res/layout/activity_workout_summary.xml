@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A"
+    tools:context=".activities.WorkoutSummaryActivity">
+
+    <!-- Top Toolbar Header -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#1E293B"
+        app:title="Workout Summary"
+        app:titleTextColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/llSummaryActions">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Success Trophy Animation Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:src="@drawable/success_illustration" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Workout Complete!"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvExerciseName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Standard Squat Session"
+                        android:textColor="#94A3B8"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Main Score Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI FORM SCORE"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:id="@+id/tvFormScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="85%"
+                            android:textColor="#22C55E"
+                            android:textSize="48sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvFormFeedback"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="Great form! Minor knees correction warning detected during reps 6 and 9."
+                            android:textColor="#CBD5E1"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#334155"
+                        android:layout_marginVertical="16dp" />
+
+                    <!-- Detailed Breakdown -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="POSTURE METRICS"
+                        android:textColor="#94A3B8"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Accuracy -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Accuracy" android:textColor="#CBD5E1" android:textSize="13sp" />
+                        <ProgressBar android:id="@+id/pbAccuracy" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="85" android:progressTint="#3B82F6" android:progressBackgroundTint="#334155" />
+                        <TextView android:id="@+id/tvAccuracy" android:layout_width="44dp" android:layout_height="wrap_content" android:text="85%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
+                    </LinearLayout>
+
+                    <!-- Depth -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Depth" android:textColor="#CBD5E1" android:textSize="13sp" />
+                        <ProgressBar android:id="@+id/pbDepth" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="90" android:progressTint="#6366F1" android:progressBackgroundTint="#334155" />
+                        <TextView android:id="@+id/tvDepth" android:layout_width="44dp" android:layout_height="wrap_content" android:text="90%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
+                    </LinearLayout>
+
+                    <!-- Balance -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Balance" android:textColor="#CBD5E1" android:textSize="13sp" />
+                        <ProgressBar android:id="@+id/pbBalance" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="95" android:progressTint="#22C55E" android:progressBackgroundTint="#334155" />
+                        <TextView android:id="@+id/tvBalance" android:layout_width="44dp" android:layout_height="wrap_content" android:text="95%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
+                    </LinearLayout>
+
+                    <!-- Stability -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Stability" android:textColor="#CBD5E1" android:textSize="13sp" />
+                        <ProgressBar android:id="@+id/pbStability" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="94" android:progressTint="#EAB308" android:progressBackgroundTint="#334155" />
+                        <TextView android:id="@+id/tvStability" android:layout_width="44dp" android:layout_height="wrap_content" android:text="94%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
+                    </LinearLayout>
+
+                    <!-- Posture -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Posture" android:textColor="#CBD5E1" android:textSize="13sp" />
+                        <ProgressBar android:id="@+id/pbPosture" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="80" android:progressTint="#EC4899" android:progressBackgroundTint="#334155" />
+                        <TextView android:id="@+id/tvPosture" android:layout_width="44dp" android:layout_height="wrap_content" android:text="80%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Activity statistics breakdown grid -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SESSION STATS"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                    <androidx.gridlayout.widget.GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:columnCount="2"
+                        app:rowCount="2"
+                        android:alignmentMode="alignMargins"
+                        android:columnOrderPreserved="false">
+
+                        <!-- Reps completed -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginEnd="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TOTAL REPS" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvTotalReps" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45 Reps" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Sets completed -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SETS COMPLETED" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvTotalSets" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="3 Sets" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Duration -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DURATION" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvDuration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2m 45s" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Calories -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EST. CALORIES" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvCalories" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="48 kcal" android:textColor="#22C55E" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                    </androidx.gridlayout.widget.GridLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/llSummaryActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnViewHistory"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_button_gradient"
+            android:backgroundTint="#475569"
+            android:text="View Session History 📊"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDone"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="Back to Home Dashboard"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

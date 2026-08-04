@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">FitTrain</string>
+    <string name="slogan">Everybody Can Train</string>
+    <string name="get_started">Get Started</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    
+    <!-- Onboarding 1 -->
+    <string name="onboarding_title_1">Track Your Goal</string>
+    <string name="onboarding_desc_1">Don\'t worry if you have trouble determining your goals. We can help you determine your goals and track your goals.</string>
+    
+    <!-- Onboarding 2 -->
+    <string name="onboarding_title_2">Get Burn</string>
+    <string name="onboarding_desc_2">Let\'s keep burning, to achieve your goals, it hurts only temporarily, if you give up now you will be in pain forever.</string>
+    
+    <!-- Onboarding 3 -->
+    <string name="onboarding_title_3">Eat Well</string>
+    <string name="onboarding_desc_3">Let\'s start a healthy lifestyle with us, we can determine your diet every day, healthy eating is fun.</string>
+    
+    <!-- Onboarding 4 -->
+    <string name="onboarding_title_4">Improve Sleep Quality</string>
+    <string name="onboarding_desc_4">Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning.</string>
+
+    <!-- Register -->
+    <string name="hey_there">Hey there,</string>
+    <string name="create_account">Create an Account</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="terms_agreement">By continuing you accept our Privacy Policy and Terms of Use</string>
+    <string name="or_text">Or</string>
+    <string name="already_have_account">Already have an account? Login</string>
+
+    <!-- Login -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="dont_have_account">Don\'t have an account yet? Register</string>
+
+    <!-- Complete Profile -->
+    <string name="complete_profile_title">Let\'s complete your profile</string>
+    <string name="complete_profile_subtitle">It will help us to know more about you!</string>
+    <string name="choose_gender">Choose Gender</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="your_weight">Your Weight</string>
+    <string name="your_height">Your Height</string>
+    <string name="next_btn">Next</string>
+
+    <!-- Goal Selection -->
+    <string name="what_is_goal">What is your goal?</string>
+    <string name="goal_subtitle">It will help us to choose a best program for you</string>
+    <string name="confirm_btn">Confirm</string>
+
+    <!-- Success -->
+    <string name="welcome_success">Welcome, %1$s</string>
+    <string name="success_message">You are all set now, let\'s reach your goals together with us</string>
+    <string name="go_to_home">Go To Home</string>
+
+    <!-- Validation Errors -->
+    <string name="err_empty_field">This field cannot be empty</string>
+    <string name="err_invalid_email">Please enter a valid email address</string>
+    <string name="err_short_password">Password must be at least 8 characters</string>
+    <string name="err_accept_terms">You must accept our terms to register</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_workouts">Workouts</string>
+    <string name="nav_diet">Diet</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home Dashboard -->
+    <string name="home_hello">Hello, %1$s</string>
+    <string name="home_goal">Goal: %1$s • Level %2$d (%3$d XP)</string>
+    <string name="home_ai_task">TODAY\'S AI FITNESS TASK</string>
+    <string name="home_workout_task">🏋️ Workout: %1$s</string>
+    <string name="home_workout_rest">🏋️ Workout: Gentle Yoga / Rest Day</string>
+    <string name="home_diet_task">🥗 Diet: %1$s (%2$d kcal)</string>
+    <string name="home_task_completed">Completed ✓</string>
+    <string name="home_task_in_progress">In Progress</string>
+    <string name="home_btn_complete_tasks">Complete Today\'s Tasks</string>
+    <string name="home_btn_completed_today">Completed for Today! 🎉</string>
+    <string name="home_activity">Today\'s Activity</string>
+    <string name="home_steps">Steps</string>
+    <string name="home_steps_val">%1$s / 10,000</string>
+    <string name="home_steps_goal">Step goal achieved! 🎉</string>
+    <string name="home_steps_percent">%1$d%% of today\'s step goal completed.</string>
+    <string name="home_calories">Calories</string>
+    <string name="home_calories_val">%1$s / 2,000 kcal</string>
+    <string name="home_calories_percent">%1$d%% of daily budget burned.</string>
+    <string name="home_water">Water Intake</string>
+    <string name="home_water_val">%1$s / 2,500 ml</string>
+    <string name="home_water_goal">Water goal achieved! 💧</string>
+    <string name="home_water_percent">%1$d%% logged today.</string>
+    <string name="home_sleep">Sleep</string>
+    <string name="home_sleep_val">%1$dh %2$dm / 8h</string>
+    <string name="home_sleep_goal">Sleep goal achieved! 😴</string>
+    <string name="home_sleep_percent">%1$d%% of rest goal.</string>
+    <string name="home_bmi">Body Mass Index</string>
+    <string name="home_bmi_val">%1$s</string>
+    <string name="home_bmi_prompt">Log weight/height to calculate BMI</string>
+</resources>

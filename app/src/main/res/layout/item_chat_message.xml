@@ -1,0 +1,106 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <!-- User Message bubble (Right Aligned) -->
+    <LinearLayout
+        android:id="@+id/layoutUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@drawable/bg_chat_user"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:maxWidth="280dp"
+        android:layout_marginEnd="6dp"
+        android:orientation="vertical">
+        
+        <!-- User Attachment preview inside bubble -->
+        <LinearLayout
+            android:id="@+id/layoutUserAttachment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#20ffffff"
+            android:padding="6dp"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/ivUserAttachmentIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_attach"
+                app:tint="@color/white" />
+            <TextView
+                android:id="@+id/tvUserAttachmentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginStart="6dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvUserMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:id="@+id/tvUserTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#E0E0E0"
+                android:textSize="9sp" />
+            <ImageView
+                android:id="@+id/ivMessageStatus"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginStart="4dp"
+                android:src="@drawable/ic_single_tick" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- AI Coach Message bubble (Left Aligned) -->
+    <LinearLayout
+        android:id="@+id/layoutAI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@drawable/bg_chat_ai"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:maxWidth="280dp"
+        android:layout_marginStart="6dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvAIMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvAITime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/gray"
+            android:textSize="9sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,177 @@
+plugins {
+    id 'com.android.application'
+    id("com.google.gms.google-services")
+}
+
+android {
+    namespace 'com.fitness.app'
+    compileSdk 34
+
+    aaptOptions {
+        noCompress 'jar', 'data'
+    }
+
+    defaultConfig {
+        applicationId "com.fitness.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.7.2')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-storage'
+    
+    // Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
+    
+    // ViewPager2
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    
+    // Glide (for loading profile pictures)
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    
+    // MPAndroidChart for Analytics
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // Room Components
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+    // CameraX dependencies
+    implementation 'androidx.camera:camera-core:1.3.1'
+    implementation 'androidx.camera:camera-camera2:1.3.1'
+    implementation 'androidx.camera:camera-lifecycle:1.3.1'
+    implementation 'androidx.camera:camera-view:1.3.1'
+
+    // ML Kit Pose Detection dependencies
+    implementation 'com.google.mlkit:pose-detection:18.0.0-beta3'
+    
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+tasks.register('copyGeneratedImages') {
+    doLast {
+        copy {
+            from 'C:/Users/My Computer/.gemini/antigravity/brain/47aa6d77-3d67-43b3-8280-2cae92d22b28'
+            into 'src/main/res/drawable'
+            include 'workout_gen_illust_1785433143681.jpg'
+            rename { 'workout_generator_illustration.jpg' }
+        }
+        copy {
+            from 'C:/Users/My Computer/.gemini/antigravity/brain/47aa6d77-3d67-43b3-8280-2cae92d22b28'
+            into 'src/main/res/drawable'
+            include 'challenges_illust_1785433157858.jpg'
+            rename { 'challenges_illustration.jpg' }
+        }
+        
+        // Process green screen splash image to transparent PNG with soft outline glow
+        File srcFile = new File("C:/Users/My Computer/.gemini/antigravity/brain/d7d97054-3fd4-42b0-95a8-cfe9abecf19c/athlete_greenscreen_1785521657577.jpg")
+        File destFile = new File(projectDir, "src/main/res/drawable/splash_athlete.png")
+        
+        if (srcFile.exists()) {
+            java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(srcFile)
+            int width = img.getWidth()
+            int height = img.getHeight()
+            
+            java.awt.image.BufferedImage out = new java.awt.image.BufferedImage(width, height, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+            
+            // 1. Create a mask of alpha values
+            int[][] alphaMask = new int[width][height]
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int rgb = img.getRGB(x, y)
+                    java.awt.Color color = new java.awt.Color(rgb)
+                    
+                    float r = color.getRed()
+                    float g = color.getGreen()
+                    float b = color.getBlue()
+                    
+                    float greenIntensity = g - Math.max(r, b)
+                    if (greenIntensity > 40) {
+                        alphaMask[x][y] = 0
+                    } else if (greenIntensity > 20) {
+                        float t = (greenIntensity - 20) / 20.0f
+                        alphaMask[x][y] = (int)((1.0f - t) * 255)
+                    } else {
+                        alphaMask[x][y] = 255
+                    }
+                }
+            }
+            
+            // 2. Perform distance-based glow and render pixels
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int originalAlpha = alphaMask[x][y]
+                    int rgb = img.getRGB(x, y)
+                    
+                    if (originalAlpha == 255) {
+                        out.setRGB(x, y, rgb)
+                    } else {
+                        float maxGlow = 0.0f
+                        int radius = 3
+                        for (int dy = -radius; dy <= radius; dy++) {
+                            for (int dx = -radius; dx <= radius; dx++) {
+                                int nx = x + dx
+                                int ny = y + dy
+                                if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                    if (alphaMask[nx][ny] > 0) {
+                                        float dist = (float)Math.sqrt(dx*dx + dy*dy)
+                                        if (dist <= radius) {
+                                            float intensity = (radius - dist) / radius
+                                            if (intensity > maxGlow) {
+                                                maxGlow = intensity
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (maxGlow > 0.0f) {
+                            int glowAlpha = (int)(maxGlow * 0.25f * 255)
+                            int finalAlpha = Math.max(originalAlpha, glowAlpha)
+                            int glowColor = (finalAlpha << 24) | (240 << 16) | (248 << 8) | 255 // Soft AliceBlue glow (#F0F8FF)
+                            out.setRGB(x, y, glowColor)
+                        } else {
+                            out.setRGB(x, y, 0x00000000)
+                        }
+                    }
+                }
+            }
+            
+            javax.imageio.ImageIO.write(out, "png", destFile)
+        }
+    }
+}
+preBuild.dependsOn copyGeneratedImages

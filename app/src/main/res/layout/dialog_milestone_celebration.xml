@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="290dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    app:cardCornerRadius="28dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎉"
+            android:textSize="54dp"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tvCelebrationBadgeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Champion Badge Unlocked!"
+            android:textColor="#1E293B"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/tvCelebrationDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fantastic work completing all daily targets!\nYou earned +100 XP reward."
+            android:textColor="#64748B"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCelebrationDone"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="Awesome! 🚀"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

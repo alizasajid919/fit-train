@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Star Sparks -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M16,22l0.6,1.5l1.5,0.6l-1.5,0.6l-0.6,1.5l-0.6,-1.5l-1.5,-0.6l1.5,-0.6z M46,14l0.6,1.5l1.5,0.6l-1.5,0.6l-0.6,1.5l-0.6,-1.5l-1.5,-0.6l1.5,-0.6z" />
+    <!-- Moon (Golden/Yellow) -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M34,10c-0.6,0 -1.2,0 -1.8,0.1c5.2,2.3,8.8,7.5,8.8,13.6c0,8.2 -6.6,14.8 -14.8,14.8c-2,0 -4,-0.4 -5.8,-1.2c2.4,5.4,7.8,9.2,14.1,9.2c8.6,0,15.6,-7,15.6,-15.6S42.6,10,34,10z" />
+    <!-- Clouds (Light Purple/Lavender Overlay) -->
+    <path
+        android:fillColor="#C7D2FE"
+        android:pathData="M20,38c0,-4.4 3.6,-8 8,-8c1.3,0 2.5,0.3 3.6,0.9c1.6,-2.4 4.4,-3.9 7.6,-3.9c5,0 9,4 9,9c0,0.4,0,0.8 -0.1,1.1c1.8,0.8,3.1,2.6,3.1,4.7c0,2.8 -2.2,5 -5,5H20c-3.3,0 -6,-2.7 -6,-6c0,-3,2.2,-5.5,5.1,-5.9C19.5,39.2,20,38.6,20,38z" />
+</vector>

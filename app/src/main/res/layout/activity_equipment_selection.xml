@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_settings_gradient"
+    tools:context=".activities.EquipmentSelectionActivity">
+
+    <!-- Header toolbar -->
+    <LinearLayout
+        android:id="@+id/toolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/white"
+        android:paddingHorizontal="16dp"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back_chevron"
+            app:tint="#1E293B"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI Workout Generator"
+            android:textColor="#1E293B"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollSelection"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbarLayout"
+        app:layout_constraintBottom_toTopOf="@id/bottomLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Generator Header Illustration -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="20dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/workout_generator_illustration" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Section 1: Goals -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Workout Goal 🎯"
+                android:textColor="#1E293B"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgGoals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipWeightLoss"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weight Loss"
+                    android:checked="true"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMuscleGain"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Muscle Gain"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFatLoss"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fat Loss"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStrength"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Strength"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipEndurance"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Endurance"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCardio"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cardio"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:chipStrokeColor="@color/chip_stroke_color_selector"
+                    android:textColor="@color/chip_text_color_selector" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Section 2: Equipment selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Available Equipment 🏋️"
+                android:textColor="#1E293B"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You can select multiple options"
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Grid Layout of checkable items -->
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/glEquipment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:columnCount="2"
+                android:layout_marginBottom="24dp">
+                
+                <!-- We will add checkable boxes dynamically or pre-lay them out -->
+                <CheckBox
+                    android:id="@+id/cbNoEquipment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="No Equipment" />
+
+                <CheckBox
+                    android:id="@+id/cbChair"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Chair" />
+
+                <CheckBox
+                    android:id="@+id/cbWaterBottle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Water Bottle" />
+
+                <CheckBox
+                    android:id="@+id/cbResistanceBand"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Resistance Band" />
+
+                <CheckBox
+                    android:id="@+id/cbBackpack"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Backpack" />
+
+                <CheckBox
+                    android:id="@+id/cbYogaMat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Yoga Mat" />
+
+                <CheckBox
+                    android:id="@+id/cbDumbbells"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Dumbbells" />
+
+                <CheckBox
+                    android:id="@+id/cbBarbell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Barbell" />
+
+                <CheckBox
+                    android:id="@+id/cbPullUpBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Pull-up Bar" />
+
+                <CheckBox
+                    android:id="@+id/cbBench"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Bench" />
+
+                <CheckBox
+                    android:id="@+id/cbKettlebell"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Kettlebell" />
+
+                <CheckBox
+                    android:id="@+id/cbMedicineBall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Medicine Ball" />
+
+                <CheckBox
+                    android:id="@+id/cbJumpRope"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Jump Rope" />
+
+                <CheckBox
+                    android:id="@+id/cbStairs"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Stairs" />
+
+                <CheckBox
+                    android:id="@+id/cbSofa"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Sofa" />
+
+                <CheckBox
+                    android:id="@+id/cbWall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Wall" />
+
+                <CheckBox
+                    android:id="@+id/cbTowel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Towel" />
+
+                <CheckBox
+                    android:id="@+id/cbTable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:padding="12dp"
+                    android:background="@drawable/bg_equipment_checkbox"
+                    android:buttonTint="@color/checkbox_button_tint"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:text="Table" />
+            </androidx.gridlayout.widget.GridLayout>
+
+            <!-- Section 3: History of Generated Workouts -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E2E8F0"
+                android:layout_marginVertical="24dp" />
+
+            <TextView
+                android:id="@+id/tvHistoryHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Generated Workout History 📜"
+                android:textColor="#1E293B"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutEmptyHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp"
+                android:visibility="visible">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No generated history yet."
+                    android:textColor="#94A3B8"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWorkoutHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Actions layout -->
+    <LinearLayout
+        android:id="@+id/bottomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSubmitGeneration"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="Generate AI Workout 🚀"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Loading State Dialog Overlay -->
+    <FrameLayout
+        android:id="@+id/layoutLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D9FFFFFF"
+        android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:indeterminateTint="@color/primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="AI is Generating Your Custom Plan..."
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Creating safe, equipment-specific routines"
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

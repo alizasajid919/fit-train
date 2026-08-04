@@ -1,0 +1,12 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /profile_images/{userId} {
+      allow read: if true; // Profile pictures can be retrieved publicly or read by logged-in users
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /transformation_photos/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

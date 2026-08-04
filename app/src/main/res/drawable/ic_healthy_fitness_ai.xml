@@ -1,0 +1,105 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 1. Backdrop Glow Ring (Translucent blue/white circular background) -->
+    <path
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="1.2"
+        android:fillColor="#2638BDF8"
+        android:pathData="M 12,2 A 10,10 0 1,0 12,22 A 10,10 0 1,0 12,2 Z" />
+
+    <!-- 2. Robot Antenna -->
+    <!-- Connection Stem -->
+    <path
+        android:strokeColor="#CBD5E1"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M 12,5 L 12,3" />
+    <!-- Glowing Cyan Bulb -->
+    <path
+        android:fillColor="#00F2FE"
+        android:pathData="M 12,1.8 A 1.2,1.2 0 1,0 12,4.2 A 1.2,1.2 0 1,0 12,1.8 Z" />
+
+    <!-- 3. Robot Ears / Side Nodes -->
+    <!-- Left Ear Node -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M 5.8,9 C 5.3,9 5,9.3 5,10 C 5,10.7 5.3,11 5.8,11 Z" />
+    <!-- Right Ear Node -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M 18.2,9 C 18.7,9 19,9.3 19,10 C 19,10.7 18.7,11 18.2,11 Z" />
+
+    <!-- 4. Neck Joint -->
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M 10,14.2 L 14,14.2 L 13.5,15.5 L 10.5,15.5 Z" />
+
+    <!-- 5. Robot Head (Premium Rounded Core) -->
+    <!-- Head Base (Solid White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 7,8 C 7,6 8.5,5 12,5 C 15.5,5 17,6 17,8 L 17,12 C 17,13.5 15.5,14.2 12,14.2 C 8.5,14.2 7,13.5 7,12 Z" />
+    <!-- Head Bottom Highlight/Shade (3D depth overlay) -->
+    <path
+        android:fillColor="#1F94A3B8"
+        android:pathData="M 7,10.5 L 17,10.5 L 17,12 C 17,13.5 15.5,14.2 12,14.2 C 8.5,14.2 7,13.5 7,12 Z" />
+
+    <!-- 6. Robot Face Display Screen (Futuristic Inset) -->
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M 8.2,8.5 C 8.2,7.7 9,7.2 12,7.2 C 15,7.2 15.8,7.7 15.8,8.5 L 15.8,11.5 C 15.8,12.3 15,12.8 12,12.8 C 9,12.8 8.2,12.3 8.2,11.5 Z" />
+
+    <!-- 7. Face Expression (Smiling Cyan Lights) -->
+    <!-- Left Eye (Glowing Aqua) -->
+    <path
+        android:fillColor="#00F2FE"
+        android:pathData="M 10,9.2 C 9.7,9.2 9.5,9.4 9.5,9.7 C 9.5,10 9.7,10.2 10,10.2 C 10.3,10.2 10.5,10 10.5,9.7 C 10.5,9.4 10.3,9.2 10,9.2 Z" />
+    <!-- Right Eye (Glowing Aqua) -->
+    <path
+        android:fillColor="#00F2FE"
+        android:pathData="M 14,9.2 C 13.7,9.2 13.5,9.4 13.5,9.7 C 13.5,10 13.7,10.2 14,10.2 C 14.3,10.2 14.5,10 14.5,9.7 C 14.5,9.4 14.3,9.2 14,9.2 Z" />
+    <!-- Smiling Mouth (Soft Happy Arc) -->
+    <path
+        android:strokeColor="#80FFF0"
+        android:strokeWidth="1.0"
+        android:strokeLineCap="round"
+        android:pathData="M 10.8,11.2 Q 12,12.2 13.2,11.2" />
+
+    <!-- 8. Robot Torso / Body -->
+    <!-- Torso Base (Solid White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 6.2,18 C 6.2,16 8,15.2 12,15.2 C 16,15.2 17.8,16 17.8,18 L 17.8,21.5 C 17.8,22.2 17,22.8 12,22.8 C 7,22.8 6.2,22.2 6.2,21.5 Z" />
+    <!-- Torso Bottom Shade -->
+    <path
+        android:fillColor="#1F94A3B8"
+        android:pathData="M 6.2,19.5 L 17.8,19.5 L 17.8,21.5 C 17.8,22.2 17,22.8 12,22.8 C 7,22.8 6.2,22.2 6.2,21.5 Z" />
+
+    <!-- 9. Chest Display (Fitness/Nutrition Heart Badge) -->
+    <!-- Inset Display Panel -->
+    <path
+        android:fillColor="#1E1B4B"
+        android:pathData="M 9.5,16.8 C 9.5,16.3 10,16 12,16 C 14,16 14.5,16.3 14.5,16.8 L 14.5,20 C 14.5,20.5 14,20.8 12,20.8 C 10,20.8 9.5,20.5 9.5,20 L 9.5,16.8 Z" />
+    <!-- Heart-shaped Nutrition Indicator inside Chest Display (glowing cyan/mint) -->
+    <path
+        android:fillColor="#80FFF0"
+        android:pathData="M 12,19.5 C 12,19.5 10.6,18.3 10.6,17.5 C 10.6,17.1 10.9,16.8 11.3,16.8 C 11.6,16.8 11.9,17 12,17.2 C 12.1,17 12.4,16.8 12.7,16.8 C 13.1,16.8 13.4,17.1 13.4,17.5 C 13.4,18.3 12,19.5 12,19.5 Z" />
+
+    <!-- 10. Floating Sparkles / AI Particles -->
+    <!-- Sparkle 1 (Top-Right - Gold) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M 19.5,4 L 19.8,4.6 L 20.5,4.8 L 19.8,5 L 19.5,5.6 L 19.2,5 L 18.5,4.8 L 19.2,4.6 Z" />
+    <!-- Sparkle 2 (Left - Glowing Cyan) -->
+    <path
+        android:fillColor="#00F2FE"
+        android:pathData="M 4,7.5 L 4.3,8.1 L 5,8.3 L 4.3,8.5 L 4,9.1 L 3.7,8.5 L 3,8.3 L 3.7,8.1 Z" />
+    <!-- Sparkle 3 (Right - White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 19,14.5 L 19.2,14.9 L 19.7,15 L 19.2,15.1 L 19,15.5 L 18.8,15.1 L 18.3,15 L 18.8,14.9 Z" />
+</vector>

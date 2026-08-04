@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC"
+    tools:context=".activities.AddScheduleActivity">
+
+    <!-- Top Bar Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bg_blue_gradient"
+        app:titleTextColor="@color/white"
+        app:title="Add Schedule"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Title Header -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Schedule Details"
+                android:textColor="#1E293B"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Outlined Workout Name Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Choose Workout"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_dumbbell"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <AutoCompleteTextView
+                    android:id="@+id/actvWorkoutSelect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Custom/Free Workout Name (if choice is custom) -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Or Enter Custom Name"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_dumbbell"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCustomWorkoutName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Date Selector Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Choose Date"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_calendar"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etScheduleDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Time Selector Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Choose Hour Slot"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_user"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <AutoCompleteTextView
+                    android:id="@+id/actvTimeSelect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Duration Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Duration (minutes)"
+                android:layout_marginBottom="16dp"
+                app:startIconDrawable="@drawable/ic_height"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etScheduleDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="30"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Notes Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Notes / Target Focus"
+                android:layout_marginBottom="32dp"
+                app:startIconDrawable="@drawable/ic_mail"
+                app:startIconTint="@color/primary"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etScheduleNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Action buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:textColor="@color/primary"
+                    app:strokeColor="@color/primary"
+                    app:cornerRadius="16dp"
+                    android:textAllCaps="false"
+                    android:layout_marginEnd="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveSchedule"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="Save Schedule"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/primary"
+                    app:cornerRadius="16dp"
+                    android:textAllCaps="false"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

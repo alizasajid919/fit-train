@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvRecipeMealType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#E8F5E9"
+                android:textColor="#2E7D32"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="Meal Type"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvRecipeTiming"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Prep: 10m • Cook: 15m"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/ivRecipeFavorite"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_heart_fav"
+                android:contentDescription="Favorite" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvRecipeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:text="Recipe Name" />
+
+        <TextView
+            android:id="@+id/tvRecipeBenefits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#555555"
+            android:textSize="12sp"
+            android:text="Health Benefits" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvRecipeCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:text="350 kcal"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvRecipeProtein"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Protein: 20g"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvRecipeCarbs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Carbs: 30g"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvRecipeFat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/darker_gray"
+                android:text="Fat: 10g"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvRecipeMissing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#D32F2F"
+            android:textSize="12sp"
+            android:text="Missing Ingredients" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+    <!-- Purple Rounded Background Card -->
+    <path
+        android:fillColor="#8B5CF6"
+        android:pathData="M12,4h20c4.4,0 8,3.6 8,8v20c0,4.4 -3.6,8 -8,8H12c-4.4,0 -8,-3.6 -8,-8V12C4,7.6 7.6,4 12,4z" />
+    <!-- White Trend Line Graph -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,14l2.29,2.29l-4.88,4.88l-4,-4L14,24.59L15.41,26l6,-6l4,4l6.3,-6.29L34,20V14H28z" />
+</vector>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Colors -->
+    <color name="primary">#6C63FF</color>
+    <color name="primary_variant">#4CC9F0</color>
+    <color name="secondary">#3B82F6</color>
+    <color name="secondary_variant">#FFB703</color>
+    
+    <!-- Neutral Colors -->
+    <color name="black">#1E293B</color>
+    <color name="gray">#64748B</color>
+    <color name="light_gray">#94A3B8</color>
+    <color name="border_color">#E2E8F0</color>
+    <color name="white">#FFFFFF</color>
+    <color name="background_color">#F8FAFC</color>
+    
+    <!-- Gradient Colors -->
+    <color name="blue_gradient_start">#4CC9F0</color>
+    <color name="blue_gradient_end">#6C63FF</color>
+    
+    <color name="purple_gradient_start">#FFB703</color>
+    <color name="purple_gradient_end">#FF5A5F</color>
+    
+    <!-- Status & Input -->
+    <color name="error">#FF3B30</color>
+    <color name="success">#34C759</color>
+
+    <!-- Workout Log Premium Palette -->
+    <color name="workout_primary">#6C63FF</color>
+    <color name="workout_secondary">#3B82F6</color>
+    <color name="workout_background">#F8FAFC</color>
+    <color name="workout_white">#FFFFFF</color>
+    <color name="workout_border">#E2E8F0</color>
+    <color name="workout_text_primary">#1E293B</color>
+    <color name="workout_text_secondary">#64748B</color>
+    <color name="workout_accent">#FFB703</color>
+    <color name="workout_error">#EF4444</color>
+    <color name="workout_success">#22C55E</color>
+</resources>

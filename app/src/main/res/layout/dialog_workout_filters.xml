@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:padding="20dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Top Drag Handle bar -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:background="#CBD5E1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Workout Filters"
+                android:textColor="#1E293B"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
+
+            <TextView
+                android:id="@+id/btnResetFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset All"
+                android:textColor="#EF4444"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <!-- Section: Difficulty Levels -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DIFFICULTY LEVEL"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgDifficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipBeginner"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Beginner" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipIntermediate"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Intermediate" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipAdvanced"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Section: Categories -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CATEGORIES"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipStrength"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Strength" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipCardio"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cardio" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipMindfulness"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mindfulness" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipFatLoss"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fat Loss" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipMuscleGain"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Muscle Gain" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Section: Muscle Focus -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MUSCLE TARGET"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgMuscle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipFullBody"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Body" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipUpperBody"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upper Body" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipLowerBody"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lower Body" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipCore"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Core" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Section: Place & Equipment -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WORKOUT PLACE &amp; EQUIPMENT"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgPlaceEquipment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipHomeWorkout"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home Workout" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipGymWorkout"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gym Workout" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDumbbell"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dumbbell" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipBarbell"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Barbell" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Section: Duration -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DURATION"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="20dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDur10"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDur20"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDur30"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDur45"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="45 min" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipDur60"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="60+ min" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Section: Calories -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CALORIES BURN RANGE"
+            android:textColor="#475569"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgCalories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="4dp"
+            app:singleSelection="false"
+            android:layout_marginBottom="28dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipCalLow"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&lt; 150 kcal" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipCalMid"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="150 - 300 kcal" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/fChipCalHigh"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&gt; 300 kcal" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Apply Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApplyFilters"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Apply Filters"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="25dp"
+            app:backgroundTint="@null"
+            android:background="@drawable/bg_button_gradient"
+            android:textAllCaps="false"
+            android:layout_marginBottom="12dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

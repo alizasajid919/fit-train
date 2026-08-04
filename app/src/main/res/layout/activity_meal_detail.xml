@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_settings_gradient"
+    tools:context=".activities.MealDetailActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/layoutBottomActions"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Hero Circle Emoji Header -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvImageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="0dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#F8FAFC"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Blue circular container centered in the header -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
+                        android:layout_gravity="center"
+                        app:cardCornerRadius="70dp"
+                        app:cardElevation="6dp"
+                        app:strokeColor="#BFDBFE"
+                        app:strokeWidth="2.5dp"
+                        app:cardBackgroundColor="@color/white">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_circle_button">
+
+                            <TextView
+                                android:id="@+id/tvMealEmoji"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textSize="64sp"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:text="🥞" />
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Back and Edit Floating Buttons -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_back_chevron"
+                app:tint="#1E293B"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnEditTop"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_person_edit"
+                app:tint="@color/primary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Body Content Sheet -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-30dp"
+                android:background="@drawable/bg_bottom_sheet"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintTop_toBottomOf="@id/cvImageContainer">
+
+                <TextView
+                    android:id="@+id/tvMealTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Honey Pancake"
+                    android:textColor="#1E293B"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <!-- Sub-info: Category and Time -->
+                <TextView
+                    android:id="@+id/tvCategoryTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Breakfast  •  07:00 AM"
+                    android:textColor="#64748B"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Macros Details Row 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <!-- Calories -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_advanced"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvCalories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="350 kcal"
+                            android:textColor="#B91C1C"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Calories"
+                            android:textColor="#B91C1C"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <!-- Protein -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_beginner"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvProtein"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="15g"
+                            android:textColor="#15803D"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Protein"
+                            android:textColor="#15803D"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <!-- Carbs -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_intermediate"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvCarbs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="35g"
+                            android:textColor="#B45309"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Carbs"
+                            android:textColor="#B45309"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <!-- Fat -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_duration"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5g"
+                            android:textColor="#1D4ED8"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fat"
+                            android:textColor="#1D4ED8"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Macros Details Row 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <!-- Fiber -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_streak"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvFiber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3g"
+                            android:textColor="#0369A1"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fiber"
+                            android:textColor="#0369A1"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <!-- Sugar -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_badge_goal"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvSugar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5g"
+                            android:textColor="#4F46E5"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sugar"
+                            android:textColor="#4F46E5"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+
+                    <!-- Serving Size -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="3dp"
+                        android:background="@drawable/bg_day_circle_unselected"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/tvServing"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1 Serving"
+                            android:textColor="#475569"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:singleLine="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Serving Size"
+                            android:textColor="#475569"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Description / Notes -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Notes"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="No custom notes recorded."
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="3dp" />
+
+                <!-- Ingredients -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Ingredients"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvIngredientsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="• Standard ingredients list"
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp" />
+
+                <!-- Steps -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Recipe / Preparation Steps"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvStepsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="1. Standard instructions list"
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginBottom="40dp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Actions Toolbar -->
+    <LinearLayout
+        android:id="@+id/layoutBottomActions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDelete"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:text="Delete"
+            android:textColor="#EF4444"
+            app:strokeColor="#FCA5A5"
+            app:strokeWidth="1.2dp"
+            app:cornerRadius="14dp"
+            android:textAllCaps="false"
+            android:layout_marginEnd="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEdit"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="52dp"
+            android:text="Edit"
+            android:textColor="#64748B"
+            app:strokeColor="#CBD5E1"
+            app:strokeWidth="1.2dp"
+            app:cornerRadius="14dp"
+            android:textAllCaps="false"
+            android:layout_marginEnd="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompleteToggle"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="52dp"
+            android:text="Mark as Completed"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="14dp"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

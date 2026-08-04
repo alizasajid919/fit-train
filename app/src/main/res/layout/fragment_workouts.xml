@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_settings_gradient"
+    tools:context=".fragments.WorkoutsFragment">
+
+    <!-- Top Toolbar Search Bar -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cvSearchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#BFDBFE"
+        app:strokeWidth="1.2dp"
+        app:cardBackgroundColor="@color/white"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
+
+            <EditText
+                android:id="@+id/etSearchWorkouts"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Search workouts (e.g. Shred, Upper).."
+                android:textColor="#1E293B"
+                android:textColorHint="#94A3B8"
+                android:textSize="14sp"
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <ImageView
+                android:id="@+id/btnFilterOptions"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_tune"
+                app:tint="@color/primary"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Stub views to prevent NullPointerExceptions in legacy bindings -->
+    <View android:id="@+id/ivTutorialGuide" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <View android:id="@+id/ivScheduleCalendar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+    <!-- Nested Scroll View for Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/cvSearchContainer"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <!-- Side-by-side prominent Guide and Schedule Buttons (Exactly like screenshot) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:weightSum="2">
+
+                <!-- Form Guides Card Button -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnFormGuides"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:paddingHorizontal="8dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_healthy_fitness_ai"
+                            app:tint="@color/primary"
+                            android:layout_marginEnd="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Form Guides"
+                            android:textColor="#1E293B"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Workout Schedule Card Button -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnWorkoutSchedule"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:paddingHorizontal="8dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_calendar"
+                            app:tint="@color/primary"
+                            android:layout_marginEnd="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Schedule"
+                            android:textColor="#1E293B"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Restored Onboarding Card exactly matching Home Screen task card styling in solid white (#FFFFFF) with top-right dismiss button -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardOnboarding"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="16dp">
+
+                    <!-- Title -->
+                    <TextView
+                        android:id="@+id/tvOnboardingTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🚀 NEW TO FITTRAIN? START HERE!"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/btnDismissOnboarding" />
+
+                    <!-- Top Right Close Dismiss Button -->
+                    <ImageView
+                        android:id="@+id/btnDismissOnboarding"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_close"
+                        app:tint="#94A3B8"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true" />
+
+                    <TextView
+                        android:id="@+id/tvOnboardingSubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Let's get started in 3 simple steps"
+                        android:textColor="#64748B"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_below="@id/tvOnboardingTitle"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Steps Layout -->
+                    <LinearLayout
+                        android:id="@+id/llOnboardingSteps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_below="@id/tvOnboardingSubtitle">
+
+                        <!-- Step 1 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="top"
+                            android:layout_marginBottom="10dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_target"
+                                app:tint="@color/secondary"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginTop="2dp" />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="1. Choose Your Goal: Customize target in settings."
+                                android:textColor="#1E293B"
+                                android:textSize="13sp"
+                                android:lineSpacingMultiplier="1.1" />
+                        </LinearLayout>
+
+                        <!-- Step 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="top"
+                            android:layout_marginBottom="10dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_dumbbell"
+                                app:tint="@color/secondary"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginTop="2dp" />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="2. Generate AI Plan: Let the coach create routines."
+                                android:textColor="#1E293B"
+                                android:textSize="13sp"
+                                android:lineSpacingMultiplier="1.1" />
+                        </LinearLayout>
+
+                        <!-- Step 3 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="top"
+                            android:layout_marginBottom="16dp">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_single_tick"
+                                app:tint="@color/secondary"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginTop="2dp" />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="3. Learn Exercise Forms: Follow correct movements."
+                                android:textColor="#1E293B"
+                                android:textSize="13sp"
+                                android:lineSpacingMultiplier="1.1" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Wide Single Bottom Learn Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLearnForms"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_below="@id/llOnboardingSteps"
+                        android:text="Learn Exercise Forms 📖"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="22dp"
+                        app:backgroundTint="@null"
+                        android:background="@drawable/bg_button_gradient"
+                        android:textAllCaps="false"
+                        android:padding="0dp"
+                        android:layout_marginTop="4dp" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Beginner Tips Card (Positioned directly below the Onboarding Card, exactly like screenshot) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBeginnerTips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#FEF3C7"
+                app:strokeWidth="1dp"
+                app:cardBackgroundColor="#FFFBEB"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💡"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvTipTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="COACH TIP"
+                            android:textColor="#B45309"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvTipText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Keep your form slow and controlled to build baseline muscle memory."
+                            android:textColor="#78350F"
+                            android:textSize="12.5sp"
+                            android:layout_marginTop="2dp"
+                            android:lineSpacingExtra="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btnDismissTip"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_close"
+                        app:tint="#B45309"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Filters Scroll Area -->
+            <HorizontalScrollView
+                android:id="@+id/hsvFilters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:paddingHorizontal="16dp"
+                android:clipToPadding="false"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp">
+
+                    <!-- Category Filters -->
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAll"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Categories"
+                        android:checked="true"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipStrength"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Strength"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCardio"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cardio"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMindfulness"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mindfulness"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Difficulty Filters -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="24dp"
+                        android:background="#CBD5E1"
+                        android:layout_marginHorizontal="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBeginner"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Beginner"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipIntermediate"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Intermediate"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAdvanced"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Advanced"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_color_selector"
+                        android:textColor="@color/chip_text_color_selector"
+                        app:chipStrokeWidth="1.2dp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Workouts List Recycler View -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWorkoutsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="16dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- No results layout -->
+            <LinearLayout
+                android:id="@+id/llNoResults"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/onboarding_4"
+                    android:alpha="0.5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Workouts Found"
+                    android:textColor="#64748B"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Try removing some filter choices"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

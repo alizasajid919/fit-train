@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_settings_gradient"
+    tools:context=".activities.RecipeDetailActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/layoutBottomButton"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Hero Circle Emoji Header -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvImageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="0dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#F8FAFC"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Blue circular container centered in the header -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
+                        android:layout_gravity="center"
+                        app:cardCornerRadius="70dp"
+                        app:cardElevation="6dp"
+                        app:strokeColor="#BFDBFE"
+                        app:strokeWidth="2.5dp"
+                        app:cardBackgroundColor="@color/white">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_circle_button">
+
+                            <TextView
+                                android:id="@+id/tvMealEmoji"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textSize="64sp"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:text="🥞" />
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Back Button and Star icon overlays -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_back_chevron"
+                app:tint="#1E293B"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_heart_fav"
+                app:tint="#E91E63"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Body sheet content card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-30dp"
+                android:background="@drawable/bg_bottom_sheet"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintTop_toBottomOf="@id/cvImageContainer">
+
+                <TextView
+                    android:id="@+id/tvMealTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Blueberry Pancakes"
+                    android:textColor="#1E293B"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="by james oliver"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+
+                <!-- Macro Nutrition Grid Details -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
+                    <!-- Calories Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/bg_badge_advanced"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+                        <TextView
+                            android:id="@+id/tvCalories"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="180 kcal"
+                            android:textColor="#B91C1C"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:singleLine="true"/>
+                    </LinearLayout>
+
+                    <!-- Protein Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/bg_badge_beginner"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+                        <TextView
+                            android:id="@+id/tvProtein"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="15g\nProtein"
+                            android:textColor="#15803D"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <!-- Carbs Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/bg_badge_intermediate"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+                        <TextView
+                            android:id="@+id/tvCarbs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="45g\nCarbs"
+                            android:textColor="#C2410C"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <!-- Fat Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/bg_badge_duration"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+                        <TextView
+                            android:id="@+id/tvFat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="8g\nFat"
+                            android:textColor="#1E40AF"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Description -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Description"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Pancakes are lightweight, delicious baked flatbreads. Perfectly flavored with sugar and honey, they make for an energy-boosting breakfast meal."
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingMultiplier="1.2" />
+
+                <!-- Ingredients -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Ingredients That You Will Need"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvIngredientsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="• 1 cup flour\n• 1 egg\n• 1/2 cup milk\n• 1/2 cup fresh blueberries"
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+                <!-- Steps -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Step by Step Cooking"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvStepsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Step 1:\nMix egg and milk together.\n\nStep 2:\nStir in flour gently.\n\nStep 3:\nFold in blueberries."
+                    android:textColor="#475569"
+                    android:textSize="14sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Button Container -->
+    <LinearLayout
+        android:id="@+id/layoutBottomButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_button_gradient"
+            android:text="Add to Meal Schedule"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

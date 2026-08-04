@@ -1,0 +1,76 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    
+    <!-- Dashed Winding Pathway (Walking Route) -->
+    <path
+        android:strokeColor="#C7D2FE"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M 16 54 C 28 56, 40 46, 46 34 C 50 24, 48 14, 42 8" />
+        
+    <!-- Energy Sparks (Motivational Elements) -->
+    <!-- Star 1 -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M 12 16 L 14 19 L 17 20 L 14 21 L 12 24 L 10 21 L 7 20 L 10 19 Z" />
+    <!-- Star 2 -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M 50 44 L 52 47 L 55 48 L 52 49 L 50 52 L 48 49 L 45 48 L 48 47 Z" />
+
+    <!-- LEFT FOOTPRINT (Indigo/Active Purple Gradient Effect) -->
+    <!-- Left Heel (Ellipse) -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M 18 42 C 18 39.2, 19.8 37, 22 37 C 24.2 37, 26 39.2, 26 42 C 26 44.8, 24.2 47, 22 47 C 19.8 47, 18 44.8, 18 42 Z" />
+    <!-- Left Foot Arch/Pad -->
+    <path
+        android:fillColor="#6366F1"
+        android:pathData="M 22 36 C 25 36, 26.5 31, 25 26.5 C 23.8 22.5, 18.5 22.5, 17.5 26.5 C 16.5 31, 19 36, 22 36 Z" />
+    <!-- Left Toes (Sharp Path Vectors) -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M25.5,18a2.5,2.5 0 1,0 0,5a2.5,2.5 0 1,0 0,-5z" />
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M21.5,17.7a1.8,1.8 0 1,0 0,3.6a1.8,1.8 0 1,0 0,-3.6z" />
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M18,19a1.5,1.5 0 1,0 0,3a1.5,1.5 0 1,0 0,-3z" />
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M15,21.3a1.2,1.2 0 1,0 0,2.4a1.2,1.2 0 1,0 0,-2.4z" />
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M13,24.5a1,1 0 1,0 0,2a1,1 0 1,0 0,-2z" />
+
+    <!-- RIGHT FOOTPRINT (Neon Cyan Gradient Effect) -->
+    <!-- Right Heel (Ellipse) -->
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M 34 30 C 34 27.2, 35.8 25, 38 25 C 40.2 25, 42 27.2, 42 30 C 42 32.8, 40.2 35, 38 35 C 35.8 35, 34 32.8, 34 30 Z" />
+    <!-- Right Foot Arch/Pad -->
+    <path
+        android:fillColor="#06B6D4"
+        android:pathData="M 38 24 C 41 24, 42.5 19, 41 14.5 C 39.8 10.5, 34.5 10.5, 33.5 14.5 C 32.5 19, 35 24, 38 24 Z" />
+    <!-- Right Toes (Sharp Path Vectors) -->
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M41.5,6a2.5,2.5 0 1,0 0,5a2.5,2.5 0 1,0 0,-5z" />
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M37.5,5.7a1.8,1.8 0 1,0 0,3.6a1.8,1.8 0 1,0 0,-3.6z" />
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M34,7a1.5,1.5 0 1,0 0,3a1.5,1.5 0 1,0 0,-3z" />
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M31,9.3a1.2,1.2 0 1,0 0,2.4a1.2,1.2 0 1,0 0,-2.4z" />
+    <path
+        android:fillColor="#0891B2"
+        android:pathData="M29,12.5a1,1 0 1,0 0,2a1,1 0 1,0 0,-2z" />
+</vector>

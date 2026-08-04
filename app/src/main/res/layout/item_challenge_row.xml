@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="8dp"
+    android:layout_marginHorizontal="2dp"
+    app:cardCornerRadius="20dp"
+    app:strokeColor="#E2E8F0"
+    app:strokeWidth="1.2dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top Title & Status Label -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvRowTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="7-Day Active Health Starter"
+                android:textColor="#1E293B"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRowStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="In Progress"
+                android:textColor="#3B82F6"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="#EFF6FF"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvRowDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kickstart your fitness journey with simple, consistency-building habits."
+            android:textColor="#64748B"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Badges (Difficulty, Duration, Rewards) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tvRowDifficulty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Easy"
+                android:textColor="#D97706"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="#FEF3C7"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tvRowDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weekly"
+                android:textColor="#7C3AED"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="#F5F3FF"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tvRowReward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+100 XP"
+                android:textColor="#059669"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="#D1FAE5"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:id="@+id/tvRowBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Beginner Badge"
+                android:textColor="#0369A1"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="#E0F2FE"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F1F5F9"
+            android:layout_marginVertical="12dp" />
+
+        <!-- Date Range -->
+        <TextView
+            android:id="@+id/tvRowDateRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start: Jul 30, 2026 • End: Aug 6, 2026"
+            android:textColor="#94A3B8"
+            android:textSize="10sp" />
+
+        <!-- Progress Layout -->
+        <LinearLayout
+            android:id="@+id/layoutRowProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvRowProgressPercent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Progress: 0%"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/pbRowProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="6dp"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/pb_steps_gradient" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

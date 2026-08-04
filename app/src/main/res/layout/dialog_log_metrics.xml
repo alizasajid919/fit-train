@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_opaque"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log Today's Metrics"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Steps Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Daily Steps"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/etLogSteps"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 8500"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/light_gray"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Calories Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calories Consumed (kcal)"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/etLogCalories"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 1800"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/light_gray"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Water Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Water Consumption (ml)"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etLogWater"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="e.g. 1200 ml"
+                android:inputType="number"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/light_gray" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlusGlass"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="+250 ml"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/primary"
+                android:textAllCaps="false"
+                android:layout_marginStart="8dp"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <!-- Sleep Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sleep Duration (minutes)"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/etLogSleep"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 480"
+            android:inputType="number"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/light_gray"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Current Weight Input -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weight (kg)"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+        <EditText
+            android:id="@+id/etLogWeight"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 68.5"
+            android:inputType="numberDecimal"
+            android:background="@drawable/bg_edittext"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/light_gray"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Cancel"
+                android:textColor="@color/gray"
+                android:layout_marginEnd="8dp"
+                android:textAllCaps="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveLog"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/primary"
+                app:cornerRadius="12dp"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

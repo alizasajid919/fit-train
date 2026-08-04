@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/apk/res/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@android:color/transparent">
+
+    <!-- Linear Layout inside Card with gradient background -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_blue_gradient"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Image Illustration -->
+        <ImageView
+            android:id="@+id/ivGoalIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:scaleType="fitCenter"
+            android:contentDescription="Goal Illustration"
+            tools:src="@drawable/onboarding_1" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvGoalCardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Improve Shape" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1.5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvGoalCardDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp"
+            tools:text="I have a low amount of body fat and need / want to build more muscle" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

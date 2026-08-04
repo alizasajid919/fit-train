@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC"
+    tools:context=".activities.GroceryScannerActivity">
+
+    <!-- Top Bar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bg_blue_gradient"
+        app:title="AI Grocery &amp; Meal Planner"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Tabs for Feature Navigation -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="2dp"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="#6C63FF"
+        app:tabTextColor="@color/gray"
+        app:tabIndicatorColor="#6C63FF"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📷 Grocery Scanner" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🥗 Smart Recipes" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🛒 Shopping &amp; Expiry" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 7-Day Meal Plan" />
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎙️ AI Recipe Voice" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <!-- LOADING / SCANNING ANIMATION STATE -->
+    <LinearLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ProgressBar
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminateTint="#6C63FF" />
+
+        <TextView
+            android:id="@+id/tvLoadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Analyzing Groceries &amp; Detecting Food..."
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FitTrain AI Vision is calculating macros and freshness..."
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp" />
+    </LinearLayout>
+
+    <!-- TAB 1: SCANNER CONTENT -->
+    <ScrollView
+        android:id="@+id/tabScannerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Scanner Banner & Controls -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/ivScannedPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/onboarding_1"
+                        android:background="#E2E8F0" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutImageActions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditImage"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edit"
+                            app:icon="@android:drawable/ic_menu_edit"
+                            android:textColor="#6C63FF"
+                            app:iconTint="#6C63FF"
+                            android:textAllCaps="false" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDeleteImage"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Delete"
+                            app:icon="@android:drawable/ic_menu_delete"
+                            android:textColor="#EF4444"
+                            app:iconTint="#EF4444"
+                            android:textAllCaps="false"
+                            android:layout_marginStart="16dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scan Fridge, Pantry, or Grocery Bag"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Take a photo or upload an image. AI will detect all visible ingredients."
+                        android:textColor="@color/gray"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:layout_marginTop="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCameraScan"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:text="Take Photo 📷"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="22dp"
+                            app:backgroundTint="#6C63FF"
+                            android:layout_marginEnd="6dp"
+                            android:textAllCaps="false" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGalleryScan"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:text="Upload Gallery 🖼️"
+                            android:textColor="#6C63FF"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:strokeColor="#6C63FF"
+                            app:cornerRadius="22dp"
+                            android:layout_marginStart="6dp"
+                            android:textAllCaps="false" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Product Scan Detailed Report Card (Visible when a package is scanned) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvProductReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/white"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvReportTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Product Scan Report"
+                        android:textColor="#6C63FF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvReportProductName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Coca Cola Zero Sugar"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="2dp" />
+
+                    <TextView
+                        android:id="@+id/tvReportBrandCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Coca-Cola Company • Beverage"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+
+                    <!-- Scores & Recommendation -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="#F1F5F9"
+                            android:padding="8dp"
+                            android:layout_marginEnd="4dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Health Score"
+                                android:textColor="@color/gray"
+                                android:textSize="10sp" />
+                            <TextView
+                                android:id="@+id/tvReportHealthScore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="85/100"
+                                android:textColor="#22C55E"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="#F1F5F9"
+                            android:padding="8dp"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nutrition Score"
+                                android:textColor="@color/gray"
+                                android:textSize="10sp" />
+                            <TextView
+                                android:id="@+id/tvReportNutritionScore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="70/100"
+                                android:textColor="#3B82F6"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:background="#F1F5F9"
+                            android:padding="8dp"
+                            android:layout_marginStart="4dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AI Rec"
+                                android:textColor="@color/gray"
+                                android:textSize="10sp" />
+                            <TextView
+                                android:id="@+id/tvReportRecommendation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Moderation"
+                                android:textColor="#F59E0B"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Why Recommended and Ingredients -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Why:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp" />
+                    <TextView
+                        android:id="@+id/tvReportWhy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Contains zero sugar but contains artificial sweeteners."
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ingredients:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                    <TextView
+                        android:id="@+id/tvReportIngredients"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Carbonated water, caramel color, aspartame, phosphoric acid..."
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
+
+                    <!-- Classifications labels -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Food Properties:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                    <TextView
+                        android:id="@+id/tvReportClassifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Highly Processed • Suitable for Weight Loss • Not Diabetic Safe"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Alternatives -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alternative Healthier Products:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp" />
+                    <TextView
+                        android:id="@+id/tvReportAlternatives"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1. Perrier Sparkling Water\n2. Zevia Organic Soda\n3. Home-brewed Lemon Iced Tea"
+                        android:textColor="#059669"
+                        android:textSize="12sp"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Detected Ingredients Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detected Ingredients &amp; Freshness"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvScannedIngredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TAB 2: RECIPES CONTENT -->
+    <ScrollView
+        android:id="@+id/tabRecipesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI Generated Meal Recipes 🥗"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recipes crafted using your available scanned ingredients:"
+                android:textColor="@color/gray"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Filters Chip Groups -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgRecipeMealType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMealAll"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Meals"
+                        android:checked="true" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMealBreakfast"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Breakfast" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMealLunch"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lunch" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMealDinner"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dinner" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMealSnack"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Snacks" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgRecipeDietTarget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietAll"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All Diets"
+                        android:checked="true" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietVeg"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vegetarian" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietVegan"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vegan" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietHighProtein"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="High Protein" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietLowCarb"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Low Carb" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietWeightLoss"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weight Loss" />
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDietMuscleGain"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Muscle Gain" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRecipes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TAB 3: SHOPPING LIST & EXPIRY CONTENT -->
+    <ScrollView
+        android:id="@+id/tabShoppingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Expiring Warnings Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FEF2F2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚠️ Food Waste &amp; Expiry Alerts"
+                        android:textColor="#EF4444"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Chicken Breast expires tomorrow! Use in dinner recipe.\n• Spinach expires in 2 days."
+                        android:textColor="#991B1B"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Shopping List Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Smart Shopping List 🛒"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddShoppingItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="+ Add Item"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:cornerRadius="18dp"
+                    app:backgroundTint="#6C63FF"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvShoppingList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TAB 4: 7-DAY MEAL PLAN CONTENT -->
+    <ScrollView
+        android:id="@+id/tabPlannerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="7-Day Weekly Meal Planner 📅"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegenerateFullWeek"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Regenerate 🔄"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:cornerRadius="18dp"
+                    app:backgroundTint="#C084FC"
+                    android:layout_marginStart="8dp"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom weekly meal schedule calculated for your daily target calories &amp; protein:"
+                android:textColor="@color/gray"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="12dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvWeeklyPlanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TAB 5: AI VOICE ASSISTANT CONTENT -->
+    <LinearLayout
+        android:id="@+id/tabVoiceLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI Recipe &amp; Cooking Assistant 🎙️"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ask anything like: 'What can I cook with eggs and milk?' or 'Suggest dinner under 500 calories'"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Response output box -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvVoiceAssistantResponse"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tap the microphone or type below to ask your AI Grocery Assistant!"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp" />
+            </ScrollView>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Voice & Query Input Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
+
+            <EditText
+                android:id="@+id/etVoiceQuery"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:hint="Ask what to cook..."
+                android:textColor="@color/black"
+                android:textColorHint="#64748B"
+                android:textSize="13sp"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="14dp"
+                android:inputType="text" />
+
+            <ImageButton
+                android:id="@+id/btnVoiceMic"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_mic"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Voice Input" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSendVoiceQuery"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="Ask"
+                android:textColor="@color/white"
+                app:cornerRadius="22dp"
+                app:backgroundTint="#6C63FF"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
