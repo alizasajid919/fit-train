@@ -148,13 +148,7 @@ public class OnboardingActivity extends AppCompatActivity {
         guest.setActivityLevel("Active");
         localDb.saveUser(guest);
 
-        // Silent Firebase Anonymous Login
-        authViewModel.signInAnonymously(localDb).observe(this, resource -> {
-            // Note: We navigate regardless of connection state so that offline users are never blocked!
-            if (resource != null && resource.status != com.fitness.app.repositories.UserRepository.Resource.Status.LOADING) {
-                startActivity(new Intent(OnboardingActivity.this, MainActivity.class));
-                finish();
-            }
-        });
+        startActivity(new Intent(OnboardingActivity.this, MainActivity.class));
+        finish();
     }
 }

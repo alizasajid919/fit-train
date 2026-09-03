@@ -83,44 +83,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkUserSession() {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
-            if (localDb.getUser() != null) {
-                navigateTo(MainActivity.class);
-            } else {
-                if (firebaseUser.isAnonymous()) {
-                    User guest = new User(firebaseUser.getUid(), "Guest", "User", "", System.currentTimeMillis());
-                    guest.setProfileCompleted(true);
-                    guest.setGender("Male");
-                    guest.setDob("2000-01-01");
-                    guest.setHeight(175.0);
-                    guest.setWeight(70.0);
-                    guest.setGoal("Improve Shape");
-                    guest.setActivityLevel("Active");
-                    localDb.saveUser(guest);
-                    navigateTo(MainActivity.class);
-                } else {
-                    FirebaseFirestore.getInstance().collection("users").document(firebaseUser.getUid())
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                                User cloudUser = task.getResult().toObject(User.class);
-                                if (cloudUser != null) {
-                                    localDb.saveUser(cloudUser);
-                                    navigateTo(MainActivity.class);
-                                    return;
-                                }
-                            }
-                            navigateTo(LoginActivity.class);
-                        });
-                }
-            }
+        if (localDb.isOnboardingSeen()) {
+            navigateTo(MainActivity.class);
         } else {
-            if (localDb.isOnboardingSeen()) {
-                navigateTo(LoginActivity.class);
-            } else {
-                navigateTo(OnboardingActivity.class);
-            }
+            navigateTo(OnboardingActivity.class);
         }
     }
 

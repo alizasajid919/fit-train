@@ -11,6 +11,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +32,10 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -46,17 +49,17 @@ public class EditProfileActivity extends AppCompatActivity {
     private static final int CROP_IMAGE = 102;
     private static final int CAMERA_PERMISSION_REQUEST = 104;
 
-    private EditText etEditFirstName, etEditLastName, etEditEmail, etEditMobile, etEditDob;
-    private EditText etEditCity;
-    private AutoCompleteTextView etEditGender, etEditCountry, etEditBloodGroup, etEditActivityLevel, etEditGoal, etEditDietary;
+    private EditText etEditFirstName, etEditLastName, etEditEmail, etEditDob;
+    private AutoCompleteTextView etEditCity, etEditGender, etEditCountry, etEditBloodGroup, etEditActivityLevel, etEditGoal, etEditDietary, etEditConditions;
     private EditText etEditHeight, etEditWeight, etEditTargetWeight;
-    private EditText etEditConditions, etEditEmergency;
 
     private TextView tvEditProfileName, tvEditProfileEmail;
     private ImageView ivEditProfilePic;
     private Button btnRemovePic;
     private com.google.android.material.button.MaterialButton btnCancel, btnSaveProfile;
     private View btnChangePic;
+    private com.google.android.material.textfield.TextInputLayout tilEditConditions;
+    private ScrollView scrollView;
 
     private LocalDataManager localDb;
     private User user;
@@ -69,6 +72,12 @@ public class EditProfileActivity extends AppCompatActivity {
         // Fade animation transition
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_edit_profile);
+
+        scrollView = findViewById(R.id.scrollView);
+        if (scrollView == null && findViewById(android.R.id.content) != null) {
+            View root = findViewById(android.R.id.content);
+            if (root instanceof ScrollView) scrollView = (ScrollView) root;
+        }
 
         localDb = new LocalDataManager(this);
         profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
@@ -98,7 +107,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etEditFirstName = findViewById(R.id.etEditFirstName);
         etEditLastName = findViewById(R.id.etEditLastName);
         etEditEmail = findViewById(R.id.etEditEmail);
-        etEditMobile = findViewById(R.id.etEditMobile);
         etEditDob = findViewById(R.id.etEditDob);
         etEditCity = findViewById(R.id.etEditCity);
         
@@ -109,13 +117,11 @@ public class EditProfileActivity extends AppCompatActivity {
         etEditActivityLevel = findViewById(R.id.etEditActivityLevel);
         etEditGoal = findViewById(R.id.etEditGoal);
         etEditDietary = findViewById(R.id.etEditDietary);
+        etEditConditions = findViewById(R.id.etEditConditions);
 
         etEditHeight = findViewById(R.id.etEditHeight);
         etEditWeight = findViewById(R.id.etEditWeight);
         etEditTargetWeight = findViewById(R.id.etEditTargetWeight);
-
-        etEditConditions = findViewById(R.id.etEditConditions);
-        etEditEmergency = findViewById(R.id.etEditEmergency);
 
         ivEditProfilePic = findViewById(R.id.ivEditProfilePic);
         btnChangePic = findViewById(R.id.btnChangePic);
@@ -155,9 +161,122 @@ public class EditProfileActivity extends AppCompatActivity {
         ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, diets);
         etEditDietary.setAdapter(dietAdapter);
 
-        String[] countries = {"United States", "Canada", "United Kingdom", "Australia", "Germany", "India", "Other"};
+        List<String> countries = com.fitness.app.utils.LocationUtils.getCountries();
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, countries);
         etEditCountry.setAdapter(countryAdapter);
+
+        etEditCountry.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedCountry = etEditCountry.getText().toString();
+            etEditCity.setText("");
+            updateCityDropdown(selectedCountry);
+        });
+
+        etEditCity.setOnClickListener(v -> {
+            String country = etEditCountry.getText().toString().trim();
+            if (country.isEmpty() || !com.fitness.app.utils.ValidationUtils.isValidCountry(country)) {
+                etEditCountry.setError("Please select a valid country first");
+                scrollToView(etEditCountry);
+                return;
+            }
+            showCitySearchDialog(country);
+        });
+
+        tilEditConditions = findViewById(R.id.tilEditConditions);
+
+        String[] conditions = {"None", "Hypertension (High BP)", "Diabetes (Type 1 / Type 2)", "Asthma / Respiratory", "Heart Condition", "Joint / Arthritis", "Thyroid Disorder", "Other"};
+        ArrayAdapter<String> medAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, conditions);
+        etEditConditions.setAdapter(medAdapter);
+
+        View.OnClickListener medClickListener = v -> showMedicalConditionDialogEdit();
+        etEditConditions.setOnClickListener(medClickListener);
+        etEditConditions.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                showMedicalConditionDialogEdit();
+            }
+            return false;
+        });
+        if (tilEditConditions != null) {
+            tilEditConditions.setEndIconOnClickListener(medClickListener);
+        }
+    }
+
+    private void showMedicalConditionDialogEdit() {
+        String[] options = {
+            "None", "Hypertension (High BP)", "Diabetes (Type 1 / Type 2)",
+            "Asthma / Respiratory", "Heart Condition", "Joint / Arthritis",
+            "Thyroid Disorder", "Other"
+        };
+
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Select Medical Condition")
+            .setItems(options, (dialog, which) -> {
+                etEditConditions.setText(options[which], false);
+                etEditConditions.setError(null);
+                dialog.dismiss();
+            })
+            .show();
+    }
+
+    private void updateCityDropdown(String country) {
+        List<String> cities = com.fitness.app.utils.LocationUtils.getCitiesForCountry(country);
+        ArrayAdapter<String> cityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, cities);
+        etEditCity.setAdapter(cityAdapter);
+    }
+
+    private void showCitySearchDialog(String country) {
+        List<String> cityList = com.fitness.app.utils.LocationUtils.getCitiesForCountry(country);
+        if (cityList == null || cityList.isEmpty()) {
+            Toast.makeText(this, "No cities available for " + country, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Select City for " + country);
+
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(32, 24, 32, 16);
+
+        EditText etSearch = new EditText(this);
+        etSearch.setHint("🔍 Search city...");
+        etSearch.setPadding(24, 20, 24, 20);
+        etSearch.setBackgroundResource(R.drawable.bg_edittext);
+        layout.addView(etSearch);
+
+        android.widget.ListView listView = new android.widget.ListView(this);
+        listView.setPadding(0, 16, 0, 0);
+        layout.addView(listView);
+
+        builder.setView(layout);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new 8ArrayList<>(cityList));
+        listView.setAdapter(adapter);
+
+        android.app.AlertDialog dialog = builder.create();
+
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedCity = adapter.getItem(position);
+            if (selectedCity != null) {
+                etEditCity.setText(selectedCity);
+                etEditCity.setError(null);
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void loadUserData() {
@@ -167,7 +286,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etEditFirstName.setText(user.getFirstName());
         etEditLastName.setText(user.getLastName());
         etEditEmail.setText(user.getEmail());
-        etEditMobile.setText(user.getMobileNumber() != null ? user.getMobileNumber() : "");
         etEditDob.setText(user.getDob() != null ? user.getDob() : "");
         etEditGender.setText(user.getGender() != null ? user.getGender() : "", false);
         etEditCountry.setText(user.getCountry() != null ? user.getCountry() : "", false);
@@ -193,7 +311,6 @@ public class EditProfileActivity extends AppCompatActivity {
         etEditDietary.setText(user.getDietaryPreference() != null ? user.getDietaryPreference() : "", false);
 
         etEditConditions.setText(user.getMedicalConditions() != null ? user.getMedicalConditions() : "");
-        etEditEmergency.setText(user.getEmergencyContact() != null ? user.getEmergencyContact() : "");
 
         selectedImageUriString = user.getProfileImageUrl();
         refreshProfileImage();
@@ -355,95 +472,106 @@ public class EditProfileActivity extends AppCompatActivity {
         Toast.makeText(this, "Profile image removed", Toast.LENGTH_SHORT).show();
     }
 
+    private void scrollToView(View view) {
+        if (view == null) return;
+        view.requestFocus();
+        if (scrollView != null) {
+            scrollView.post(() -> scrollView.smoothScrollTo(0, view.getTop() - 100));
+        }
+    }
+
     private void saveProfileData() {
         String firstName = etEditFirstName.getText().toString().trim();
         String lastName = etEditLastName.getText().toString().trim();
         String email = etEditEmail.getText().toString().trim();
-        String mobile = etEditMobile.getText().toString().trim();
         String dob = etEditDob.getText().toString().trim();
+        String country = etEditCountry.getText().toString().trim();
+        String city = etEditCity.getText().toString().trim();
+        String conditions = etEditConditions.getText().toString().trim();
 
-        if (firstName.isEmpty()) {
-            etEditFirstName.setError("First Name is required");
-            etEditFirstName.requestFocus();
+        if (!com.fitness.app.utils.ValidationUtils.isValidName(firstName)) {
+            etEditFirstName.setError("Please enter a valid first name (letters only)");
+            scrollToView(etEditFirstName);
             return;
         }
-        if (lastName.isEmpty()) {
-            etEditLastName.setError("Last Name is required");
-            etEditLastName.requestFocus();
+        if (!com.fitness.app.utils.ValidationUtils.isValidName(lastName)) {
+            etEditLastName.setError("Please enter a valid last name (letters only)");
+            scrollToView(etEditLastName);
             return;
         }
-        if (email.isEmpty()) {
-            etEditEmail.setError("Email is required");
-            etEditEmail.requestFocus();
-            return;
-        }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!com.fitness.app.utils.ValidationUtils.isValidEmail(email)) {
             etEditEmail.setError("Please enter a valid email address");
-            etEditEmail.requestFocus();
-            return;
-        }
-        if (!mobile.isEmpty() && (mobile.length() < 9 || mobile.length() > 15)) {
-            etEditMobile.setError("Please enter a valid phone number (9-15 digits)");
-            etEditMobile.requestFocus();
+            scrollToView(etEditEmail);
             return;
         }
         if (dob.isEmpty()) {
             etEditDob.setError("Date of Birth is required");
-            etEditDob.requestFocus();
+            scrollToView(etEditDob);
+            return;
+        }
+        int age = com.fitness.app.utils.ValidationUtils.calculateAge(dob);
+        if (age == -1 || !com.fitness.app.utils.ValidationUtils.isValidAge(age)) {
+            etEditDob.setError("Please enter a valid age (10 - 100 years)");
+            scrollToView(etEditDob);
             return;
         }
 
         double heightVal;
         boolean metricEnabled = localDb.isMetricUnitsEnabled();
-        try {
-            String ht = etEditHeight.getText().toString().trim();
-            if (ht.isEmpty()) {
-                etEditHeight.setError("Height is required");
-                etEditHeight.requestFocus();
-                return;
-            }
-            double inputHeight = Double.parseDouble(ht);
-            heightVal = metricEnabled ? inputHeight : inputHeight * 2.54;
-            if (heightVal < 50 || heightVal > 260) {
-                etEditHeight.setError(metricEnabled ? "Height must be between 50 and 260 cm" : "Height must be between 20 and 102 inches");
-                etEditHeight.requestFocus();
-                return;
-            }
-        } catch (NumberFormatException e) {
-            etEditHeight.setError("Invalid height format");
-            etEditHeight.requestFocus();
+        String ht = etEditHeight.getText().toString().trim();
+        double parsedHt = com.fitness.app.utils.ValidationUtils.parseHeight(ht);
+        if (parsedHt == -1) {
+            etEditHeight.setError("Please enter a valid height");
+            scrollToView(etEditHeight);
+            return;
+        }
+        heightVal = metricEnabled ? parsedHt : parsedHt * 2.54;
+        if (!com.fitness.app.utils.ValidationUtils.isValidHeight(heightVal)) {
+            etEditHeight.setError("Please enter a valid height (50 - 250 cm)");
+            scrollToView(etEditHeight);
             return;
         }
 
         double weightVal;
-        try {
-            String wt = etEditWeight.getText().toString().trim();
-            if (wt.isEmpty()) {
-                etEditWeight.setError("Weight is required");
-                etEditWeight.requestFocus();
-                return;
-            }
-            double inputWeight = Double.parseDouble(wt);
-            weightVal = metricEnabled ? inputWeight : inputWeight / 2.20462;
-            if (weightVal < 20 || weightVal > 350) {
-                etEditWeight.setError(metricEnabled ? "Weight must be between 20 and 350 kg" : "Weight must be between 44 and 770 lbs");
-                etEditWeight.requestFocus();
-                return;
-            }
-        } catch (NumberFormatException e) {
-            etEditWeight.setError("Invalid weight format");
-            etEditWeight.requestFocus();
+        String wt = etEditWeight.getText().toString().trim();
+        double parsedWt = com.fitness.app.utils.ValidationUtils.parseWeight(wt);
+        if (parsedWt == -1) {
+            etEditWeight.setError("Please enter a valid weight");
+            scrollToView(etEditWeight);
+            return;
+        }
+        weightVal = metricEnabled ? parsedWt : parsedWt / 2.20462;
+        if (!com.fitness.app.utils.ValidationUtils.isValidWeight(weightVal)) {
+            etEditWeight.setError("Please enter a valid weight (20 - 300 kg)");
+            scrollToView(etEditWeight);
+            return;
+        }
+
+        if (!com.fitness.app.utils.ValidationUtils.isValidCountry(country)) {
+            etEditCountry.setError("Please select a valid country");
+            scrollToView(etEditCountry);
+            return;
+        }
+
+        if (!com.fitness.app.utils.LocationUtils.isValidCityForCountry(country, city)) {
+            etEditCity.setError("Please enter or select a valid city for " + country);
+            scrollToView(etEditCity);
+            return;
+        }
+
+        if (!com.fitness.app.utils.ValidationUtils.isValidMedicalCondition(conditions)) {
+            etEditConditions.setError("Please select a valid medical condition option");
+            scrollToView(etEditConditions);
             return;
         }
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setMobileNumber(mobile);
         user.setDob(dob);
         user.setGender(etEditGender.getText().toString().trim());
-        user.setCountry(etEditCountry.getText().toString().trim());
-        user.setCity(etEditCity.getText().toString().trim());
+        user.setCountry(country);
+        user.setCity(city);
         user.setBloodGroup(etEditBloodGroup.getText().toString().trim());
         user.setHeight(heightVal);
         user.setWeight(weightVal);
@@ -463,9 +591,7 @@ public class EditProfileActivity extends AppCompatActivity {
         user.setGoal(etEditGoal.getText().toString().trim());
         user.setActivityLevel(etEditActivityLevel.getText().toString().trim());
         user.setDietaryPreference(etEditDietary.getText().toString().trim());
-
-        user.setMedicalConditions(etEditConditions.getText().toString().trim());
-        user.setEmergencyContact(etEditEmergency.getText().toString().trim());
+        user.setMedicalConditions(conditions);
 
         user.setProfileImageUrl(selectedImageUriString);
         user.setProfileCompleted(true);
@@ -546,8 +672,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (firebaseUser == null) {
             if (progressDialog.isShowing()) progressDialog.dismiss();
             btnSaveProfile.setEnabled(true);
-            Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-            finish();
+            showSuccessNotificationAndFinish();
             return;
         }
 
@@ -556,22 +681,21 @@ public class EditProfileActivity extends AppCompatActivity {
             if (resource != null) {
                 switch (resource.status) {
                     case SUCCESS:
-                        if (progressDialog.isShowing()) progressDialog.dismiss();
-                        btnSaveProfile.setEnabled(true);
-                        Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
-                        break;
                     case ERROR:
                         if (progressDialog.isShowing()) progressDialog.dismiss();
                         btnSaveProfile.setEnabled(true);
-                        Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
+                        showSuccessNotificationAndFinish();
                         break;
                     case LOADING:
                         break;
                 }
             }
         });
+    }
+
+    private void showSuccessNotificationAndFinish() {
+        Toast.makeText(this, "Your personal data has been successfully saved.", Toast.LENGTH_LONG).show();
+        btnSaveProfile.postDelayed(this::finish, 2000);
     }
 
     @Override

@@ -163,7 +163,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Remaining: 957 kcal"
-                            android:textColor="#059669"
+                            android:textColor="#1D4ED8"
                             android:textStyle="bold"
                             android:textSize="13sp" />
 
@@ -417,7 +417,7 @@
                         android:layout_height="4dp"
                         android:layout_marginBottom="14dp"
                         app:trackCornerRadius="2dp"
-                        app:indicatorColor="#10B981"
+                        app:indicatorColor="#2563EB"
                         app:trackColor="#F1F5F9"
                         android:progress="48" />
 
@@ -646,7 +646,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_check_circle"
-                            app:tint="#10B981" />
+                            app:tint="#2563EB" />
 
                         <TextView
                             android:id="@+id/tvCalorieGoalStatus"
@@ -671,7 +671,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_check_circle"
-                            app:tint="#10B981" />
+                            app:tint="#2563EB" />
 
                         <TextView
                             android:id="@+id/tvProteinGoalStatus"
@@ -696,7 +696,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_check_circle"
-                            app:tint="#10B981" />
+                            app:tint="#2563EB" />
 
                         <TextView
                             android:id="@+id/tvCarbsGoalStatus"
@@ -721,7 +721,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_check_circle"
-                            app:tint="#10B981" />
+                            app:tint="#2563EB" />
 
                         <TextView
                             android:id="@+id/tvFatGoalStatus"
@@ -746,7 +746,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_check_circle"
-                            app:tint="#10B981" />
+                            app:tint="#2563EB" />
 
                         <TextView
                             android:id="@+id/tvWaterGoalStatus"
@@ -998,13 +998,13 @@
                                 android:id="@+id/vBarAvg"
                                 android:layout_width="32dp"
                                 android:layout_height="70dp"
-                                android:background="#10B981" />
+                                android:background="#2563EB" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="7-Day Avg"
-                                android:textColor="#10B981"
+                                android:textColor="#2563EB"
                                 android:textSize="11sp"
                                 android:layout_marginTop="6dp" />
                         </LinearLayout>

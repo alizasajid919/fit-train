@@ -49,32 +49,32 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
 
         // Field Validations
-        if (ValidationUtils.isEmpty(firstName)) {
-            etFirstName.setError(getString(R.string.err_empty_field));
+        if (!ValidationUtils.isValidName(firstName)) {
+            etFirstName.setError("Please enter a valid first name (letters only)");
             etFirstName.requestFocus();
             return;
         }
 
-        if (ValidationUtils.isEmpty(lastName)) {
-            etLastName.setError(getString(R.string.err_empty_field));
+        if (!ValidationUtils.isValidName(lastName)) {
+            etLastName.setError("Please enter a valid last name (letters only)");
             etLastName.requestFocus();
             return;
         }
 
         if (!ValidationUtils.isValidEmail(email)) {
-            etEmail.setError(getString(R.string.err_invalid_email));
+            etEmail.setError("Please enter a valid email address");
             etEmail.requestFocus();
             return;
         }
 
         if (!ValidationUtils.isValidPassword(password)) {
-            etPassword.setError(getString(R.string.err_short_password));
+            etPassword.setError("Password must be at least 8 characters");
             etPassword.requestFocus();
             return;
         }
 
         if (!cbTerms.isChecked()) {
-            Toast.makeText(this, R.string.err_accept_terms, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please accept the Terms of Service to register", Toast.LENGTH_SHORT).show();
             return;
         }
 

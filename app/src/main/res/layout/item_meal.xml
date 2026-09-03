@@ -36,12 +36,25 @@
             app:cardCornerRadius="12dp"
             app:strokeWidth="0dp"
             app:cardElevation="0dp">
-            <ImageView
-                android:id="@+id/ivMealImage"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/onboarding_1" />
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/ivMealImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/tvMealEmoji"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textSize="34sp"
+                    android:textColor="@color/black"
+                    android:text="🍳"
+                    android:visibility="visible" />
+            </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Meal Details -->
@@ -115,7 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:textColor="#10B981"
+                    android:textColor="#2563EB"
                     android:textSize="11sp"
                     android:text="C: 0g" />
 

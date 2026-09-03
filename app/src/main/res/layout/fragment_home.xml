@@ -1091,7 +1091,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0 / 2,000 kcal"
-                            android:textColor="#059669"
+                            android:textColor="#1D4ED8"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:layout_marginTop="2dp" />
@@ -1307,7 +1307,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
                         android:text="Healthy range!\nKeep it up."
-                        android:textColor="#22C55E"
+                        android:textColor="#2563EB"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:gravity="center"
@@ -1319,188 +1319,6 @@
                         android:src="@drawable/ic_bmi_trend" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-            <!-- Featured Workouts Carousel -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Explore Other Workouts"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:layout_marginBottom="24dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Featured Card 1 -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="200dp"
-                        android:layout_height="110dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        android:layout_margin="4dp">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_blue_gradient"
-                            android:padding="12dp">
-                            <TextView
-                                android:id="@+id/tvFeatured1Title"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="Full Body Shred"
-                                android:textColor="@android:color/white"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <TextView
-                                android:id="@+id/tvFeatured1Desc"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="25 Mins • Intermediate"
-                                android:textColor="@android:color/white"
-                                android:textSize="10sp"
-                                android:alpha="0.8"
-                                android:layout_marginTop="2dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tvFeatured1Title"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/btnFeatured1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="28dp"
-                                android:background="@drawable/bg_circle_button"
-                                android:backgroundTint="@color/white"
-                                android:text="Start"
-                                android:textColor="@color/primary"
-                                android:textSize="9.5sp"
-                                android:textStyle="bold"
-                                android:paddingStart="12dp"
-                                android:paddingEnd="12dp"
-                                android:textAllCaps="false"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- Featured Card 2 -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="200dp"
-                        android:layout_height="110dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        android:layout_margin="4dp">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_button_gradient"
-                            android:padding="12dp">
-                            <TextView
-                                android:id="@+id/tvFeatured2Title"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="Upper Body Builder"
-                                android:textColor="@android:color/white"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <TextView
-                                android:id="@+id/tvFeatured2Desc"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="30 Mins • Beginner"
-                                android:textColor="@android:color/white"
-                                android:textSize="10sp"
-                                android:alpha="0.8"
-                                android:layout_marginTop="2dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tvFeatured2Title"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/btnFeatured2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="28dp"
-                                android:background="@drawable/bg_circle_button"
-                                android:backgroundTint="@color/white"
-                                android:text="Start"
-                                android:textColor="@color/primary"
-                                android:textSize="9.5sp"
-                                android:textStyle="bold"
-                                android:paddingStart="12dp"
-                                android:paddingEnd="12dp"
-                                android:textAllCaps="false"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <!-- Featured Card 3 -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="200dp"
-                        android:layout_height="110dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp"
-                        android:layout_margin="4dp">
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_blue_gradient"
-                            android:padding="12dp">
-                            <TextView
-                                android:id="@+id/tvFeatured3Title"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="Cardio Core Burner"
-                                android:textColor="@android:color/white"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <TextView
-                                android:id="@+id/tvFeatured3Desc"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="15 Mins • Advanced"
-                                android:textColor="@android:color/white"
-                                android:textSize="10sp"
-                                android:alpha="0.8"
-                                android:layout_marginTop="2dp"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tvFeatured3Title"
-                                app:layout_constraintEnd_toEndOf="parent" />
-                            <androidx.appcompat.widget.AppCompatButton
-                                android:id="@+id/btnFeatured3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="28dp"
-                                android:background="@drawable/bg_circle_button"
-                                android:backgroundTint="@color/white"
-                                android:text="Start"
-                                android:textColor="@color/primary"
-                                android:textSize="9.5sp"
-                                android:textStyle="bold"
-                                android:paddingStart="12dp"
-                                android:paddingEnd="12dp"
-                                android:textAllCaps="false"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
-                </LinearLayout>
-            </HorizontalScrollView>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@
     tools:context=".activities.CompleteProfileActivity">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -112,9 +113,10 @@
 
                 <!-- Gender Dropdown -->
                 <LinearLayout
+                    android:id="@+id/containerGender"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_edittext"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -136,12 +138,24 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvErrorGender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please select a gender" />
+
                 <!-- Date of Birth -->
                 <EditText
                     android:id="@+id/etDob"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_edittext"
                     android:drawableStart="@drawable/ic_calendar"
                     android:drawablePadding="12dp"
@@ -156,11 +170,24 @@
                     android:textSize="14sp"
                     android:importantForAutofill="no" />
 
+                <TextView
+                    android:id="@+id/tvErrorDob"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please enter a valid date of birth" />
+
                 <!-- Weight Input -->
                 <LinearLayout
+                    android:id="@+id/containerWeight"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_edittext"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -196,11 +223,24 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvErrorWeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please enter a valid weight" />
+
                 <!-- Height Input -->
                 <LinearLayout
+                    android:id="@+id/containerHeight"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_edittext"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -236,10 +276,24 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvErrorHeight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please enter a valid height" />
+
                 <!-- Activity Level Dropdown -->
                 <LinearLayout
+                    android:id="@+id/containerActivityLevel"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_edittext"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -260,6 +314,171 @@
                         android:background="@null" />
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvErrorActivityLevel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please select an activity level" />
+
+                <!-- Country Dropdown -->
+                <LinearLayout
+                    android:id="@+id/containerCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/bg_edittext"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_user"
+                        android:contentDescription="Country" />
+
+                    <Spinner
+                        android:id="@+id/spCountry"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="12dp"
+                        android:background="@null" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvErrorCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please select a country" />
+
+                <!-- City Dropdown -->
+                <LinearLayout
+                    android:id="@+id/containerCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/bg_edittext"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_user"
+                        android:contentDescription="City" />
+
+                    <TextView
+                        android:id="@+id/tvCity"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Choose City"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <Spinner
+                        android:id="@+id/spCity"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ivCityArrow"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_chevron_down"
+                        android:contentDescription="Dropdown Arrow" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvErrorCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please select a valid city" />
+
+                <!-- Medical Condition Dropdown -->
+                <LinearLayout
+                    android:id="@+id/containerMedicalCondition"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/bg_edittext"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_user"
+                        android:contentDescription="Medical Condition" />
+
+                    <TextView
+                        android:id="@+id/tvMedicalCondition"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Choose Medical Condition"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                    <Spinner
+                        android:id="@+id/spMedicalCondition"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ivMedicalConditionArrow"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_chevron_down"
+                        android:contentDescription="Dropdown Arrow" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvErrorMedicalCondition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:textColor="#EF4444"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="⚠ Please select a medical condition option" />
 
             </LinearLayout>
 

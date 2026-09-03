@@ -21,7 +21,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         findViewById(R.id.btnGetStarted).setOnClickListener(v -> {
             if (prefs.isOnboardingSeen()) {
-                startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             } else {
                 startActivity(new Intent(WelcomeActivity.this, OnboardingActivity.class));
             }

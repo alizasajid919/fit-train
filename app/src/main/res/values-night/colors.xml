@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Brand Colors -->
-    <color name="primary">#6C63FF</color>
-    <color name="primary_variant">#4CC9F0</color>
-    <color name="secondary">#3B82F6</color>
-    <color name="secondary_variant">#FFB703</color>
+    <color name="primary">#818CF8</color>
+    <color name="primary_variant">#6366F1</color>
+    <color name="secondary">#38BDF8</color>
+    <color name="secondary_variant">#0284C7</color>
     
     <!-- Neutral Colors for Dark Mode -->
-    <color name="black">#F8FAFC</color> <!-- High readability white text -->
-    <color name="gray">#94A3B8</color> <!-- Readable subtext -->
+    <color name="black">#F8FAFC</color>
+    <color name="gray">#94A3B8</color>
     <color name="light_gray">#475569</color>
-    <color name="border_color">#334155</color> <!-- Dark borders -->
-    <color name="white">#1E293B</color> <!-- Dark card backgrounds -->
-    <color name="background_color">#0F172A</color> <!-- Deep dark background -->
+    <color name="border_color">#334155</color>
+    <color name="white">#1E293B</color>
+    <color name="background_color">#0F172A</color>
     
     <!-- Gradient Colors -->
-    <color name="blue_gradient_start">#1E293B</color>
-    <color name="blue_gradient_end">#0F172A</color>
+    <color name="blue_gradient_start">#6366F1</color>
+    <color name="blue_gradient_end">#38BDF8</color>
     
-    <color name="purple_gradient_start">#FFB703</color>
-    <color name="purple_gradient_end">#FF5A5F</color>
+    <color name="purple_gradient_start">#6366F1</color>
+    <color name="purple_gradient_end">#38BDF8</color>
     
     <!-- Status & Input -->
     <color name="error">#EF4444</color>
-    <color name="success">#22C55E</color>
+    <color name="success">#38BDF8</color>
 
-    <!-- Workout Log Premium Dark Palette -->
-    <color name="workout_primary">#6C63FF</color>
-    <color name="workout_secondary">#3B82F6</color>
+    <!-- Workout Log Dark Palette -->
+    <color name="workout_primary">#818CF8</color>
+    <color name="workout_secondary">#38BDF8</color>
     <color name="workout_background">#0F172A</color>
     <color name="workout_white">#1E293B</color>
     <color name="workout_border">#334155</color>
     <color name="workout_text_primary">#F8FAFC</color>
     <color name="workout_text_secondary">#94A3B8</color>
-    <color name="workout_accent">#FFB703</color>
+    <color name="workout_accent">#F59E0B</color>
     <color name="workout_error">#EF4444</color>
-    <color name="workout_success">#22C55E</color>
+    <color name="workout_success">#38BDF8</color>
 </resources>

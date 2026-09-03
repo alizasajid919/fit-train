@@ -168,9 +168,7 @@
             android:name=".activities.RecipeDetailActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".activities.MealScheduleActivity"
-            android:exported="false" />
+
 
         <activity
             android:name=".activities.SleepTrackerActivity"

@@ -1,7 +1,6 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="200"
-    android:exitFadeDuration="200">
-    <item android:state_checked="true" android:color="@color/secondary" />
-    <item android:state_selected="true" android:color="@color/secondary" />
-    <item android:color="#64748B" />
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="#2563EB" />
+    <item android:state_selected="true" android:color="#2563EB" />
+    <item android:color="#1A1A1A" />
 </selector>

@@ -129,7 +129,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvProfileEmail.setText(user.getEmail());
 
         String goal = user.getGoal() != null && !user.getGoal().isEmpty() ? user.getGoal() : "Improve Shape";
-        tvProfileGoal.setText("Goal: " + goal);
+        tvProfileGoal.setText("Goal: " + goal + " • Lvl 2 (370 XP)");
         tvProfileGoalTitle.setText(goal);
 
         tvProfileMobile.setText(user.getMobileNumber() != null && !user.getMobileNumber().isEmpty() ? user.getMobileNumber() : "N/A");
@@ -180,8 +180,8 @@ public class ProfileActivity extends AppCompatActivity {
         tvSummaryCalories.setText(String.format("%,d kcal", totalCalories));
         tvSummarySteps.setText(String.format("%,d", totalSteps));
 
-        // Streak & BMI
-        tvProfileStreak.setText("🔥 " + Math.max(3, progressLogs.size()) + " Day Streak");
+        int streak = progressLogs.isEmpty() ? 0 : Math.max(0, progressLogs.size());
+        tvProfileStreak.setText("🔥 " + streak + " Day Streak\n(Best: 1)");
 
         double weight = user.getWeight();
         double height = user.getHeight();
@@ -235,7 +235,7 @@ public class ProfileActivity extends AppCompatActivity {
             case "gain muscle":
                 return "Increase protein intake and prioritize compound lifts like squats and chest presses. Recovery is when muscles grow!";
             case "improve shape":
-                return "Mix resistance weight training with low-intensity active recovery walks. Listen to your body and celebrate small wins!";
+                return "A balanced diet and mixing cardio with resistance training will yield the best long-term metabolic flexibility and cardiovascular health.";
             case "increase strength":
                 return "Focus on progressive overload—gradually adding weights in your routines. Always practice safe lifting form.";
             case "improve endurance":

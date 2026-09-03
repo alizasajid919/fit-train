@@ -106,7 +106,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="85%"
-                            android:textColor="#22C55E"
+                            android:textColor="#2563EB"
                             android:textSize="48sp"
                             android:textStyle="bold" />
 
@@ -169,7 +169,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginBottom="8dp">
                         <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Balance" android:textColor="#CBD5E1" android:textSize="13sp" />
-                        <ProgressBar android:id="@+id/pbBalance" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="95" android:progressTint="#22C55E" android:progressBackgroundTint="#334155" />
+                        <ProgressBar android:id="@+id/pbBalance" style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_height="6dp" android:layout_weight="1" android:progress="95" android:progressTint="#2563EB" android:progressBackgroundTint="#334155" />
                         <TextView android:id="@+id/tvBalance" android:layout_width="44dp" android:layout_height="wrap_content" android:text="95%" android:textColor="#FFFFFF" android:textSize="13sp" android:gravity="end" />
                     </LinearLayout>
 
@@ -274,7 +274,7 @@
                             android:orientation="vertical"
                             android:layout_marginStart="8dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EST. CALORIES" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
-                            <TextView android:id="@+id/tvCalories" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="48 kcal" android:textColor="#22C55E" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                            <TextView android:id="@+id/tvCalories" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="48 kcal" android:textColor="#2563EB" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
                         </LinearLayout>
 
                     </androidx.gridlayout.widget.GridLayout>

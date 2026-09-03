@@ -149,6 +149,11 @@ public class DietPlan implements Serializable {
         private double fiber;
         private String servingSize;
         private String portionSize;
+        private String instructions;
+        private String prepTime;
+        private String cookTime;
+        private String emoji;
+        private String cuisine;
 
         public Meal() {}
 
@@ -157,6 +162,10 @@ public class DietPlan implements Serializable {
         }
 
         public Meal(String type, String name, int calories, String ingredients, String description, double protein, double carbs, double fat, double fiber, String servingSize, String portionSize) {
+            this(type, name, calories, ingredients, description, protein, carbs, fat, fiber, servingSize, portionSize, "", "10 mins", "20 mins", "🍽️", "Pakistani");
+        }
+
+        public Meal(String type, String name, int calories, String ingredients, String description, double protein, double carbs, double fat, double fiber, String servingSize, String portionSize, String instructions, String prepTime, String cookTime, String emoji, String cuisine) {
             this.type = type;
             this.name = name;
             this.calories = calories;
@@ -168,6 +177,11 @@ public class DietPlan implements Serializable {
             this.fiber = fiber;
             this.servingSize = servingSize;
             this.portionSize = portionSize;
+            this.instructions = instructions;
+            this.prepTime = prepTime;
+            this.cookTime = cookTime;
+            this.emoji = emoji;
+            this.cuisine = cuisine;
         }
 
         public String getType() { return type; }
@@ -203,6 +217,21 @@ public class DietPlan implements Serializable {
         public String getPortionSize() { return portionSize; }
         public void setPortionSize(String portionSize) { this.portionSize = portionSize; }
 
+        public String getInstructions() { return instructions; }
+        public void setInstructions(String instructions) { this.instructions = instructions; }
+
+        public String getPrepTime() { return prepTime; }
+        public void setPrepTime(String prepTime) { this.prepTime = prepTime; }
+
+        public String getCookTime() { return cookTime; }
+        public void setCookTime(String cookTime) { this.cookTime = cookTime; }
+
+        public String getEmoji() { return emoji; }
+        public void setEmoji(String emoji) { this.emoji = emoji; }
+
+        public String getCuisine() { return cuisine; }
+        public void setCuisine(String cuisine) { this.cuisine = cuisine; }
+
         public JSONObject toJsonObject() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("type", type);
@@ -216,6 +245,11 @@ public class DietPlan implements Serializable {
             obj.put("fiber", fiber);
             obj.put("servingSize", servingSize);
             obj.put("portionSize", portionSize);
+            obj.put("instructions", instructions);
+            obj.put("prepTime", prepTime);
+            obj.put("cookTime", cookTime);
+            obj.put("emoji", emoji);
+            obj.put("cuisine", cuisine);
             return obj;
         }
 
@@ -233,6 +267,11 @@ public class DietPlan implements Serializable {
             meal.setFiber(obj.optDouble("fiber", 0.0));
             meal.setServingSize(obj.optString("servingSize", ""));
             meal.setPortionSize(obj.optString("portionSize", ""));
+            meal.setInstructions(obj.optString("instructions", ""));
+            meal.setPrepTime(obj.optString("prepTime", "10 mins"));
+            meal.setCookTime(obj.optString("cookTime", "20 mins"));
+            meal.setEmoji(obj.optString("emoji", "🍽️"));
+            meal.setCuisine(obj.optString("cuisine", "Pakistani"));
             return meal;
         }
     }

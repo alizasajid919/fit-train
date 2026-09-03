@@ -49,6 +49,34 @@ public class UserRepository {
         firebaseAuth.signOut();
     }
 
+    public boolean isEmailVerified() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            return user.isEmailVerified();
+        }
+        return false;
+    }
+
+    public LiveData<Resource<String>> resendEmailVerification() {
+        MutableLiveData<Resource<String>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading());
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            user.sendEmailVerification()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        result.setValue(Resource.success("Verification email sent successfully. Please check your inbox."));
+                    } else {
+                        String msg = task.getException() != null ? task.getException().getMessage() : "Failed to send verification email.";
+                        result.setValue(Resource.error(msg));
+                    }
+                });
+        } else {
+            result.setValue(Resource.error("No active session found."));
+        }
+        return result;
+    }
+
     // Silent Anonymous Authentication
     public LiveData<Resource<FirebaseUser>> signInAnonymously(LocalDataManager localDb) {
         MutableLiveData<Resource<FirebaseUser>> result = new MutableLiveData<>();
@@ -708,9 +736,43 @@ public class UserRepository {
         return profileResult;
     }
 
+    public String validateUserProfilePayload(User user) {
+        if (user == null) return "User object is null";
+
+        if (user.getHeight() > 0 && !com.fitness.app.utils.ValidationUtils.isValidHeight(user.getHeight())) {
+            return "Invalid height data. Must be between 50 and 250 cm.";
+        }
+
+        if (user.getWeight() > 0 && !com.fitness.app.utils.ValidationUtils.isValidWeight(user.getWeight())) {
+            return "Invalid weight data. Must be between 20 and 300 kg.";
+        }
+
+        if (user.getCountry() != null && !user.getCountry().isEmpty()) {
+            if (user.getCity() != null && !user.getCity().isEmpty()) {
+                if (!com.fitness.app.utils.LocationUtils.isValidCityForCountry(user.getCountry(), user.getCity())) {
+                    return "Invalid city for selected country (" + user.getCountry() + ").";
+                }
+            }
+        }
+
+        if (user.getMedicalConditions() != null && !user.getMedicalConditions().isEmpty()) {
+            if (!com.fitness.app.utils.ValidationUtils.isValidMedicalCondition(user.getMedicalConditions())) {
+                return "Invalid medical condition option selected.";
+            }
+        }
+
+        return null; // Valid
+    }
+
     public LiveData<Resource<Void>> updateUserProfile(User user) {
         MutableLiveData<Resource<Void>> updateResult = new MutableLiveData<>();
         updateResult.setValue(Resource.loading());
+
+        String validationErr = validateUserProfilePayload(user);
+        if (validationErr != null) {
+            updateResult.setValue(Resource.error("Backend validation failed: " + validationErr));
+            return updateResult;
+        }
 
         user.setUpdatedAt(System.currentTimeMillis());
 

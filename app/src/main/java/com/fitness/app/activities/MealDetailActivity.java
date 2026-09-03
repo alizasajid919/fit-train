@@ -194,7 +194,7 @@ public class MealDetailActivity extends AppCompatActivity {
         // Complete Button state
         if (meal.isChecked) {
             btnCompleteToggle.setText("Completed ✅");
-            btnCompleteToggle.setBackgroundColor(0xFF10B981); // Solid Emerald Green
+            btnCompleteToggle.setBackgroundColor(0xFF2563EB); // Solid Primary Blue
         } else {
             btnCompleteToggle.setText("Mark as Completed");
             btnCompleteToggle.setBackgroundColor(0xFF3B82F6); // Slate/Blue Brand color

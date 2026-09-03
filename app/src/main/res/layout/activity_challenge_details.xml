@@ -116,7 +116,7 @@
                             android:textColor="#E0F7FA"
                             android:textSize="10sp"
                             android:textStyle="bold"
-                            android:background="#059669"
+                            android:background="#1D4ED8"
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="3dp"
                             android:layout_marginEnd="6dp" />

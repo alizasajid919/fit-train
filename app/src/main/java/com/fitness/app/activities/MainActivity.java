@@ -35,11 +35,7 @@ public class MainActivity extends AppCompatActivity {
         // Verify profile loaded, otherwise route to onboarding
         User user = localDb.getUser();
         if (user == null) {
-            if (localDb.isOnboardingSeen()) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            } else {
-                startActivity(new Intent(MainActivity.this, OnboardingActivity.class));
-            }
+            startActivity(new Intent(MainActivity.this, OnboardingActivity.class));
             finish();
             return;
         }
@@ -47,8 +43,13 @@ public class MainActivity extends AppCompatActivity {
         // Reschedule challenge notifications
         com.fitness.app.utils.ReminderScheduler.rescheduleChallengeReminders(this);
 
-        // Bottom Navigation Bar Setup
+        // Bottom Navigation Bar Setup (Pure White Background behind Home, Workouts, Diets, Profile)
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
+        android.view.View navContainer = findViewById(R.id.llBottomNavContainer);
+        if (navContainer != null) {
+            navContainer.setBackgroundColor(android.graphics.Color.WHITE);
+        }
+        bottomNavigation.setBackgroundColor(android.graphics.Color.WHITE);
         bottomNavigation.setItemActiveIndicatorColor(android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
 
         bottomNavigation.setOnItemSelectedListener(item -> {

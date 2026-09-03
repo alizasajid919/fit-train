@@ -290,7 +290,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="85/100"
-                                android:textColor="#22C55E"
+                                android:textColor="#2563EB"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -412,7 +412,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1. Perrier Sparkling Water\n2. Zevia Organic Soda\n3. Home-brewed Lemon Iced Tea"
-                        android:textColor="#059669"
+                        android:textColor="#1D4ED8"
                         android:textSize="12sp"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>

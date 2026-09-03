@@ -34,6 +34,7 @@
 
     <!-- Scrollable Form Container -->
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -305,38 +306,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Mobile Number -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="1dp"
-                        android:backgroundTint="#FFFFFF">
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Mobile Number"
-                            app:hintTextColor="#6C63FF"
-                            android:textColorHint="#64748B"
-                            app:startIconDrawable="@drawable/ic_user"
-                            app:startIconTint="#6C63FF"
-                            app:boxStrokeColor="@color/text_input_stroke_color"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp">
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etEditMobile"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:inputType="phone"
-                                android:background="@android:color/transparent" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </androidx.cardview.widget.CardView>
+
 
                     <!-- Date of Birth -->
                     <androidx.cardview.widget.CardView
@@ -442,7 +412,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- City -->
+                    <!-- City (Material Exposed Dropdown) -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -451,7 +421,7 @@
                         app:cardElevation="1dp"
                         android:backgroundTint="#FFFFFF">
                         <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="City"
@@ -464,13 +434,12 @@
                             app:boxCornerRadiusTopEnd="14dp"
                             app:boxCornerRadiusBottomStart="14dp"
                             app:boxCornerRadiusBottomEnd="14dp">
-                            <com.google.android.material.textfield.TextInputEditText
+                            <AutoCompleteTextView
                                 android:id="@+id/etEditCity"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:inputType="text"
                                 android:background="@android:color/transparent" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
@@ -714,7 +683,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Medical Conditions -->
+                    <!-- Medical Conditions (Material Exposed Dropdown) -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -723,10 +692,11 @@
                         app:cardElevation="1dp"
                         android:backgroundTint="#FFFFFF">
                         <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:id="@+id/tilEditConditions"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Medical Conditions"
+                            android:hint="Medical Condition"
                             app:hintTextColor="#6C63FF"
                             android:textColorHint="#64748B"
                             app:startIconDrawable="@drawable/ic_lock"
@@ -736,49 +706,20 @@
                             app:boxCornerRadiusTopEnd="14dp"
                             app:boxCornerRadiusBottomStart="14dp"
                             app:boxCornerRadiusBottomEnd="14dp">
-                            <com.google.android.material.textfield.TextInputEditText
+                            <AutoCompleteTextView
                                 android:id="@+id/etEditConditions"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:clickable="true"
                                 android:textColor="@color/black"
                                 android:textSize="16sp"
-                                android:inputType="text"
                                 android:background="@android:color/transparent" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Emergency Contact -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="1dp"
-                        android:backgroundTint="#FFFFFF">
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Emergency Contact"
-                            app:hintTextColor="#6C63FF"
-                            android:textColorHint="#64748B"
-                            app:startIconDrawable="@drawable/ic_user"
-                            app:startIconTint="#6C63FF"
-                            app:boxStrokeColor="@color/text_input_stroke_color"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp">
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etEditEmergency"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:inputType="text"
-                                android:background="@android:color/transparent" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </androidx.cardview.widget.CardView>
+
 
                     <!-- Buttons: Cancel (Outlined Purple border) & Save Changes (Purple filled, height 56dp, ripple) -->
                     <LinearLayout

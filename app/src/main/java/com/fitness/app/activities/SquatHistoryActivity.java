@@ -304,8 +304,8 @@ public class SquatHistoryActivity extends AppCompatActivity {
             // Dynamic styling based on score
             if (score >= 80) {
                 holder.tvHistoryStatus.setText("CORRECT FORM");
-                holder.tvHistoryStatus.setTextColor(0xFF22C55E); // Green
-                holder.tvHistoryScore.setTextColor(0xFF22C55E);
+                holder.tvHistoryStatus.setTextColor(0xFF2563EB); // Blue
+                holder.tvHistoryScore.setTextColor(0xFF2563EB);
                 holder.flScoreIndicator.setBackgroundResource(R.drawable.bg_ring_green);
             } else if (score >= 60) {
                 holder.tvHistoryStatus.setText("NEEDS WORK");

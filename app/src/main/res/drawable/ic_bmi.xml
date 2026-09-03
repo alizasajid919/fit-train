@@ -24,7 +24,7 @@
         android:pathData="M16,22h8v20h-8z M40,22h8v20h-8z" />
     <!-- Green Check Circle Badge (Bottom Right) -->
     <path
-        android:fillColor="#22C55E"
+        android:fillColor="#2563EB"
         android:pathData="M48,40c-4.4,0 -8,3.6 -8,8s3.6,8,8,8s8,-3.6,8,-8S52.4,40 48,40z" />
     <!-- White Checkmark in Badge -->
     <path

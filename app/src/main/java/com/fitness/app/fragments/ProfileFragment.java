@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.fitness.app.R;
 import com.fitness.app.activities.EditProfileActivity;
-import com.fitness.app.activities.LoginActivity;
+import com.fitness.app.activities.OnboardingActivity;
 import com.fitness.app.activities.SettingsActivity;
 import com.fitness.app.activities.HelpActivity;
 import com.fitness.app.activities.PrivacyActivity;
@@ -358,7 +358,8 @@ public class ProfileFragment extends Fragment {
                 .setPositiveButton("Logout", (dialog, which) -> {
                     FirebaseAuth.getInstance().signOut();
                     localDb.clearAll();
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    localDb.setOnboardingSeen(false);
+                    Intent intent = new Intent(getActivity(), OnboardingActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 })

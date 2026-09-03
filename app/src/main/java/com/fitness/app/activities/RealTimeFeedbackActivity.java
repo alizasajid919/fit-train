@@ -302,10 +302,10 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
 
         // Draw skeletons based on accuracy status
         if (currentScore > 80) {
-            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF22C55E)); // Success Green
+            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2563EB)); // Success Green
             tvPostureStatus.setText("✔ Correct Form");
-            tvPostureStatus.setTextColor(0xFF22C55E);
-            ovPoseOverlay.setSkeletonColor(0xFF22C55E);
+            tvPostureStatus.setTextColor(0xFF2563EB);
+            ovPoseOverlay.setSkeletonColor(0xFF2563EB);
             tvFeedbackTips.setText("Excellent form. Keep drive weight through your heels.");
         } else if (currentScore > 55) {
             vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFF59E0B)); // Warning Yellow
@@ -324,7 +324,7 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         // Update UI panels
         tvOverallScore.setText(String.format(Locale.getDefault(), "%d", (int) currentScore));
         if (currentScore > 80) {
-            tvOverallScore.setTextColor(0xFF22C55E);
+            tvOverallScore.setTextColor(0xFF2563EB);
         } else if (currentScore > 55) {
             tvOverallScore.setTextColor(0xFFF59E0B);
         } else {
@@ -360,7 +360,7 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
 
             case STAGE_BOTTOM:
                 tvSquatStage.setText("Bottom Position");
-                tvSquatStage.setTextColor(0xFF22C55E);
+                tvSquatStage.setTextColor(0xFF2563EB);
                 if (kneeAngle > 115) {
                     currentStage = STAGE_COMING_UP;
                 }

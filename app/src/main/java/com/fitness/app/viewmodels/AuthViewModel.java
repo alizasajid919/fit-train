@@ -33,4 +33,12 @@ public class AuthViewModel extends ViewModel {
     public FirebaseUser getCurrentUser() {
         return userRepository.getCurrentUser();
     }
+
+    public boolean isEmailVerified() {
+        return userRepository.isEmailVerified();
+    }
+
+    public LiveData<UserRepository.Resource<String>> resendEmailVerification() {
+        return userRepository.resendEmailVerification();
+    }
 }

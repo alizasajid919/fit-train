@@ -102,13 +102,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         // Cloud Actions
-        findViewById(R.id.btnCreateAccount).setOnClickListener(v -> {
-            startActivity(new Intent(SettingsActivity.this, RegisterActivity.class));
-        });
-
-        findViewById(R.id.btnLoginAccount).setOnClickListener(v -> {
-            startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
-        });
 
         findViewById(R.id.btnSyncNow).setOnClickListener(v -> syncCloudData());
 
@@ -124,11 +117,10 @@ public class SettingsActivity extends AppCompatActivity {
                             user.delete().addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     localDb.clearAll();
+                                    localDb.setOnboardingSeen(false);
                                     Toast.makeText(this, "Account deleted successfully", Toast.LENGTH_LONG).show();
-                                    authViewModel.signInAnonymously(localDb).observe(this, res -> {
-                                        startActivity(new Intent(SettingsActivity.this, OnboardingActivity.class));
-                                        finishAffinity();
-                                    });
+                                    startActivity(new Intent(SettingsActivity.this, OnboardingActivity.class));
+                                    finishAffinity();
                                 } else {
                                     Toast.makeText(this, "Failed to delete: " + (task.getException() != null ? task.getException().getMessage() : ""), Toast.LENGTH_LONG).show();
                                 }
@@ -195,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity {
             sb.append("Local Data Size: ").append(dataSize);
             tvCloudStatus.setText(sb.toString());
             
-            layoutGuestActions.setVisibility(View.VISIBLE);
+            layoutGuestActions.setVisibility(View.GONE);
             layoutUserActions.setVisibility(View.GONE);
         } else {
             StringBuilder sb = new StringBuilder();
@@ -236,6 +228,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .setMessage("Are you sure you want to log out of your FitTrain account?")
                 .setPositiveButton("Logout", (dialog, which) -> {
                     localDb.clearAll();
+                    localDb.setOnboardingSeen(false);
                     new Thread(() -> {
                         try {
                             com.fitness.app.data.room.AppDatabase.getInstance(this).clearAllTables();
@@ -245,7 +238,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }).start();
                     profileViewModel.logout();
                     Toast.makeText(this, "Logged out and local cache cleared.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                    Intent intent = new Intent(SettingsActivity.this, OnboardingActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finishAffinity();

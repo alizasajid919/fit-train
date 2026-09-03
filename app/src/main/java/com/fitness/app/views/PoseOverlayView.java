@@ -28,7 +28,7 @@ public class PoseOverlayView extends View {
         super(context, attrs);
 
         paintPoint = new Paint();
-        paintPoint.setColor(0xFF22C55E); // Green Success accent
+        paintPoint.setColor(0xFF2563EB); // Blue accent
         paintPoint.setStyle(Paint.Style.FILL);
         paintPoint.setAntiAlias(true);
         paintPoint.setStrokeWidth(12f);

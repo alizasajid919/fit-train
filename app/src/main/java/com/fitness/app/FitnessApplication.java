@@ -255,11 +255,12 @@ public class FitnessApplication extends Application {
                 }
             }
 
-            // Adjust Bottom Navigation Tints
+            // Ensure Bottom Navigation Bar maintains white background and proper active/inactive selector
             if (view instanceof BottomNavigationView) {
                 BottomNavigationView nav = (BottomNavigationView) view;
-                nav.setBackgroundColor(0xFF1E293B);
-                nav.setItemIconTintList(ColorStateList.valueOf(0xFF6C63FF));
+                nav.setBackgroundColor(0xFFFFFFFF);
+                nav.setItemRippleColor(android.content.res.ColorStateList.valueOf(0x1A2563EB));
+                nav.setItemActiveIndicatorColor(android.content.res.ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
             }
 
             // Adjust Custom Toolbar backgrounds

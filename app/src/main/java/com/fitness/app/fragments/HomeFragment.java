@@ -193,11 +193,8 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.cardSleep).setOnClickListener(v -> startActivity(new Intent(getActivity(), com.fitness.app.activities.SleepTrackerActivity.class)));
         view.findViewById(R.id.cardBmi).setOnClickListener(v -> startDetailTracker("bmi"));
 
-        // Featured Workouts & Buttons
+        // Daily Recommended Workout Button
         view.findViewById(R.id.btnStartWorkout).setOnClickListener(v -> startFeaturedWorkout("Full Body Shred"));
-        view.findViewById(R.id.btnFeatured1).setOnClickListener(v -> startFeaturedWorkout("Full Body Shred"));
-        view.findViewById(R.id.btnFeatured2).setOnClickListener(v -> startFeaturedWorkout("Upper Body Builder"));
-        view.findViewById(R.id.btnFeatured3).setOnClickListener(v -> startFeaturedWorkout("Cardio Core Burner"));
 
         // Safe setup for hidden elements (to avoid breaking constraints / compilation)
         View btnAICoach = view.findViewById(R.id.btnAICoach);
@@ -544,7 +541,7 @@ public class HomeFragment extends Fragment {
     private int getBmiColor(String category) {
         switch (category) {
             case "Normal":
-                return 0xFF22C55E; // Green Success Color
+                return 0xFF2563EB; // Blue Success Color
             case "Underweight":
                 return 0xFFFFB703; // Accent Yellow Color
             default:

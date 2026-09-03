@@ -623,7 +623,7 @@ public class ChallengesHubActivity extends AppCompatActivity {
                 holder.pbProgress.setProgress(item.getProgressPercent());
             } else if ("COMPLETED".equalsIgnoreCase(status)) {
                 holder.tvStatus.setText("Completed");
-                holder.tvStatus.setTextColor(0xFF059669);
+                holder.tvStatus.setTextColor(0xFF1D4ED8);
                 holder.layoutProgress.setVisibility(View.VISIBLE);
                 holder.tvProgressPercent.setText("Progress: 100%");
                 holder.pbProgress.setProgress(100);

@@ -66,7 +66,7 @@
                     android:layout_height="12dp"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/bg_badge_streak"
-                    android:backgroundTint="#22C55E"
+                    android:backgroundTint="#2563EB"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -283,7 +283,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="#22C55E"
+                        android:textColor="#2563EB"
                         android:textSize="26sp"
                         android:textStyle="bold" />
                 </LinearLayout>

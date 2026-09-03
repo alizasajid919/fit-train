@@ -98,7 +98,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Intermediate"
-                        android:textColor="#15803D"
+                        android:textColor="#1D4ED8"
                         android:textSize="10sp"
                         android:textStyle="bold"
                         android:background="@drawable/bg_badge_beginner"

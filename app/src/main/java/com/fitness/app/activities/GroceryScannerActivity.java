@@ -561,20 +561,20 @@ public class GroceryScannerActivity extends AppCompatActivity {
         
         TextView tvHealth = findViewById(R.id.tvReportHealthScore);
         tvHealth.setText(report.getHealthScore() + "/100");
-        if (report.getHealthScore() >= 80) tvHealth.setTextColor(0xFF22C55E); // Green
+        if (report.getHealthScore() >= 80) tvHealth.setTextColor(0xFF2563EB); // Blue
         else if (report.getHealthScore() >= 50) tvHealth.setTextColor(0xFFF59E0B); // Yellow
         else tvHealth.setTextColor(0xFFEF4444); // Red
         
         TextView tvNutrition = findViewById(R.id.tvReportNutritionScore);
         tvNutrition.setText(report.getNutritionScore() + "/100");
-        if (report.getNutritionScore() >= 80) tvNutrition.setTextColor(0xFF22C55E);
+        if (report.getNutritionScore() >= 80) tvNutrition.setTextColor(0xFF2563EB);
         else if (report.getNutritionScore() >= 50) tvNutrition.setTextColor(0xFFF59E0B);
         else tvNutrition.setTextColor(0xFFEF4444);
         
         TextView tvRec = findViewById(R.id.tvReportRecommendation);
         tvRec.setText(report.getAiRecommendation());
         if ("Highly Recommended".equalsIgnoreCase(report.getAiRecommendation()) || "Recommended".equalsIgnoreCase(report.getAiRecommendation())) {
-            tvRec.setTextColor(0xFF22C55E);
+            tvRec.setTextColor(0xFF2563EB);
         } else if ("Avoid".equalsIgnoreCase(report.getAiRecommendation())) {
             tvRec.setTextColor(0xFFEF4444);
         } else {
@@ -1371,7 +1371,7 @@ public class GroceryScannerActivity extends AppCompatActivity {
             if ("Expiring Soon".equalsIgnoreCase(item.getFreshness()) || "Expired".equalsIgnoreCase(item.getFreshness())) {
                 holder.tvFreshnessBadge.setTextColor(0xFFEF4444);
             } else {
-                holder.tvFreshnessBadge.setTextColor(0xFF22C55E);
+                holder.tvFreshnessBadge.setTextColor(0xFF2563EB);
             }
 
             holder.tvIngredientCalories.setText(String.format(Locale.getDefault(), "%d kcal", item.getCalories()));

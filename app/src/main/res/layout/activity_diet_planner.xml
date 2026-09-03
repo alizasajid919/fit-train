@@ -202,7 +202,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Filters Row: AI suggestions, Logged diary, Favorites -->
+    <!-- Filters Row: Meal Schedule, Logged diary, Favorites -->
     <LinearLayout
         android:id="@+id/llDietFilters"
         android:layout_width="match_parent"
@@ -217,7 +217,7 @@
             style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AI Suggestions"
+            android:text="Meal Schedule"
             android:checked="true"
             app:chipBackgroundColor="@color/white"
             app:chipStrokeColor="#E2E8F0"
@@ -249,10 +249,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:paddingHorizontal="16dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/llDietFilters"
-        app:layout_constraintBottom_toTopOf="@id/btnRegenerate" />
+        android:paddingBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llDietFilters" />
 
     <!-- No data placeholder -->
     <LinearLayout
@@ -263,7 +263,7 @@
         android:gravity="center"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/llDietFilters"
-        app:layout_constraintBottom_toTopOf="@id/btnRegenerate"
+        app:layout_constraintBottom_toTopOf="@+id/btnRegeneratePlan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -293,14 +293,14 @@
             android:layout_marginTop="4dp" />
     </LinearLayout>
 
-    <!-- Regenerate AI suggestions button -->
+    <!-- Regenerate button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnRegenerate"
+        android:id="@+id/btnRegeneratePlan"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_margin="16dp"
-        android:text="Regenerate AI Diet Plan"
+        android:text="Regenerate Meal Plan"
         android:textColor="@color/white"
         android:textSize="15sp"
         android:textStyle="bold"

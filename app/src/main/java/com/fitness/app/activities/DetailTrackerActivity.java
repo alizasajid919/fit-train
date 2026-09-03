@@ -475,7 +475,7 @@ public class DetailTrackerActivity extends AppCompatActivity {
             if (category.equals("Underweight")) {
                 tvStatSubtitle.setTextColor(Color.parseColor("#0284C7"));
             } else if (category.equals("Normal Weight")) {
-                tvStatSubtitle.setTextColor(Color.parseColor("#22C55E"));
+                tvStatSubtitle.setTextColor(Color.parseColor("#2563EB"));
             } else if (category.equals("Overweight")) {
                 tvStatSubtitle.setTextColor(Color.parseColor("#EA580C"));
             } else {

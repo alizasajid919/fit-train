@@ -58,7 +58,7 @@ public class DietPlannerActivity extends AppCompatActivity {
     private List<LoggedMeal> todayLoggedMeals = new ArrayList<>();
     private MealAdapter adapter;
 
-    // 0 = AI Suggestions, 1 = Logged Diary, 2 = Favorites
+    // 0 = Meal Schedule, 1 = Logged Diary, 2 = Favorites
     private int showingFilterMode = 0;
     private String todayDateString;
 
@@ -110,7 +110,7 @@ public class DietPlannerActivity extends AppCompatActivity {
         setupDatabaseObservers();
         applyFilters();
 
-        findViewById(R.id.btnRegenerate).setOnClickListener(v -> {
+        findViewById(R.id.btnRegeneratePlan).setOnClickListener(v -> {
             generateNewDietPlan();
             setupData();
             applyFilters();
@@ -299,7 +299,7 @@ public class DietPlannerActivity extends AppCompatActivity {
             TextView desc = llNoFavorites.findViewById(R.id.tvNoFavoritesDesc);
 
             if (showingFilterMode == 0) {
-                title.setText("No Meal Suggestions");
+                title.setText("No Meals Scheduled");
                 desc.setText("Tap Regenerate to generate AI Meal plans.");
             } else if (showingFilterMode == 1) {
                 title.setText("No Logged Foods");

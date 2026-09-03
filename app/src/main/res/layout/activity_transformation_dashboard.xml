@@ -128,7 +128,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="Task Completion Rate: 88%"
-                            android:textColor="#22C55E"
+                            android:textColor="#2563EB"
                             android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>

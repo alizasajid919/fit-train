@@ -637,7 +637,7 @@ public class AICoachActivity extends AppCompatActivity {
             bmiAdvice = "Focus on healthy calorie surplus diet. Increase complex carbs and clean proteins.";
         } else if (bmi < 25.0) {
             bmiCategory = "Normal";
-            bmiColor = 0xFF22C55E;
+            bmiColor = 0xFF2563EB;
             bmiAdvice = "Healthy range! Maintain your active training and consistent meal schedule.";
         } else if (bmi < 30.0) {
             bmiCategory = "Overweight";

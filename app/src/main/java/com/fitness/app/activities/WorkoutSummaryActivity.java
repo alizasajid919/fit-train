@@ -61,7 +61,7 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
         tvFormScore.setText(String.format(Locale.getDefault(), "%d%%", score));
 
         if (score >= 80) {
-            tvFormScore.setTextColor(0xFF22C55E); // Success Green
+            tvFormScore.setTextColor(0xFF2563EB); // Success Blue
             tvFormFeedback.setText("Excellent posture control! You maintained balanced alignment throughout the entire session.");
         } else if (score >= 60) {
             tvFormScore.setTextColor(0xFFF59E0B); // Warning Yellow
