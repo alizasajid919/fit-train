@@ -99,4 +99,10 @@
     <string name="home_bmi">Body Mass Index</string>
     <string name="home_bmi_val">%1$s</string>
     <string name="home_bmi_prompt">Log weight/height to calculate BMI</string>
+
+    <!-- Workout Session -->
+    <string name="target_muscle_format">Target: %1$s</string>
+    <string name="workout_pause">Pause ⏸️</string>
+    <string name="workout_resume">Resume ▶️</string>
+    <string name="log_reps_weights_title">Log Your Reps &amp; Weights</string>
 </resources>

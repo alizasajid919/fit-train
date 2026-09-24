@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#FFF7ED"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Runner Athlete Motion Silhouette -->
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M125,45c6.63,0 12,5.37 12,12s-5.37,12 -12,12 -12,-5.37 -12,-12 5.37,-12 12,-12z" />
+
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M105,75l-20,15 -15,-10v20l18,12 -10,35h15l10,-28 17,15v30h15v-35l-18,-20 8,-20 20,15v-18l-25,-18-15,-7z" />
+
+    <!-- Motion Speed Lines -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M40,70h30v4H40zm-10,30h35v4H30zm15,30h25v4H45z" />
+</vector>

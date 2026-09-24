@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#ECFDF5"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Plate Rim -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,35C64.1,35 35,64.1 35,100s29.1,65 65,65 65,-29.1 65,-65S135.9,35 100,35z" />
+    <path
+        android:fillColor="#F1F5F9"
+        android:pathData="M100,45C69.62,45 45,69.62 45,100s24.62,55 55,55 55,-24.62 55,-55S130.38,45 100,45z" />
+
+    <!-- Avocado Slices & Greens -->
+    <path
+        android:fillColor="#84CC16"
+        android:pathData="M70,80c0,-11.05 8.95,-20 20,-20s20,8.95 20,20 -8.95,20 -20,20 -20,-8.95 -20,-20z" />
+    <path
+        android:fillColor="#65A30D"
+        android:pathData="M80,80c0,-5.52 4.48,-10 10,-10s10,4.48 10,10 -4.48,10 -10,10 -10,-4.48 -10,-10z" />
+
+    <!-- Grilled Protein Pieces -->
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M105,105h30v15h-30zm5,18h25v12h-25z" />
+</vector>

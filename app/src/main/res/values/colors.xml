@@ -10,13 +10,43 @@
     <color name="accent_purple">#6366F1</color>
     <color name="accent_pink">#EC4899</color>
     
+    <!-- FitTrain Multi-Shade Blue Palette -->
+    <color name="blue_deep_navy">#0F172A</color>
+    <color name="blue_dark_navy">#1E3A8A</color>
+    <color name="blue_primary">#2563EB</color>
+    <color name="blue_royal">#3B82F6</color>
+    <color name="blue_bright">#6366F1</color>
+    <color name="blue_medium">#0284C7</color>
+    <color name="blue_sky">#38BDF8</color>
+    <color name="blue_light">#DBEAFE</color>
+    <color name="blue_pale">#EFF6FF</color>
+    <color name="blue_ice">#F0F9FF</color>
+    <color name="blue_lavender">#E0E7FF</color>
+
+    <!-- FitTrain Warm Off-White / Soft Cream Background & Category Palette -->
+    <color name="bg_cream">#FAF9F5</color>
+    <color name="bg_cream_card">#FFFFFF</color>
+    <color name="border_neutral">#E2E8F0</color>
+
+    <color name="primary_dark_blue">#0F172A</color>
+    <color name="primary_fit_blue">#2563EB</color>
+    <color name="secondary_sky">#38BDF8</color>
+
+    <color name="accent_workout">#6366F1</color>
+    <color name="accent_nutrition">#F97316</color>
+    <color name="accent_hydration">#14B8A6</color>
+    <color name="accent_progress">#8B5CF6</color>
+    <color name="accent_motivation">#F59E0B</color>
+    <color name="accent_success">#10B981</color>
+    <color name="accent_warning">#EF4444</color>
+
     <!-- Neutral & Surface Colors -->
     <color name="black">#0F172A</color>
     <color name="gray">#64748B</color>
     <color name="light_gray">#94A3B8</color>
     <color name="border_color">#E2E8F0</color>
     <color name="white">#FFFFFF</color>
-    <color name="background_color">#F8FAFC</color>
+    <color name="background_color">#FAF9F5</color>
     <color name="card_surface">#FFFFFF</color>
     
     <!-- Hero & Card Gradient Colors (Indigo/Purple #6366F1 to Cyan/Sky Blue #38BDF8) -->
@@ -27,24 +57,24 @@
     
     <!-- Metric Specific Ring Colors -->
     <color name="metric_steps">#6366F1</color>
-    <color name="metric_calories">#F59E0B</color>
-    <color name="metric_water">#38BDF8</color>
+    <color name="metric_calories">#F97316</color>
+    <color name="metric_water">#14B8A6</color>
     <color name="metric_sleep">#8B5CF6</color>
     <color name="metric_bmi">#2563EB</color>
 
     <!-- Status & Input -->
     <color name="error">#EF4444</color>
-    <color name="success">#38BDF8</color>
+    <color name="success">#10B981</color>
 
     <!-- Workout Palette -->
     <color name="workout_primary">#6366F1</color>
     <color name="workout_secondary">#38BDF8</color>
-    <color name="workout_background">#F8FAFC</color>
+    <color name="workout_background">#FAF9F5</color>
     <color name="workout_white">#FFFFFF</color>
     <color name="workout_border">#E2E8F0</color>
     <color name="workout_text_primary">#0F172A</color>
     <color name="workout_text_secondary">#64748B</color>
-    <color name="workout_accent">#F59E0B</color>
+    <color name="workout_accent">#F97316</color>
     <color name="workout_error">#EF4444</color>
-    <color name="workout_success">#38BDF8</color>
+    <color name="workout_success">#10B981</color>
 </resources>

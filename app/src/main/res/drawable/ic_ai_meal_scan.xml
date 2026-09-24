@@ -1,0 +1,91 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <!-- Outer Soft Glow -->
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M120,10C59.25,10 10,59.25 10,120s49.25,110 110,110 110,-49.25 110,-110S180.75,10 120,10z" />
+
+    <path
+        android:fillColor="#FFFBEB"
+        android:pathData="M120,24C67,24 24,67 24,120s43,96 96,96 96,-43 96,-96S173,24 120,24z" />
+
+    <!-- Phone Bezel / Frame Mockup -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M70,30h100c8.84,0 16,7.16 16,16v150c0,8.84 -7.16,16 -16,16H70c-8.84,0 -16,-7.16 -16,-16V46c0,-8.84 7.16,-16 16,-16z" />
+
+    <!-- Phone Display Screen -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M74,38h92c4.42,0 8,3.58 8,8v136c0,4.42 -3.58,8 -8,8H74c-4.42,0 -8,-3.58 -8,-8V46c0,-4.42 3.58,-8 8,-8z" />
+
+    <!-- Notch / Dynamic Island -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M104,42h32c2.21,0 4,1.79 4,4v2c0,2.21 -1.79,4 -4,4h-32c-2.21,0 -4,-1.79 -4,-4v-2c0,-2.21 1.79,-4 4,-4z" />
+
+    <!-- Salmon Meal Bowl Circle -->
+    <path
+        android:fillColor="#ECFDF5"
+        android:pathData="M120,60C92.39,60 70,82.39 70,110s22.39,50 50,50 50,-22.39 50,-50S147.61,60 120,60z" />
+
+    <!-- Grilled Salmon Fill -->
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M100,95c0,-8 10,-15 20,-15s20,7 20,15 -10,25 -20,25 -20,-17 -20,-25z" />
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M106,90h12v4h-12zm10,8h12v4h-12zm-8,8h14v4h-14z" />
+
+    <!-- Broccoli / Salad Greenery -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M84,95c0,-5 4,-9 9,-9s8,3 9,8 -4,11 -9,11 -9,-5 -9,-10zm54,10c0,-5 4,-9 9,-9s8,3 9,8 -4,11 -9,11 -9,-5 -9,-10z" />
+
+    <!-- Tomato Slices -->
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M110,122c0,-4 3,-7 7,-7s7,3 7,7 -3,7 -7,7 -7,-3 -7,-7z" />
+
+    <!-- Macro Pills (Floating overlapping circles) -->
+    <!-- Carbs Pill 17g -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,125C40,111.19 51.19,100 65,100s25,11.19 25,25 -11.19,25 -25,25S40,138.81 40,125z" />
+    <path
+        android:fillColor="#84CC16"
+        android:pathData="M44,125c0,-11.6 9.4,-21 21,-21s21,9.4 21,21" />
+    
+    <!-- Protein Pill 25g -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M95,120C95,106.19 106.19,95 120,95s25,11.19 25,25 -11.19,25 -25,25S95,133.81 95,120z" />
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M99,120c0,-11.6 9.4,-21 21,-21s21,9.4 21,21" />
+
+    <!-- Fat Pill 25g -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M150,125C150,111.19 161.19,100 175,100s25,11.19 25,25 -11.19,25 -25,25S150,138.81 150,125z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M154,125c0,-11.6 9.4,-21 21,-21s21,9.4 21,21" />
+
+    <!-- Total Calorie Banner Pill (392 kcal) -->
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M70,165h100c6.63,0 12,5.37 12,12v10c0,6.63 -5.37,12 -12,12H70c-6.63,0 -12,-5.37 -12,-12v-10c0,-6.63 5.37,-12 12,-12z" />
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M90,175h60v8H90z" />
+
+    <!-- AI Scan Reticle Corner Accents -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M50,50h16v4H54v12H50V50zm140,0v16h-4V54h-12V50h16zM50,190v-16h4v12h12v4H50zm140,0h-16v-4h12v-12h4v16z" />
+</vector>

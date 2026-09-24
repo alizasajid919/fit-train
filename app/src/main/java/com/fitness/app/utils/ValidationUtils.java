@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 
 public class ValidationUtils {
 
-    // Strict Email Regex requiring name@domain.tld (at least 2 letter TLD, no spaces, no consecutive dots)
+    // Strict Email Regex requiring name@domain.tld (alphanumeric domain parts, 2+ letter TLD, no leading/trailing dot domain)
     private static final Pattern STRICT_EMAIL_PATTERN = 
-            Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+            Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\\.[a-zA-Z]{2,}$");
 
     // Name Regex (Unicode letters, spaces, hyphens, apostrophes, 2 to 50 chars)
     private static final Pattern NAME_PATTERN = 
@@ -33,6 +33,7 @@ public class ValidationUtils {
     public static boolean isValidEmail(String email) {
         if (isEmpty(email)) return false;
         String trimmed = email.trim();
+        if (trimmed.contains(" ") || trimmed.startsWith(".") || trimmed.endsWith(".")) return false;
         return Patterns.EMAIL_ADDRESS.matcher(trimmed).matches() && STRICT_EMAIL_PATTERN.matcher(trimmed).matches();
     }
 

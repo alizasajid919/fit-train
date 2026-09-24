@@ -41,6 +41,7 @@ import com.fitness.app.data.local.LocalDataManager;
 import com.fitness.app.models.ChatMessage;
 import com.fitness.app.models.User;
 import com.fitness.app.utils.ChatManager;
+import com.fitness.app.utils.FitnessCalculator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,6 +94,9 @@ public class AICoachActivity extends AppCompatActivity {
     private final List<ChatMessage> allMessages = new ArrayList<>();
     private final List<ChatMessage> filteredMessages = new ArrayList<>();
     private boolean shouldScrollToBottom = true;
+    private boolean userWaitingForResponse = false;
+    private boolean isUserScrollingUp = false;
+    private String lastHandledAiMsgId = null;
     private User currentUser;
     private int currentLimit = 40;
 
@@ -167,14 +171,36 @@ public class AICoachActivity extends AppCompatActivity {
         rvChat.setAdapter(adapter);
         rvChat.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (lm != null) {
+                        int lastVisible = lm.findLastCompletelyVisibleItemPosition();
+                        int totalItems = adapter.getItemCount();
+                        if (lastVisible < totalItems - 2) {
+                            isUserScrollingUp = true;
+                        }
+                    }
+                }
+            }
+
+            @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager != null && layoutManager.findFirstVisibleItemPosition() == 0) {
-                    if (currentLimit < allMessages.size()) {
-                        currentLimit += 40;
-                        shouldScrollToBottom = false;
-                        filterAndDisplayMessages();
+                if (layoutManager != null) {
+                    if (layoutManager.findFirstVisibleItemPosition() == 0) {
+                        if (currentLimit < allMessages.size()) {
+                            currentLimit += 40;
+                            shouldScrollToBottom = false;
+                            filterAndDisplayMessages();
+                        }
+                    }
+                    int lastVisible = layoutManager.findLastCompletelyVisibleItemPosition();
+                    int totalItems = adapter.getItemCount();
+                    if (totalItems > 0 && lastVisible >= totalItems - 2) {
+                        isUserScrollingUp = false;
                     }
                 }
             }
@@ -445,6 +471,8 @@ public class AICoachActivity extends AppCompatActivity {
 
     private void sendAutoPrompt(String text) {
         shouldScrollToBottom = true;
+        userWaitingForResponse = true;
+        isUserScrollingUp = false;
         chatManager.sendMessage(text, currentUser);
     }
 
@@ -504,7 +532,8 @@ public class AICoachActivity extends AppCompatActivity {
 
         // Add typing indicator bubble
         Boolean isLoading = chatManager.getIsLoadingLive().getValue();
-        if (isLoading != null && isLoading && query.isEmpty()) {
+        boolean isTypingVisible = (isLoading != null && isLoading && query.isEmpty());
+        if (isTypingVisible) {
             filteredMessages.add(new ChatMessage("TYPING_ID", "AI_TYPING", "AI Coach is typing...", System.currentTimeMillis()));
         }
 
@@ -522,9 +551,35 @@ public class AICoachActivity extends AppCompatActivity {
         } else {
             chatEmptyState.setVisibility(View.GONE);
             rvChat.setVisibility(View.VISIBLE);
+
+            ChatMessage lastMsg = filteredMessages.get(filteredMessages.size() - 1);
+
             if (shouldScrollToBottom) {
-                rvChat.scrollToPosition(filteredMessages.size() - 1);
                 shouldScrollToBottom = false;
+                rvChat.post(() -> {
+                    if (adapter.getItemCount() > 0) {
+                        rvChat.scrollToPosition(adapter.getItemCount() - 1);
+                    }
+                });
+            } else if (userWaitingForResponse && !isUserScrollingUp) {
+                if (isTypingVisible) {
+                    rvChat.post(() -> {
+                        if (adapter.getItemCount() > 0) {
+                            rvChat.smoothScrollToPosition(adapter.getItemCount() - 1);
+                        }
+                    });
+                } else if ("AI".equals(lastMsg.getSender()) && !lastMsg.getId().equals(lastHandledAiMsgId)) {
+                    lastHandledAiMsgId = lastMsg.getId();
+                    userWaitingForResponse = false;
+                    int aiMsgPosition = filteredMessages.size() - 1;
+
+                    rvChat.post(() -> {
+                        LinearLayoutManager lm = (LinearLayoutManager) rvChat.getLayoutManager();
+                        if (lm != null && aiMsgPosition >= 0 && aiMsgPosition < adapter.getItemCount()) {
+                            lm.scrollToPositionWithOffset(aiMsgPosition, 0);
+                        }
+                    });
+                }
             }
         }
     }
@@ -611,7 +666,11 @@ public class AICoachActivity extends AppCompatActivity {
             errorLayout.setVisibility(View.GONE);
             chatLayout.setVisibility(View.VISIBLE);
             if (shouldScrollToBottom && !filteredMessages.isEmpty()) {
-                rvChat.scrollToPosition(filteredMessages.size() - 1);
+                rvChat.post(() -> {
+                    if (adapter.getItemCount() > 0) {
+                        rvChat.scrollToPosition(adapter.getItemCount() - 1);
+                    }
+                });
                 shouldScrollToBottom = false;
             }
         }
@@ -625,26 +684,21 @@ public class AICoachActivity extends AppCompatActivity {
         String name = user.getFirstName() != null && !user.getFirstName().trim().isEmpty() ? user.getFirstName() : "Athlete";
         tvDashboardMotivation.setText(String.format("“Keep pushing, %s! Focus on consistency. Every step counts toward your goal to %s.”", name, goal.toLowerCase()));
 
-        double heightM = height / 100.0;
-        double bmi = weight / (heightM * heightM);
-        String bmiCategory;
+        double bmi = FitnessCalculator.calculateBmi(weight, height);
+        String bmiCategory = FitnessCalculator.getBmiCategory(bmi);
         int bmiColor;
         String bmiAdvice;
 
         if (bmi < 18.5) {
-            bmiCategory = "Underweight";
             bmiColor = 0xFFFFB703;
             bmiAdvice = "Focus on healthy calorie surplus diet. Increase complex carbs and clean proteins.";
         } else if (bmi < 25.0) {
-            bmiCategory = "Normal";
             bmiColor = 0xFF2563EB;
             bmiAdvice = "Healthy range! Maintain your active training and consistent meal schedule.";
         } else if (bmi < 30.0) {
-            bmiCategory = "Overweight";
             bmiColor = 0xFFEF4444;
             bmiAdvice = "Aim for regular caloric deficit. Combine HIIT workouts with cardio exercises.";
         } else {
-            bmiCategory = "Obese";
             bmiColor = 0xFFEF4444;
             bmiAdvice = "Consult a health professional. Gentle active walking and portion control advised.";
         }
@@ -654,16 +708,10 @@ public class AICoachActivity extends AppCompatActivity {
         tvDashboardBmiRange.setText(String.format(Locale.getDefault(), "Weight: %.1f kg | Height: %.1f cm", weight, height));
         tvDashboardBmiAdvice.setText(bmiAdvice);
 
-        int calTarget;
-        if (goal.toLowerCase().contains("lose") || goal.toLowerCase().contains("fat")) {
-            calTarget = 1700;
-        } else if (goal.toLowerCase().contains("gain") || goal.toLowerCase().contains("build") || goal.toLowerCase().contains("muscle")) {
-            calTarget = 2600;
-        } else {
-            calTarget = 2100;
-        }
-
-        int waterTarget = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : 2500;
+        double bmr = FitnessCalculator.calculateBmr(weight, height, user.getAge(), user.getGender());
+        double tdee = FitnessCalculator.calculateTdee(bmr, user.getActivityLevel());
+        int calTarget = FitnessCalculator.calculateDailyCalorieTarget(tdee, goal);
+        int waterTarget = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : FitnessCalculator.calculateDailyWaterGoal(weight);
         tvDashboardCalTarget.setText(String.format(Locale.getDefault(), "%d kcal", calTarget));
         tvDashboardWaterTarget.setText(String.format(Locale.getDefault(), "%d ml", waterTarget));
 
@@ -709,6 +757,8 @@ public class AICoachActivity extends AppCompatActivity {
         if (text.isEmpty() && selectedAttachmentUri == null) return;
 
         shouldScrollToBottom = true;
+        userWaitingForResponse = true;
+        isUserScrollingUp = false;
 
         // Prevent double sends
         findViewById(R.id.btnSend).setEnabled(false);

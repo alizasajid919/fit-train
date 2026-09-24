@@ -1,0 +1,45 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="260dp"
+    android:height="260dp"
+    android:viewportWidth="260"
+    android:viewportHeight="260">
+
+    <!-- Soft Sky Blue Outer Backdrop Glow -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M130,10C63.73,10 10,63.73 10,130s53.73,120 120,120 120,-53.73 120,-120S196.27,10 130,10z" />
+    <path
+        android:fillColor="#E0F2FE"
+        android:pathData="M130,28C73.67,28 28,73.67 28,130s45.67,102 102,102 102,-45.67 102,-102S186.33,28 130,28z" />
+
+    <!-- Digital Smart Scale Platform -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,110h180c11.05,0 20,8.95 20,20v90c0,11.05 -8.95,20 -20,20H40c-11.05,0 -20,-8.95 -20,-20v-90c0,-11.05 8.95,-20 20,-20z" />
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M40,110h180c11.05,0 20,8.95 20,20v10H20v-10c0,-11.05 8.95,-20 20,-20z" />
+
+    <!-- Digital Display Screen (LED Screen) -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M80,135h100c6.63,0 12,5.37 12,12v30c0,6.63 -5.37,12 -12,12H80c-6.63,0 -12,-5.37 -12,-12v-30c0,-6.63 5.37,-12 12,-12z" />
+
+    <!-- Digital Weight Readout Line (70.0 kg) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M95,148h70v16H95z" />
+
+    <!-- Standing Feet Outlines on Scale Pads -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M45,150c0,-11 8,-20 18,-20s18,9 18,20v45H45v-45zm134,0c0,-11 8,-20 18,-20s18,9 18,20v45h-36v-45z" />
+
+    <!-- Character Legs & Feet standing above -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M110,30c9.94,0 18,8.06 18,18s-8.06,18 -18,18 -18,-8.06 -18,-18 8.06,-18 18,-18z" />
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M90,70c0,-8.84 8.95,-16 20,-16s20,7.16 20,16v40H90V70z" />
+</vector>

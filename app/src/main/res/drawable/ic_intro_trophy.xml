@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="220dp"
+    android:height="220dp"
+    android:viewportWidth="220"
+    android:viewportHeight="220">
+
+    <!-- Soft Gold Backdrop -->
+    <path
+        android:fillColor="#FEF3C7"
+        android:pathData="M110,10C54.77,10 10,54.77 10,110s44.77,100 100,100 100,-44.77 100,-100S165.23,10 110,10z" />
+
+    <!-- 3D Gold Trophy Base -->
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M70,165h80v16H70z" />
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M80,150h60v15H80z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M100,120h20v30h-20z" />
+
+    <!-- Cup Body -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M60,50h100c0,35 -20,70 -50,70S60,85 60,50z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M68,54h84c0,28 -16,56 -42,56S68,82 68,54z" />
+
+    <!-- Handles -->
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M44,60c-8,0 -14,6 -14,14s6,14 14,14h16V60H44zm132,0h-16v28h16c8,0 14,-6 14,-14s-6,-14 -14,-14z" />
+
+    <!-- Star Sparkles -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M110,65l4,8 8,4 -8,4 -4,8 -4,-8 -8,-4 8,-4z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M165,40l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+</vector>

@@ -179,47 +179,65 @@
         android:id="@+id/bottomActions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/white"
         android:elevation="8dp"
         android:padding="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:weightSum="3">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSaveWorkout"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
+            android:id="@+id/btnStartWorkoutSession"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/bg_button_gradient"
-            android:text="Save"
+            android:text="START WORKOUT SESSION ▶️"
             android:textColor="@color/white"
+            android:textSize="15sp"
             android:textAllCaps="false"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnPdfDownload"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:background="@drawable/bg_badge_duration"
-            android:text="PDF"
-            android:textColor="#1E40AF"
-            android:textAllCaps="false"
-            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnDeleteWorkout"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_badge_advanced"
-            android:text="Delete"
-            android:textColor="#B91C1C"
-            android:textAllCaps="false"
-            android:textStyle="bold" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSaveWorkout"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_badge_duration"
+                android:text="Save Plan"
+                android:textColor="#1E40AF"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnPdfDownload"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_badge_duration"
+                android:text="PDF Export"
+                android:textColor="#1E40AF"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDeleteWorkout"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_badge_advanced"
+                android:text="Delete Plan"
+                android:textColor="#B91C1C"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -49,12 +49,58 @@ public class UserRepository {
         firebaseAuth.signOut();
     }
 
+    public static String formatAuthError(Exception e) {
+        if (e == null) return "An unexpected error occurred. Please try again.";
+        if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+            return "This email is already registered. Please use another email or sign in to your existing account.";
+        }
+        if (e instanceof com.google.firebase.FirebaseNetworkException) {
+            return "Unable to connect to the server. Please check your internet connection and try again.";
+        }
+        if (e instanceof com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ||
+            e instanceof com.google.firebase.auth.FirebaseAuthInvalidUserException) {
+            return "Invalid email or password. Please check your credentials.";
+        }
+        String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+        if (msg.contains("already in use") || msg.contains("email address is already in use")) {
+            return "This email is already registered. Please use another email or sign in to your existing account.";
+        }
+        if (msg.contains("network") || msg.contains("connection") || msg.contains("unavailable") || msg.contains("unreachable")) {
+            return "Unable to connect to the server. Please check your internet connection and try again.";
+        }
+        if (msg.contains("badly formatted") || msg.contains("invalid email")) {
+            return "Please enter a valid email address.";
+        }
+        return "Operation failed. Please check your internet connection and try again.";
+    }
+
     public boolean isEmailVerified() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             return user.isEmailVerified();
         }
         return false;
+    }
+
+    public LiveData<Resource<Boolean>> reloadAndCheckEmailVerification() {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading());
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            user.reload().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    FirebaseUser updatedUser = firebaseAuth.getCurrentUser();
+                    boolean isVerified = updatedUser != null && updatedUser.isEmailVerified();
+                    result.setValue(Resource.success(isVerified));
+                } else {
+                    String msg = task.getException() != null ? formatAuthError(task.getException()) : "Failed to verify email status.";
+                    result.setValue(Resource.error(msg));
+                }
+            });
+        } else {
+            result.setValue(Resource.error("No active user session found."));
+        }
+        return result;
     }
 
     public LiveData<Resource<String>> resendEmailVerification() {
@@ -67,7 +113,7 @@ public class UserRepository {
                     if (task.isSuccessful()) {
                         result.setValue(Resource.success("Verification email sent successfully. Please check your inbox."));
                     } else {
-                        String msg = task.getException() != null ? task.getException().getMessage() : "Failed to send verification email.";
+                        String msg = task.getException() != null ? formatAuthError(task.getException()) : "Failed to send verification email.";
                         result.setValue(Resource.error(msg));
                     }
                 });
@@ -106,7 +152,7 @@ public class UserRepository {
                         result.setValue(Resource.error("Anonymous sign-in returned null user."));
                     }
                 } else {
-                    String errorMsg = task.getException() != null ? task.getException().getMessage() : "Anonymous login failed.";
+                    String errorMsg = task.getException() != null ? formatAuthError(task.getException()) : "Anonymous login failed.";
                     result.setValue(Resource.error(errorMsg));
                 }
             });
@@ -137,7 +183,7 @@ public class UserRepository {
                                 localUser.setLastName(lastName);
                                 localUser.setEmail(email);
                             }
-                            localUser.setProfileCompleted(true);
+                            localUser.setProfileCompleted(false);
                             localDb.saveUser(localUser);
 
                             // Send Verification
@@ -152,19 +198,19 @@ public class UserRepository {
                             result.setValue(Resource.error("Linking failed: User is null."));
                         }
                     } else {
-                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Linking failed.";
+                        String errorMsg = task.getException() != null ? formatAuthError(task.getException()) : "Linking failed.";
                         result.setValue(Resource.error(errorMsg));
                     }
                 });
         } else {
-            // Create user from scratch (if not logged in anonymously, though onboarding normally does this)
+            // Create user from scratch
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         if (firebaseUser != null) {
                             User user = new User(firebaseUser.getUid(), firstName, lastName, email, System.currentTimeMillis());
-                            user.setProfileCompleted(true);
+                            user.setProfileCompleted(false);
                             localDb.saveUser(user);
                             firebaseUser.sendEmailVerification();
                             saveUserToFirestore(user, result, firebaseUser);
@@ -172,7 +218,7 @@ public class UserRepository {
                             result.setValue(Resource.error("Registration failed: User is null."));
                         }
                     } else {
-                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Registration failed.";
+                        String errorMsg = task.getException() != null ? formatAuthError(task.getException()) : "Registration failed.";
                         result.setValue(Resource.error(errorMsg));
                     }
                 });
@@ -187,12 +233,11 @@ public class UserRepository {
             .addOnSuccessListener(aVoid -> resultLiveData.setValue(Resource.success(firebaseUser)))
             .addOnFailureListener(e -> {
                 Log.e(TAG, "Firestore write failed", e);
-                // Non-crashing error handling
                 if (e instanceof FirebaseFirestoreException && 
                     ((FirebaseFirestoreException) e).getCode() == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
                     resultLiveData.setValue(Resource.error("Access Denied: Missing permissions in Firestore."));
                 } else {
-                    resultLiveData.setValue(Resource.error("Cloud sync failed: " + e.getMessage()));
+                    resultLiveData.setValue(Resource.error(formatAuthError(e)));
                 }
             });
     }
@@ -213,7 +258,7 @@ public class UserRepository {
                         loginResult.setValue(Resource.error("User is null."));
                     }
                 } else {
-                    String errorMsg = task.getException() != null ? task.getException().getMessage() : "Login failed.";
+                    String errorMsg = task.getException() != null ? formatAuthError(task.getException()) : "Login failed.";
                     loginResult.setValue(Resource.error(errorMsg));
                 }
             });

@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    
+    <!-- Soft Background Glowing Aura -->
+    <path
+        android:fillColor="#EFF6FF"
+        android:pathData="M100,15C53.06,15 15,53.06 15,100s38.06,85 85,85 85,-38.06 85,-85S146.94,15 100,15z" />
+    
+    <!-- Secondary Outer Ring -->
+    <path
+        android:fillColor="#DBEAFE"
+        android:pathData="M100,30C61.34,30 30,61.34 30,100s31.34,70 70,70 70,-31.34 70,-70S138.66,30 100,30z" />
+    
+    <!-- Character Head -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M100,48c14.36,0 26,11.64 26,26s-11.64,26 -26,26 -26,-11.64 -26,-26 11.64,-26 26,-26z" />
+    
+    <!-- Character Face Hair Detail -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M84,68c0,-12 8,-20 16,-20s18,5 20,14c-4,-3 -10,-4 -16,-2 -6,2 -10,6 -12,12 -3,-1 -6,-3 -8,-4z" />
+    
+    <!-- Body Torso / Modern Jacket -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M65,114c-12,0 -22,10 -22,22v34h114v-34c0,-12 -10,-22 -22,-22H65z" />
+        
+    <!-- Collar Detail -->
+    <path
+        android:fillColor="#93C5FD"
+        android:pathData="M86,114l14,18 14,-18h-28z" />
+
+    <!-- Wave Hand / Arm Greeting Gesture -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M140,110c6,-8 16,-18 24,-16 6,2 8,12 4,20 -6,12 -18,22 -26,24l-2,-28z" />
+        
+    <!-- Sparkle Stars -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M155,45l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M45,65l2.5,5 5,2.5 -5,2.5 -2.5,5 -2.5,-5 -5,-2.5 5,-2.5z" />
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M150,140l2,4 4,2 -4,2 -2,4 -2,-4 -4,-2 4,-2z" />
+
+    <!-- Fit Badge Pill -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,135h44v24H40z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M48,142l4,4 8,-8 3,3 -11,11 -7,-7z" />
+</vector>

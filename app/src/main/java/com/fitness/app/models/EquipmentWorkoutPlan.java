@@ -46,4 +46,6 @@ public class EquipmentWorkoutPlan implements Serializable {
 
     public long getDateCreated() { return dateCreated; }
     public void setDateCreated(long dateCreated) { this.dateCreated = dateCreated; }
+
+    public String getCategory() { return "Equipment Workout"; }
 }

@@ -1,0 +1,77 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Soft Background Glowing Backdrop -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M100,15C53.06,15 15,53.06 15,100s38.06,85 85,85 85,-38.06 85,-85S146.94,15 100,15z" />
+
+    <path
+        android:fillColor="#E0F2FE"
+        android:pathData="M100,32C62.45,32 32,62.45 32,100s30.45,68 68,68 68,-30.45 68,-68S137.55,32 100,32z" />
+
+    <!-- Calendar Main Body Base Shadow -->
+    <path
+        android:fillColor="#CBD5E1"
+        android:pathData="M44,44h116v120H44z" />
+
+    <!-- Calendar Main White Body Card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,40h116v120H40z" />
+
+    <!-- Calendar Glossy Blue Header -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M40,40h116v38H40z" />
+
+    <!-- Binder Rings / Spiral Hooks -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M64,26h12v26H64zm60,0h12v26h-12z" />
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M67,29h6v20h-6zm60,0h6v20h-6z" />
+
+    <!-- Calendar Month Text Representation Lines -->
+    <path
+        android:fillColor="#93C5FD"
+        android:pathData="M80,52h40v6H80z" />
+
+    <!-- Date Grid Numbers / Tiles -->
+    <!-- Row 1 -->
+    <path android:fillColor="#E2E8F0" android:pathData="M54,90h18v18H54z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M80,90h18v18H80z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M106,90h18v18h-18z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M132,90h18v18h-18z" />
+
+    <!-- Row 2 -->
+    <path android:fillColor="#E2E8F0" android:pathData="M54,116h18v18H54z" />
+    <!-- Selected Highlight Date Tile (Birth Date Highlight) -->
+    <path android:fillColor="#F97316" android:pathData="M80,116h18v18H80z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M86,122h6v6h-6z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M106,116h18v18h-18z" />
+    <path android:fillColor="#E2E8F0" android:pathData="M132,116h18v18h-18z" />
+
+    <!-- Birthday Cake / Age Sparkle Badge -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M142,32l4,8 8,4 -8,4 -4,8 -4,-8 -8,-4 8,-4z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M32,120l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M150,135l2.5,5 5,2.5 -5,2.5 -2.5,5 -2.5,-5 -5,-2.5 5,-2.5z" />
+
+    <!-- Dynamic Age Clock / Ribbon Icon -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M130,130c0,-11.05 8.95,-20 20,-20s20,8.95 20,20 -8.95,20 -20,20 -20,-8.95 -20,-20z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M148,120h4v12h10v4h-14z" />
+</vector>

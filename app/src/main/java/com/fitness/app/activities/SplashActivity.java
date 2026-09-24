@@ -83,7 +83,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkUserSession() {
-        if (localDb.isOnboardingSeen()) {
+        User user = localDb.getUser();
+        if (localDb.isOnboardingSeen() && user != null && user.isProfileCompleted()) {
             navigateTo(MainActivity.class);
         } else {
             navigateTo(OnboardingActivity.class);

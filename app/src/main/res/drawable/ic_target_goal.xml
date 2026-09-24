@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Soft Backdrop -->
+    <path
+        android:fillColor="#FEF2F2"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Bullseye Rings -->
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M100,35C64.1,35 35,64.1 35,100s29.1,65 65,65 65,-29.1 65,-65S135.9,35 100,35z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,55C75.15,55 55,75.15 55,100s20.15,45 45,45 45,-20.15 45,-45S124.85,55 100,55z" />
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M100,75C86.19,75 75,86.19 75,100s11.19,25 25,25 25,-11.19 25,-25S113.81,75 100,75z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,90C94.48,90 90,94.48 90,100s4.48,10 10,10 10,-4.48 10,-10S105.52,90 100,90z" />
+
+    <!-- Target Arrow Hit -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M140,40l-45,50 10,10 50,-45z" />
+</vector>

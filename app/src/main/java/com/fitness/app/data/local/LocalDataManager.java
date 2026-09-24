@@ -11,6 +11,7 @@ import com.fitness.app.models.User;
 import com.fitness.app.models.WorkoutPlan;
 import com.fitness.app.models.WorkoutLog;
 import com.fitness.app.models.WorkoutSchedule;
+import com.fitness.app.models.WorkoutSession;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,7 @@ public class LocalDataManager {
     private static final String KEY_WORKOUT_LOGS = "key_workout_logs";
     private static final String KEY_BODY_SHAMING_PROTECTION = "key_body_shaming_protection";
     private static final String KEY_WORKOUT_SCHEDULE = "key_workout_schedule";
+    private static final String KEY_WORKOUT_SESSIONS = "key_workout_sessions";
 
     public final SharedPreferences sharedPreferences;
     public final SharedPreferences.Editor editor;
@@ -137,6 +139,13 @@ public class LocalDataManager {
             obj.put("dietaryPreference", user.getDietaryPreference());
             obj.put("emergencyContact", user.getEmergencyContact());
             obj.put("availableEquipment", user.getAvailableEquipment());
+            obj.put("workoutLocation", user.getWorkoutLocation());
+            obj.put("workoutDuration", user.getWorkoutDuration());
+            obj.put("workoutDaysPerWeek", user.getWorkoutDaysPerWeek());
+            obj.put("dislikedFoods", user.getDislikedFoods());
+            obj.put("mealsPerDay", user.getMealsPerDay());
+            obj.put("targetPace", user.getTargetPace());
+            obj.put("preferredWorkoutTime", user.getPreferredWorkoutTime());
 
             editor.putString(KEY_USER, obj.toString()).apply();
         } catch (JSONException e) {
@@ -183,6 +192,14 @@ public class LocalDataManager {
             user.setDietaryPreference(obj.optString("dietaryPreference", ""));
             user.setEmergencyContact(obj.optString("emergencyContact", ""));
             user.setAvailableEquipment(obj.optString("availableEquipment", ""));
+
+            user.setWorkoutLocation(obj.optString("workoutLocation", "Home"));
+            user.setWorkoutDuration(obj.optInt("workoutDuration", 30));
+            user.setWorkoutDaysPerWeek(obj.optInt("workoutDaysPerWeek", 4));
+            user.setDislikedFoods(obj.optString("dislikedFoods", ""));
+            user.setMealsPerDay(obj.optInt("mealsPerDay", 3));
+            user.setTargetPace(obj.optString("targetPace", "Balanced"));
+            user.setPreferredWorkoutTime(obj.optString("preferredWorkoutTime", "Morning"));
 
             return user;
         } catch (JSONException e) {
@@ -456,6 +473,76 @@ public class LocalDataManager {
         // Sort by timestamp descending
         filtered.sort((a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
         return filtered;
+    }
+
+    // Unified Workout Session Persistence (Single Source of Truth)
+    public void saveWorkoutSession(WorkoutSession session) {
+        if (session == null || session.getSessionId() == null) return;
+        List<WorkoutSession> sessions = getAllWorkoutSessions();
+        boolean updated = false;
+        for (int i = 0; i < sessions.size(); i++) {
+            if (sessions.get(i).getSessionId().equals(session.getSessionId())) {
+                sessions.set(i, session);
+                updated = true;
+                break;
+            }
+        }
+        if (!updated) {
+            sessions.add(session);
+        }
+        saveAllWorkoutSessions(sessions);
+    }
+
+    public List<WorkoutSession> getAllWorkoutSessions() {
+        List<WorkoutSession> list = new ArrayList<>();
+        String json = sharedPreferences.getString(KEY_WORKOUT_SESSIONS, null);
+        if (json == null) return list;
+        try {
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                WorkoutSession s = WorkoutSession.fromJsonObject(arr.getJSONObject(i));
+                if (s != null) list.add(s);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public WorkoutSession getWorkoutSession(String sessionId) {
+        if (sessionId == null) return null;
+        List<WorkoutSession> all = getAllWorkoutSessions();
+        for (WorkoutSession s : all) {
+            if (sessionId.equals(s.getSessionId())) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public WorkoutSession getPreviousWorkoutSession(String title, String currentSessionId) {
+        if (title == null) return null;
+        String cleanTitle = title.trim().toLowerCase();
+        List<WorkoutSession> all = getAllWorkoutSessions();
+        all.sort((a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+        for (WorkoutSession s : all) {
+            if (!s.getSessionId().equals(currentSessionId) && s.getWorkoutTitle() != null && s.getWorkoutTitle().trim().toLowerCase().contains(cleanTitle)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public void saveAllWorkoutSessions(List<WorkoutSession> sessions) {
+        JSONArray arr = new JSONArray();
+        try {
+            for (WorkoutSession s : sessions) {
+                arr.put(s.toJsonObject());
+            }
+            editor.putString(KEY_WORKOUT_SESSIONS, arr.toString()).apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // Workout Schedules

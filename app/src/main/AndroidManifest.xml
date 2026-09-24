@@ -99,6 +99,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".activities.WorkoutSessionActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".activities.DetailTrackerActivity"
             android:exported="false" />
 

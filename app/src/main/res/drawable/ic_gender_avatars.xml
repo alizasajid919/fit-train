@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Soft Indigo Glow -->
+    <path
+        android:fillColor="#EEF2FF"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Male Avatar (Left) -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M65,55c9.94,0 18,8.06 18,18s-8.06,18 -18,18 -18,-8.06 -18,-18 8.06,-18 18,-18z" />
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M40,115c0,-13.25 11.19,-24 25,-24s25,10.75 25,24v35H40v-35z" />
+
+    <!-- Female Avatar (Right) -->
+    <path
+        android:fillColor="#EC4899"
+        android:pathData="M135,55c9.94,0 18,8.06 18,18s-8.06,18 -18,18 -18,-8.06 -18,-18 8.06,-18 18,-18z" />
+    <path
+        android:fillColor="#BE185D"
+        android:pathData="M110,115c0,-13.25 11.19,-24 25,-24s25,10.75 25,24v35h-50v-35z" />
+
+    <!-- Gender Sparkles -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M100,45l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+</vector>

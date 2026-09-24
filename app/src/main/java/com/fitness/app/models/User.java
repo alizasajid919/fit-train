@@ -211,6 +211,44 @@ public class User implements Serializable {
     public String getEmergencyContact() { return emergencyContact; }
     public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 
+    private String workoutLocation;
+    private int workoutDuration;
+    private int workoutDaysPerWeek;
+    private String dislikedFoods;
+    private int mealsPerDay;
+    private String targetPace;
+    private String preferredWorkoutTime;
+
     public String getAvailableEquipment() { return availableEquipment; }
     public void setAvailableEquipment(String availableEquipment) { this.availableEquipment = availableEquipment; }
+
+    public String getWorkoutLocation() { return workoutLocation; }
+    public void setWorkoutLocation(String workoutLocation) { this.workoutLocation = workoutLocation; }
+
+    public int getWorkoutDuration() { return workoutDuration; }
+    public void setWorkoutDuration(int workoutDuration) { this.workoutDuration = workoutDuration; }
+
+    public int getWorkoutDaysPerWeek() { return workoutDaysPerWeek; }
+    public void setWorkoutDaysPerWeek(int workoutDaysPerWeek) { this.workoutDaysPerWeek = workoutDaysPerWeek; }
+
+    public String getDislikedFoods() { return dislikedFoods; }
+    public void setDislikedFoods(String dislikedFoods) { this.dislikedFoods = dislikedFoods; }
+
+    public int getMealsPerDay() { return mealsPerDay; }
+    public void setMealsPerDay(int mealsPerDay) { this.mealsPerDay = mealsPerDay; }
+
+    public String getTargetPace() { return targetPace; }
+    public void setTargetPace(String targetPace) { this.targetPace = targetPace; }
+
+    public String getPreferredWorkoutTime() { return preferredWorkoutTime; }
+    public void setPreferredWorkoutTime(String preferredWorkoutTime) { this.preferredWorkoutTime = preferredWorkoutTime; }
+
+    private String eatingEnvironment;
+    private String eatingOutFrequency;
+
+    public String getEatingEnvironment() { return eatingEnvironment; }
+    public void setEatingEnvironment(String eatingEnvironment) { this.eatingEnvironment = eatingEnvironment; }
+
+    public String getEatingOutFrequency() { return eatingOutFrequency; }
+    public void setEatingOutFrequency(String eatingOutFrequency) { this.eatingOutFrequency = eatingOutFrequency; }
 }

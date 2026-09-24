@@ -1,0 +1,34 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Soft Blue Backdrop -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Digital Scale Body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,45h110c8.84,0 16,7.16 16,16v88c0,8.84 -7.16,16 -16,16H45c-8.84,0 -16,-7.16 -16,-16V61c0,-8.84 7.16,-16 16,-16z" />
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M45,45h110c8.84,0 16,7.16 16,16v8H29v-8c0,-8.84 7.16,-16 16,-16z" />
+
+    <!-- Digital Display Screen -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M70,65h60c4.42,0 8,3.58 8,8v24c0,4.42 -3.58,8 -8,8H70c-4.42,0 -8,-3.58 -8,-8V73c0,-4.42 3.58,-8 8,-8z" />
+
+    <!-- Live Weight Digits Graphic (70.0 kg) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M80,75h40v12H80z" />
+
+    <!-- Foot Placement Pads -->
+    <path
+        android:fillColor="#F1F5F9"
+        android:pathData="M45,115h35v35H45zm75,0h35v35h-35z" />
+</vector>

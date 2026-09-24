@@ -1,0 +1,67 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="260dp"
+    android:height="260dp"
+    android:viewportWidth="260"
+    android:viewportHeight="260">
+
+    <!-- Soft Cream Outer Backdrop Glow -->
+    <path
+        android:fillColor="#FFF7ED"
+        android:pathData="M130,10C63.73,10 10,63.73 10,130s53.73,120 120,120 120,-53.73 120,-120S196.27,10 130,10z" />
+    <path
+        android:fillColor="#FFEDD5"
+        android:pathData="M130,28C73.67,28 28,73.67 28,130s45.67,102 102,102 102,-45.67 102,-102S186.33,28 130,28z" />
+
+    <!-- Height Scale Board Background (Left) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,40h65c6.63,0 12,5.37 12,12v156c0,6.63 -5.37,12 -12,12H50c-6.63,0 -12,-5.37 -12,-12V52c0,-6.63 5.37,-12 12,-12z" />
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M50,40h12v180H50z" />
+
+    <!-- Ruler Tick Marks -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M62,60h35v4H62zm0,16h20v3H62zm0,16h20v3H62zm0,16h35v4H62zm0,16h20v3H62zm0,16h20v3H62zm0,16h35v4H62zm0,16h20v3H62zm0,16h20v3H62zm0,16h35v4H62z" />
+
+    <!-- Measure Pointer Ribbon Arrow -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M135,100l-16,10 16,10z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M135,105h55c4.42,0 8,3.58 8,8v12c0,4.42 -3.58,8 -8,8h-55v-28z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M145,115h35v8h-35z" />
+
+    <!-- Standing Athletic Character Silhouette (Right) -->
+    <!-- Head -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M175,55c11.05,0 20,8.95 20,20s-8.95,20 -20,20 -20,-8.95 -20,-20 8.95,-20 20,-20z" />
+
+    <!-- Torso / Athletic Outfit -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M150,105c0,-13.25 11.19,-24 25,-24s25,10.75 25,24v55h-50v-55z" />
+
+    <!-- Legs Standing Straight against Height Board -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M155,160h16v50h-16zm24,0h16v50h-16z" />
+
+    <!-- Footwear Shoes -->
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M150,205h22v12h-22zm24,0h22v12h-22z" />
+
+    <!-- Height Badge Pill (175 cm) -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M145,35h60c5.52,0 10,4.48 10,10v12c0,5.52 -4.48,10 -10,10h-60c-5.52,0 -10,-4.48 -10,-10V45c0,-5.52 4.48,-10 10,-10z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M160,45h30v8h-30z" />
+</vector>

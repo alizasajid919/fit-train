@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Dumbbell Visual -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M50,90h100v20H50z" />
+    <!-- Left Weights -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M40,75h14v50H40zm-12,8h10v34H28z" />
+    <!-- Right Weights -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M146,75h14v50h-14zm14,8h10v34h-10z" />
+
+    <!-- Kettlebell accent -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M100,120c-15,0 -25,10 -25,25s10,25 25,25 25,-10 25,-25 -10,-25 -25,-25z" />
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M88,110h24v15H88z" />
+</vector>

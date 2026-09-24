@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="220dp"
+    android:height="220dp"
+    android:viewportWidth="220"
+    android:viewportHeight="220">
+
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M110,10C54.77,10 10,54.77 10,110s44.77,100 100,100 100,-44.77 100,-100S165.23,10 110,10z" />
+
+    <!-- Graph Card -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,45h160c8.84,0 16,7.16 16,16v100c0,8.84 -7.16,16 -16,16H30c-8.84,0 -16,-7.16 -16,-16V61c0,-8.84 7.16,-16 16,-16z" />
+
+    <!-- Grid Lines -->
+    <path
+        android:fillColor="#F1F5F9"
+        android:pathData="M30,75h160v2H30zm0,30h160v2H30zm0,30h160v2H30z" />
+
+    <!-- Downward Trend Curve (Weight Loss Milestone) -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M40,65C70,65 90,95 120,105s50,35 70,35v25H40V65z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M40,65C70,65 90,95 120,105s50,35 70,35" />
+
+    <!-- Goal Star Milestone Marker -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M190,140l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+</vector>

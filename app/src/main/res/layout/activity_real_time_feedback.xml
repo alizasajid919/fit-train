@@ -18,7 +18,7 @@
         app:titleTextColor="#FFFFFF"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Main Viewport: Camera & Pose Overlay -->
+    <!-- Main Viewport: Camera and Pose Overlay -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvCameraContainer"
         android:layout_width="match_parent"
@@ -148,7 +148,7 @@
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Squats Rep counter & Score Metrics Card -->
+    <!-- Squats Rep counter and Score Metrics Card -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvMetricsContainer"
         android:layout_width="match_parent"
@@ -166,7 +166,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Rep & Stage section -->
+            <!-- Rep and Stage section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

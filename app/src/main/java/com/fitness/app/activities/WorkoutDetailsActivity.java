@@ -103,6 +103,12 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
         // Click actions
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
 
+        findViewById(R.id.btnStartWorkoutSession).setOnClickListener(v -> {
+            Intent intent = new Intent(WorkoutDetailsActivity.this, WorkoutSessionActivity.class);
+            intent.putExtra("workout_plan", plan);
+            startActivity(intent);
+        });
+
         findViewById(R.id.btnShare).setOnClickListener(v -> shareWorkoutContent());
         findViewById(R.id.btnSaveWorkout).setOnClickListener(v -> saveWorkoutToDb());
         findViewById(R.id.btnPdfDownload).setOnClickListener(v -> downloadWorkoutAsPdfText());

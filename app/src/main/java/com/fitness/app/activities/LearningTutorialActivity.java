@@ -259,6 +259,8 @@ public class LearningTutorialActivity extends AppCompatActivity {
             holder.btnLaunchCoach.setOnClickListener(v -> {
                 Intent intent = new Intent(LearningTutorialActivity.this, RealTimeFeedbackActivity.class);
                 intent.putExtra("exercise_name", item.getTitle());
+                intent.putExtra("target_reps", 12);
+                intent.putExtra("target_sets", 3);
                 startActivity(intent);
             });
         }

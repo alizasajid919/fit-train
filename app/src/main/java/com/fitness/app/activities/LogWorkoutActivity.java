@@ -42,19 +42,20 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 
+import androidx.core.content.ContextCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.UUID;
 
 public class LogWorkoutActivity extends AppCompatActivity {
 
     private NestedScrollView scrollView;
-    private TextInputLayout tilExerciseName, tilSets, tilReps, tilWeight, tilNotes;
+    private TextInputLayout tilExerciseName, tilSets, tilReps, tilWeight;
     private EditText etExerciseName, etSets, etReps, etWeight, etNotes;
     private TextView tvNotesCharCount;
 
@@ -77,11 +78,6 @@ public class LogWorkoutActivity extends AppCompatActivity {
     private MaterialButton btnSaveWorkout;
     private ProgressBar pbSavingProgress;
     private SuccessCheckmarkView successCheckmark;
-
-    // Featured Header Views
-    private View cvFeaturedHeader;
-    private TextView tvFeaturedName, tvFeaturedStats, tvFeaturedDesc, tvFormTitle;
-    private ImageView ivFeaturedIllustration;
 
     private LocalDataManager localDb;
     private final List<WorkoutLog> historyList = new ArrayList<>();
@@ -106,7 +102,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
+            toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         }
 
         // Bind Views
@@ -115,7 +111,6 @@ public class LogWorkoutActivity extends AppCompatActivity {
         tilSets = findViewById(R.id.tilSets);
         tilReps = findViewById(R.id.tilReps);
         tilWeight = findViewById(R.id.tilWeight);
-        tilNotes = findViewById(R.id.tilNotes);
         
         tilWeight.setHint(localDb.isMetricUnitsEnabled() ? "Weight (kg)" : "Weight (lbs)");
 
@@ -145,12 +140,12 @@ public class LogWorkoutActivity extends AppCompatActivity {
         successCheckmark = findViewById(R.id.successCheckmark);
 
         // Featured Header view bindings
-        cvFeaturedHeader = findViewById(R.id.cvFeaturedHeader);
-        tvFeaturedName = findViewById(R.id.tvFeaturedName);
-        tvFeaturedStats = findViewById(R.id.tvFeaturedStats);
-        tvFeaturedDesc = findViewById(R.id.tvFeaturedDesc);
-        ivFeaturedIllustration = findViewById(R.id.ivFeaturedIllustration);
-        tvFormTitle = findViewById(R.id.tvFormTitle);
+        View cvFeaturedHeader = findViewById(R.id.cvFeaturedHeader);
+        TextView tvFeaturedName = findViewById(R.id.tvFeaturedName);
+        TextView tvFeaturedStats = findViewById(R.id.tvFeaturedStats);
+        TextView tvFeaturedDesc = findViewById(R.id.tvFeaturedDesc);
+        ImageView ivFeaturedIllustration = findViewById(R.id.ivFeaturedIllustration);
+        TextView tvFormTitle = findViewById(R.id.tvFormTitle);
 
         // Initial Values & Configuration
         selectedWorkoutDate = dateFormat.format(new Date());
@@ -181,7 +176,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
             if (featuredDesc != null) tvFeaturedDesc.setText(featuredDesc);
             ivFeaturedIllustration.setImageResource(illustrationRes);
 
-            tvFormTitle.setText("Log Your Reps & Weights");
+            tvFormTitle.setText(R.string.log_reps_weights_title);
 
             // Pre-fill fields to valid starting baselines for premium user experience
             if (featuredName != null) {
@@ -269,11 +264,11 @@ public class LogWorkoutActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = s.length();
-                tvNotesCharCount.setText(length + " / 200");
+                tvNotesCharCount.setText(String.format(Locale.getDefault(), "%d / 200", length));
                 if (length >= 200) {
-                    tvNotesCharCount.setTextColor(getResources().getColor(R.color.workout_accent));
+                    tvNotesCharCount.setTextColor(ContextCompat.getColor(LogWorkoutActivity.this, R.color.workout_accent));
                 } else {
-                    tvNotesCharCount.setTextColor(getResources().getColor(R.color.workout_text_secondary));
+                    tvNotesCharCount.setTextColor(ContextCompat.getColor(LogWorkoutActivity.this, R.color.workout_text_secondary));
                 }
             }
 
@@ -411,7 +406,7 @@ public class LogWorkoutActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkFormValidity() {
+    private void checkFormValidity() {
         String name = etExerciseName.getText().toString().trim();
         String setsStr = etSets.getText().toString().trim();
         String repsStr = etReps.getText().toString().trim();
@@ -437,8 +432,6 @@ public class LogWorkoutActivity extends AppCompatActivity {
             btnSaveWorkout.setClickable(false);
             btnSaveWorkout.setAlpha(0.6f);
         }
-
-        return isValid;
     }
 
     private void clearValidationErrors() {
@@ -562,6 +555,29 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
         // Save local log
         localDb.saveWorkoutLog(log);
+
+        // Save Single Source of Truth WorkoutSession
+        com.fitness.app.models.WorkoutSession session = new com.fitness.app.models.WorkoutSession(name, "Manual Log", "Intermediate");
+        session.setSessionId(log.getId());
+        session.setDateStr(selectedWorkoutDate);
+
+        java.util.List<com.fitness.app.models.WorkoutExerciseItem> items = new java.util.ArrayList<>();
+        com.fitness.app.models.WorkoutExerciseItem item = new com.fitness.app.models.WorkoutExerciseItem(name, "Target Muscles", sets, reps, 0);
+        item.setCompletedSets(sets);
+        item.setActualCompletedReps(reps);
+        item.setStatus(com.fitness.app.models.WorkoutExerciseItem.Status.COMPLETED);
+        items.add(item);
+        session.setExercises(items);
+
+        double weightKg = 70.0;
+        com.fitness.app.models.User user = localDb.getUser();
+        if (user != null && user.getWeight() > 0) {
+            weightKg = localDb.isMetricUnitsEnabled() ? user.getWeight() : (user.getWeight() / 2.20462);
+        }
+        session.finalizeSessionMetrics(weightKg);
+        com.fitness.app.utils.AiWorkoutEngine.generateAnalysisAndRecommendations(session, localDb);
+        localDb.saveWorkoutSession(session);
+
         localDb.incrementStreak();
 
         // Automatically update Daily Progress & Weekly Calories Burned inside ProgressLog
@@ -572,9 +588,17 @@ public class LogWorkoutActivity extends AppCompatActivity {
             }
             int calBurned = getIntent().getIntExtra("calories_kcal", 0);
             if (calBurned <= 0) {
-                // Simple estimate based on sets, reps, and weight
-                calBurned = (int) (sets * reps * (weight > 0 ? (weight * 0.1) : 2.0));
-                if (calBurned < 50) calBurned = 180;
+                double met = 5.0;
+                String lowerName = name.toLowerCase();
+                if (lowerName.contains("squat") || lowerName.contains("leg")) met = 5.5;
+                else if (lowerName.contains("run") || lowerName.contains("cardio") || lowerName.contains("hiit") || lowerName.contains("jump")) met = 8.0;
+                else if (lowerName.contains("pushup") || lowerName.contains("chest") || lowerName.contains("arm")) met = 4.5;
+                else if (lowerName.contains("deadlift") || lowerName.contains("strength") || lowerName.contains("press")) met = 6.0;
+
+                double durationMins = (sets * reps * 4.0) / 60.0;
+                if (durationMins < 1.0) durationMins = 1.0;
+                calBurned = (int) Math.round((met * 3.5 * weightKg / 200.0) * durationMins);
+                if (calBurned < 10) calBurned = 15;
             }
             progressLog.setCaloriesBurned(progressLog.getCaloriesBurned() + calBurned);
             localDb.saveProgressLog(progressLog);
@@ -598,8 +622,8 @@ public class LogWorkoutActivity extends AppCompatActivity {
 
             successCheckmark.startAnimation(() -> {
                 Snackbar.make(scrollView, "Workout Saved Successfully", Snackbar.LENGTH_SHORT)
-                    .setBackgroundTint(getResources().getColor(R.color.workout_success))
-                    .setTextColor(getResources().getColor(R.color.workout_white))
+                    .setBackgroundTint(ContextCompat.getColor(LogWorkoutActivity.this, R.color.workout_success))
+                    .setTextColor(ContextCompat.getColor(LogWorkoutActivity.this, R.color.workout_white))
                     .show();
 
                 clearForm();

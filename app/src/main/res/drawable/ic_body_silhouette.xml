@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="240dp"
+    android:viewportWidth="120"
+    android:viewportHeight="240">
+    <!-- Head -->
+    <path
+        android:fillColor="#FEF08A"
+        android:pathData="M60,20C68.28,20 75,26.72 75,35C75,43.28 68.28,50 60,50C51.72,50 45,43.28 45,35C45,26.72 51.72,20 60,20Z" />
+    <!-- Body torso & limbs -->
+    <path
+        android:fillColor="#FEF08A"
+        android:pathData="M42,54C34,56 28,64 28,78V125C28,128 31,130 34,130C37,130 40,128 40,125V85H44V220C44,224 47,227 51,227C55,227 58,224 58,220V140H62V220C62,224 65,227 69,227C73,227 76,224 76,220V85H80V125C80,128 83,130 86,130C89,130 92,128 92,125V78C92,64 86,56 78,54Z" />
+</vector>

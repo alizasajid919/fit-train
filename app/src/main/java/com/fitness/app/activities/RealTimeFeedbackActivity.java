@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
@@ -26,26 +27,43 @@ import androidx.core.content.ContextCompat;
 
 import com.fitness.app.R;
 import com.fitness.app.data.local.LocalDataManager;
+import com.fitness.app.models.User;
+import com.fitness.app.models.WorkoutExerciseItem;
 import com.fitness.app.models.WorkoutLog;
+import com.fitness.app.models.WorkoutSession;
+import com.fitness.app.utils.AiWorkoutEngine;
 import com.fitness.app.views.PoseOverlayView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.pose.Pose;
 import com.google.mlkit.vision.pose.PoseDetection;
 import com.google.mlkit.vision.pose.PoseDetector;
-import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
 import com.google.mlkit.vision.pose.PoseLandmark;
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RealTimeFeedbackActivity extends AppCompatActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 1001;
+
+    // Supported Exercise Types
+    private static final int EXERCISE_TYPE_SQUAT = 1;
+    private static final int EXERCISE_TYPE_PUSHUP = 2;
+    private static final int EXERCISE_TYPE_LUNGE = 3;
+    private static final int EXERCISE_TYPE_PLANK = 4;
+
+    // Movement Cycle Stages
+    private static final int STAGE_STARTING = 0;
+    private static final int STAGE_MOVING_DOWN = 1;
+    private static final int STAGE_BOTTOM = 2;
+    private static final int STAGE_MOVING_UP = 3;
 
     private PreviewView pvCameraPreview;
     private PoseOverlayView ovPoseOverlay;
@@ -54,29 +72,32 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
     private View llLoadingLayout, llErrorLayout;
     private TextView tvRepCount, tvSetCount, tvSquatStage;
     private TextView tvOverallScore, tvAccuracyVal, tvDepthVal, tvBalanceVal, tvStabilityVal, tvPostureVal;
-    
+    private TextView btnToggleScan;
+
     private LocalDataManager localDb;
     private ExecutorService cameraExecutor;
     private ProcessCameraProvider cameraProvider;
     private PoseDetector poseDetector;
-    
-    private boolean isScanning = true;
+
+    private WorkoutSession currentSession;
+    private String exerciseName = "Standard Squats";
+    private int exerciseType = EXERCISE_TYPE_SQUAT;
+    private int targetReps = 12;
+    private int targetSets = 3;
+    private int plannedDurationSec = 0;
+
+    private boolean isWorkoutStarted = false;
+    private boolean isScanning = true; // Live posture evaluation active by default
     private boolean isFrontCamera = true;
-    private String exerciseName = "Standard Squat";
 
-    // Squat State Machine
-    private static final int STAGE_STANDING = 0;
-    private static final int STAGE_GOING_DOWN = 1;
-    private static final int STAGE_BOTTOM = 2;
-    private static final int STAGE_COMING_UP = 3;
-    
-    private int currentStage = STAGE_STANDING;
+    private int currentStage = STAGE_STARTING;
     private int repCount = 0;
-    private int completedSets = 1;
-    private final int targetReps = 15;
-    private final int targetSets = 3;
+    private int completedSets = 0;
+    private int invalidRepsCount = 0;
+    private long plankHoldStartTimeMs = 0;
+    private long totalPlankHoldMs = 0;
 
-    // Analytics Scores
+    // Rolling posture scores
     private double overallAccuracy = 0;
     private double overallDepth = 0;
     private double overallBalance = 0;
@@ -84,6 +105,7 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
     private double overallPosture = 0;
     private int frameCount = 0;
     private long sessionStartTime = 0;
+    private long lastInvalidFeedbackMs = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +115,11 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
 
         localDb = new LocalDataManager(this);
         cameraExecutor = Executors.newSingleThreadExecutor();
-        sessionStartTime = System.currentTimeMillis();
 
-        exerciseName = getIntent().getStringExtra("exercise_name");
-        if (exerciseName == null) exerciseName = "Standard Squats";
+        // 1. Initialize Workout Context from Intent
+        parseWorkoutIntent();
 
-        // Bind Views
+        // 2. Bind Layout Views
         pvCameraPreview = findViewById(R.id.pvCameraPreview);
         ovPoseOverlay = findViewById(R.id.ovPoseOverlay);
         vStatusIndicator = findViewById(R.id.vStatusIndicator);
@@ -120,14 +141,22 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         tvStabilityVal = findViewById(R.id.tvStabilityVal);
         tvPostureVal = findViewById(R.id.tvPostureVal);
 
-        // Set Toolbar Title
+        btnToggleScan = findViewById(R.id.btnToggleScan);
+
+        // Toolbar setup
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Standard Squat Form HUD");
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
+            getSupportActionBar().setTitle(exerciseName + " Form HUD");
         }
+        toolbar.setNavigationOnClickListener(v -> handleUserExitRequest());
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleUserExitRequest();
+            }
+        });
 
         // Initialize ML Kit Pose Detector
         PoseDetectorOptions options = new PoseDetectorOptions.Builder()
@@ -135,26 +164,96 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
                 .build();
         poseDetector = PoseDetection.getClient(options);
 
-        // Bind Controls
-        findViewById(R.id.btnToggleScan).setOnClickListener(v -> {
-            isScanning = !isScanning;
-            TextView btnText = (TextView) v;
-            if (isScanning) {
-                btnText.setText("Pause Tracking");
-                Toast.makeText(this, "HUD Tracking Resumed", Toast.LENGTH_SHORT).show();
-            } else {
-                btnText.setText("Resume Tracking");
-                Toast.makeText(this, "HUD Tracking Paused", Toast.LENGTH_SHORT).show();
-                tvSquatStage.setText("Paused");
-                ovPoseOverlay.clear();
-            }
-        });
+        // Start Workout Button setup
+        btnToggleScan.setText("START WORKOUT");
+        btnToggleScan.setOnClickListener(v -> handleStartOrToggleTracking());
 
-        findViewById(R.id.btnFinishSession).setOnClickListener(v -> finishSessionAndSave());
+        findViewById(R.id.btnFinishSession).setOnClickListener(v -> handleUserExitRequest());
         findViewById(R.id.btnRetry).setOnClickListener(v -> checkPermissionsAndSetupCamera());
 
-        updateCounters();
+        tvSquatStage.setText("Ready – Press START WORKOUT");
+        updateCountersUI();
         checkPermissionsAndSetupCamera();
+    }
+
+    private void parseWorkoutIntent() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("workout_session")) {
+            currentSession = (WorkoutSession) intent.getSerializableExtra("workout_session");
+        }
+
+        exerciseName = intent.getStringExtra("exercise_name");
+        if (exerciseName == null && currentSession != null) {
+            exerciseName = currentSession.getWorkoutTitle();
+        }
+        if (exerciseName == null) exerciseName = "Standard Squats";
+
+        targetReps = intent.getIntExtra("target_reps", 12);
+        targetSets = intent.getIntExtra("target_sets", 3);
+        plannedDurationSec = intent.getIntExtra("planned_duration", 0);
+
+        if (currentSession != null && currentSession.getExercises() != null && !currentSession.getExercises().isEmpty()) {
+            WorkoutExerciseItem item = currentSession.getExercises().get(0);
+            if (item.getPlannedReps() > 0) targetReps = item.getPlannedReps();
+            if (item.getPlannedSets() > 0) targetSets = item.getPlannedSets();
+            if (item.getPlannedDurationSec() > 0) plannedDurationSec = item.getPlannedDurationSec();
+        }
+
+        String lower = exerciseName.toLowerCase();
+        if (lower.contains("push")) {
+            exerciseType = EXERCISE_TYPE_PUSHUP;
+        } else if (lower.contains("lunge")) {
+            exerciseType = EXERCISE_TYPE_LUNGE;
+        } else if (lower.contains("plank")) {
+            exerciseType = EXERCISE_TYPE_PLANK;
+        } else {
+            exerciseType = EXERCISE_TYPE_SQUAT;
+        }
+
+        if (currentSession == null) {
+            currentSession = new WorkoutSession(exerciseName, "Form Check Workout", "Intermediate");
+            List<WorkoutExerciseItem> items = new ArrayList<>();
+            WorkoutExerciseItem item = new WorkoutExerciseItem(exerciseName, "Full Body", targetSets, targetReps, plannedDurationSec);
+            items.add(item);
+            currentSession.setExercises(items);
+        }
+    }
+
+    private void handleStartOrToggleTracking() {
+        if (!isWorkoutStarted) {
+            isWorkoutStarted = true;
+            isScanning = true;
+            sessionStartTime = System.currentTimeMillis();
+            currentSession.setStartTimeMs(sessionStartTime);
+            btnToggleScan.setText("Pause Tracking");
+            Toast.makeText(this, "Workout Tracking Active! Start performing reps.", Toast.LENGTH_SHORT).show();
+            tvSquatStage.setText("Active");
+        } else {
+            isScanning = !isScanning;
+            if (isScanning) {
+                btnToggleScan.setText("Pause Tracking");
+                tvSquatStage.setText("Active");
+                Toast.makeText(this, "Tracking Resumed", Toast.LENGTH_SHORT).show();
+            } else {
+                btnToggleScan.setText("Resume Tracking");
+                tvSquatStage.setText("Paused");
+                ovPoseOverlay.clear();
+                Toast.makeText(this, "Tracking Paused", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void handleUserExitRequest() {
+        if (isWorkoutStarted && (completedSets < targetSets || (plannedDurationSec > 0 && totalPlankHoldMs < plannedDurationSec * 1000L))) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Stop Workout?")
+                    .setMessage("Your current progress will be saved as an incomplete workout report.")
+                    .setPositiveButton("Stop & View Summary", (dialog, which) -> finishSessionAndSave(true))
+                    .setNegativeButton("Continue Workout", (dialog, which) -> dialog.dismiss())
+                    .show();
+        } else {
+            finishSessionAndSave(false);
+        }
     }
 
     private void checkPermissionsAndSetupCamera() {
@@ -174,10 +273,10 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         cameraProviderFuture.addListener(() -> {
             try {
                 cameraProvider = cameraProviderFuture.get();
-                tvLoadingStatus.setText("Loading AI Pose Model...");
+                tvLoadingStatus.setText("Loading AI Pose Engine...");
                 bindCameraUseCases();
             } catch (Exception e) {
-                showError("Unable to open camera provider: " + e.getMessage());
+                showError("Unable to initialize camera provider: " + e.getMessage());
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -214,11 +313,11 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
                                 int rotation = imageProxy.getImageInfo().getRotationDegrees();
                                 int width = (rotation == 90 || rotation == 270) ? imageProxy.getHeight() : imageProxy.getWidth();
                                 int height = (rotation == 90 || rotation == 270) ? imageProxy.getWidth() : imageProxy.getHeight();
-                                
+
                                 runOnUiThread(() -> {
                                     llLoadingLayout.setVisibility(View.GONE);
                                     ovPoseOverlay.setPose(pose, width, height, isFrontCamera);
-                                    evaluatePosture(pose);
+                                    evaluatePoseAndTrackWorkout(pose);
                                 });
                             })
                             .addOnFailureListener(e -> runOnUiThread(() -> {
@@ -235,15 +334,17 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
             cameraProvider.unbindAll();
             cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
         } catch (Exception e) {
-            showError("Use case binding failed: " + e.getMessage());
+            showError("Camera binding failed: " + e.getMessage());
         }
     }
 
-    private void evaluatePosture(Pose pose) {
+    private void evaluatePoseAndTrackWorkout(Pose pose) {
         PoseLandmark leftHip = pose.getPoseLandmark(PoseLandmark.LEFT_HIP);
         PoseLandmark leftKnee = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE);
         PoseLandmark leftAnkle = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE);
         PoseLandmark leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER);
+        PoseLandmark leftElbow = pose.getPoseLandmark(PoseLandmark.LEFT_ELBOW);
+        PoseLandmark leftWrist = pose.getPoseLandmark(PoseLandmark.LEFT_WRIST);
 
         PoseLandmark rightHip = pose.getPoseLandmark(PoseLandmark.RIGHT_HIP);
         PoseLandmark rightKnee = pose.getPoseLandmark(PoseLandmark.RIGHT_KNEE);
@@ -260,14 +361,13 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
 
         if (!leftSideOk && !rightSideOk) {
             tvPostureStatus.setText("Form Check: Aligning...");
-            tvPostureStatus.setTextColor(0xFF94A3B8); // Muted
+            tvPostureStatus.setTextColor(0xFF94A3B8);
             vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF94A3B8));
-            tvFeedbackTips.setText("Step back 2-3 meters and position your entire body in frame.");
+            tvFeedbackTips.setText("Step back so your full body is visible in camera frame.");
             ovPoseOverlay.setSkeletonColor(0xFF94A3B8);
             return;
         }
 
-        // Calculate joint angles
         double leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
         double rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
         double kneeAngle = (leftSideOk && rightSideOk) ? (leftKneeAngle + rightKneeAngle) / 2.0 : (leftSideOk ? leftKneeAngle : rightKneeAngle);
@@ -276,23 +376,34 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         double rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
         double hipAngle = (leftSideOk && rightSideOk) ? (leftHipAngle + rightHipAngle) / 2.0 : (leftSideOk ? leftHipAngle : rightHipAngle);
 
-        // 1. Squat State Machine
-        processSquatRep(kneeAngle);
+        double elbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+        double bodyLineAngle = calculateAngle(leftShoulder, leftHip, leftAnkle);
 
-        // 2. Form HUD analysis & Alerts
+        // Active Rep Tracking only when START WORKOUT has been tapped
+        if (isWorkoutStarted) {
+            if (exerciseType == EXERCISE_TYPE_PUSHUP) {
+                processPushupRep(elbowAngle, bodyLineAngle);
+            } else if (exerciseType == EXERCISE_TYPE_LUNGE) {
+                processLungeRep(kneeAngle, hipAngle);
+            } else if (exerciseType == EXERCISE_TYPE_PLANK) {
+                processPlankHold(bodyLineAngle);
+            } else {
+                processSquatRep(kneeAngle, hipAngle);
+            }
+        }
+
+        // Real-Time Posture HUD Calculations
         double depthPct = Math.max(0, Math.min(100, (170 - kneeAngle) / (170 - 90) * 100));
         double posturePct = Math.max(0, Math.min(100, (hipAngle - 40) / (90 - 40) * 100));
-        double balancePct = 95.0; // Assume stable horizontal alignment
+        double balancePct = 95.0;
         if (leftShoulder != null && rightShoulder != null) {
             double shoulderSymmetry = Math.abs(leftShoulder.getPosition().y - rightShoulder.getPosition().y);
             balancePct = Math.max(0, Math.min(100, 100 - (shoulderSymmetry * 5)));
         }
         double stabilityPct = 94.0;
         double accuracyPct = (depthPct + posturePct + balancePct) / 3.0;
-
         double currentScore = (accuracyPct + depthPct + balancePct + stabilityPct + posturePct) / 5.0;
 
-        // Keep rolling averages for summary
         frameCount++;
         overallAccuracy = ((overallAccuracy * (frameCount - 1)) + accuracyPct) / frameCount;
         overallDepth = ((overallDepth * (frameCount - 1)) + depthPct) / frameCount;
@@ -300,37 +411,31 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         overallStability = ((overallStability * (frameCount - 1)) + stabilityPct) / frameCount;
         overallPosture = ((overallPosture * (frameCount - 1)) + posturePct) / frameCount;
 
-        // Draw skeletons based on accuracy status
         if (currentScore > 80) {
-            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2563EB)); // Success Green
-            tvPostureStatus.setText("✔ Correct Form");
+            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2563EB));
+            tvPostureStatus.setText("✔ Body Detected – Correct Form");
             tvPostureStatus.setTextColor(0xFF2563EB);
             ovPoseOverlay.setSkeletonColor(0xFF2563EB);
-            tvFeedbackTips.setText("Excellent form. Keep drive weight through your heels.");
+            if (!isWorkoutStarted) {
+                tvFeedbackTips.setText("Body aligned! Press START WORKOUT to begin tracking.");
+            } else {
+                tvFeedbackTips.setText("Excellent form! Keep driving weight through your heels.");
+            }
         } else if (currentScore > 55) {
-            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFF59E0B)); // Warning Yellow
-            tvPostureStatus.setText("⚠ Knees Too Forward");
+            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFF59E0B));
+            tvPostureStatus.setText("⚠ Form Warning");
             tvPostureStatus.setTextColor(0xFFF59E0B);
             ovPoseOverlay.setSkeletonColor(0xFFF59E0B);
-            tvFeedbackTips.setText("Keep knees aligned behind toes. Push your hips back.");
+            tvFeedbackTips.setText("Control movement speed and keep core engaged.");
         } else {
-            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFEF4444)); // Error Red
-            tvPostureStatus.setText("⚠ Lean Back Slightly");
+            vStatusIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFEF4444));
+            tvPostureStatus.setText("⚠ Correction Needed");
             tvPostureStatus.setTextColor(0xFFEF4444);
             ovPoseOverlay.setSkeletonColor(0xFFEF4444);
-            tvFeedbackTips.setText("Straighten your back. Engage core to support your spine.");
+            tvFeedbackTips.setText("Keep back straight and complete full range of motion.");
         }
 
-        // Update UI panels
         tvOverallScore.setText(String.format(Locale.getDefault(), "%d", (int) currentScore));
-        if (currentScore > 80) {
-            tvOverallScore.setTextColor(0xFF2563EB);
-        } else if (currentScore > 55) {
-            tvOverallScore.setTextColor(0xFFF59E0B);
-        } else {
-            tvOverallScore.setTextColor(0xFFEF4444);
-        }
-
         tvAccuracyVal.setText(String.format(Locale.getDefault(), "Accuracy: %d%%", (int) accuracyPct));
         tvDepthVal.setText(String.format(Locale.getDefault(), "Depth: %d%%", (int) depthPct));
         tvBalanceVal.setText(String.format(Locale.getDefault(), "Balance: %d%%", (int) balancePct));
@@ -338,23 +443,24 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         tvPostureVal.setText(String.format(Locale.getDefault(), "Posture: %d%%", (int) posturePct));
     }
 
-    private void processSquatRep(double kneeAngle) {
+    private void processSquatRep(double kneeAngle, double hipAngle) {
         switch (currentStage) {
-            case STAGE_STANDING:
+            case STAGE_STARTING:
                 tvSquatStage.setText("Standing");
                 tvSquatStage.setTextColor(0xFF3B82F6);
                 if (kneeAngle < 155) {
-                    currentStage = STAGE_GOING_DOWN;
+                    currentStage = STAGE_MOVING_DOWN;
                 }
                 break;
 
-            case STAGE_GOING_DOWN:
+            case STAGE_MOVING_DOWN:
                 tvSquatStage.setText("Going Down");
                 tvSquatStage.setTextColor(0xFFF59E0B);
                 if (kneeAngle < 110) {
                     currentStage = STAGE_BOTTOM;
                 } else if (kneeAngle > 162) {
-                    currentStage = STAGE_STANDING;
+                    logInvalidRep("Incomplete squat depth. Lower your hips lower to complete the rep.");
+                    currentStage = STAGE_STARTING;
                 }
                 break;
 
@@ -362,26 +468,18 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
                 tvSquatStage.setText("Bottom Position");
                 tvSquatStage.setTextColor(0xFF2563EB);
                 if (kneeAngle > 115) {
-                    currentStage = STAGE_COMING_UP;
+                    currentStage = STAGE_MOVING_UP;
                 }
                 break;
 
-            case STAGE_COMING_UP:
+            case STAGE_MOVING_UP:
                 tvSquatStage.setText("Coming Up");
                 tvSquatStage.setTextColor(0xFF6366F1);
                 if (kneeAngle > 160) {
                     repCount++;
-                    currentStage = STAGE_STANDING;
-                    
-                    if (repCount >= targetReps) {
-                        repCount = 0;
-                        completedSets++;
-                        if (completedSets > targetSets) {
-                            completedSets = targetSets;
-                            finishSessionAndSave();
-                        }
-                    }
-                    updateCounters();
+                    currentStage = STAGE_STARTING;
+                    checkSetProgress();
+                    updateCountersUI();
                 } else if (kneeAngle < 110) {
                     currentStage = STAGE_BOTTOM;
                 }
@@ -389,8 +487,111 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         }
     }
 
-    private void updateCounters() {
-        tvRepCount.setText(String.format(Locale.getDefault(), "%d / %d", repCount, targetReps));
+    private void processPushupRep(double elbowAngle, double bodyLineAngle) {
+        if (bodyLineAngle < 150) {
+            logInvalidRep("Keep your body in a straight line!");
+        }
+
+        switch (currentStage) {
+            case STAGE_STARTING:
+                tvSquatStage.setText("Plank Top");
+                if (elbowAngle < 150) currentStage = STAGE_MOVING_DOWN;
+                break;
+            case STAGE_MOVING_DOWN:
+                tvSquatStage.setText("Lowering");
+                if (elbowAngle < 95) currentStage = STAGE_BOTTOM;
+                else if (elbowAngle > 160) {
+                    logInvalidRep("Push-up too shallow. Lower chest lower.");
+                    currentStage = STAGE_STARTING;
+                }
+                break;
+            case STAGE_BOTTOM:
+                tvSquatStage.setText("Bottom Push");
+                if (elbowAngle > 105) currentStage = STAGE_MOVING_UP;
+                break;
+            case STAGE_MOVING_UP:
+                tvSquatStage.setText("Pressing Up");
+                if (elbowAngle > 155) {
+                    repCount++;
+                    currentStage = STAGE_STARTING;
+                    checkSetProgress();
+                    updateCountersUI();
+                }
+                break;
+        }
+    }
+
+    private void processLungeRep(double kneeAngle, double hipAngle) {
+        switch (currentStage) {
+            case STAGE_STARTING:
+                tvSquatStage.setText("Standing Lunge");
+                if (kneeAngle < 150) currentStage = STAGE_MOVING_DOWN;
+                break;
+            case STAGE_MOVING_DOWN:
+                tvSquatStage.setText("Stepping Down");
+                if (kneeAngle < 105) currentStage = STAGE_BOTTOM;
+                else if (kneeAngle > 158) {
+                    logInvalidRep("Incomplete lunge depth. Bend front knee to 90 degrees.");
+                    currentStage = STAGE_STARTING;
+                }
+                break;
+            case STAGE_BOTTOM:
+                tvSquatStage.setText("Lunge Bottom");
+                if (kneeAngle > 115) currentStage = STAGE_MOVING_UP;
+                break;
+            case STAGE_MOVING_UP:
+                tvSquatStage.setText("Driving Up");
+                if (kneeAngle > 155) {
+                    repCount++;
+                    currentStage = STAGE_STARTING;
+                    checkSetProgress();
+                    updateCountersUI();
+                }
+                break;
+        }
+    }
+
+    private void processPlankHold(double bodyLineAngle) {
+        if (bodyLineAngle >= 155 && bodyLineAngle <= 195) {
+            if (plankHoldStartTimeMs == 0) plankHoldStartTimeMs = System.currentTimeMillis();
+            totalPlankHoldMs += (System.currentTimeMillis() - plankHoldStartTimeMs);
+            plankHoldStartTimeMs = System.currentTimeMillis();
+            tvSquatStage.setText(String.format(Locale.getDefault(), "Holding %ds", totalPlankHoldMs / 1000));
+        } else {
+            plankHoldStartTimeMs = 0;
+            logInvalidRep("Keep hips level and body aligned in a straight line!");
+            tvSquatStage.setText("Adjust Hips");
+        }
+    }
+
+    private void logInvalidRep(String feedback) {
+        long now = System.currentTimeMillis();
+        if (now - lastInvalidFeedbackMs > 3000) {
+            invalidRepsCount++;
+            lastInvalidFeedbackMs = now;
+            Toast.makeText(this, "⚠ " + feedback, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void checkSetProgress() {
+        if (repCount >= targetReps) {
+            repCount = 0;
+            completedSets++;
+            if (completedSets >= targetSets) {
+                completedSets = targetSets;
+                finishSessionAndSave(false);
+            } else {
+                Toast.makeText(this, "Set " + completedSets + " Complete! Great job.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void updateCountersUI() {
+        if (plannedDurationSec > 0) {
+            tvRepCount.setText(String.format(Locale.getDefault(), "%ds / %ds", totalPlankHoldMs / 1000, plannedDurationSec));
+        } else {
+            tvRepCount.setText(String.format(Locale.getDefault(), "%d / %d", repCount, targetReps));
+        }
         tvSetCount.setText(String.format(Locale.getDefault(), "%d / %d", completedSets, targetSets));
     }
 
@@ -410,52 +611,85 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
         return angle;
     }
 
-    private void finishSessionAndSave() {
+    private void finishSessionAndSave(boolean stoppedEarly) {
         isScanning = false;
-        
+
         int finalScore = (int) ((overallAccuracy + overallDepth + overallBalance + overallStability + overallPosture) / 5.0);
-        if (frameCount == 0) finalScore = 90; // Default fallback if no frame processed
+        if (frameCount == 0) finalScore = 88;
 
-        // Save progress to local DB
-        String logId = UUID.randomUUID().toString();
-        String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        long timestamp = System.currentTimeMillis();
+        int totalActualReps = (completedSets * targetReps) + repCount;
+        long durationMs = sessionStartTime > 0 ? (System.currentTimeMillis() - sessionStartTime) : 30000L;
 
-        int totalReps = (completedSets - 1) * targetReps + repCount;
-        long durationMs = System.currentTimeMillis() - sessionStartTime;
+        currentSession.setStartTimeMs(sessionStartTime > 0 ? sessionStartTime : System.currentTimeMillis() - durationMs);
+        currentSession.setEndTimeMs(System.currentTimeMillis());
+        currentSession.setActiveDurationMs(durationMs);
+        currentSession.setHeartRateStatus("Not available");
+        currentSession.setStepsStatus("Not applicable");
+        currentSession.setStoppedEarly(stoppedEarly);
 
-        org.json.JSONObject notesObj = new org.json.JSONObject();
+        List<WorkoutExerciseItem> items = currentSession.getExercises();
+        if (items == null || items.isEmpty()) {
+            items = new ArrayList<>();
+            WorkoutExerciseItem item = new WorkoutExerciseItem(exerciseName, "Full Body", targetSets, targetReps, plannedDurationSec);
+            items.add(item);
+            currentSession.setExercises(items);
+        }
+
+        WorkoutExerciseItem mainExercise = items.get(0);
+        mainExercise.setCompletedSets(completedSets);
+        mainExercise.setActualCompletedReps(totalActualReps);
+        mainExercise.setInvalidReps(invalidRepsCount);
+
+        if (completedSets >= targetSets) {
+            mainExercise.setStatus(WorkoutExerciseItem.Status.COMPLETED);
+        } else if (completedSets > 0 || totalActualReps > 0 || totalPlankHoldMs > 0) {
+            mainExercise.setStatus(WorkoutExerciseItem.Status.PARTIALLY_COMPLETED);
+        } else {
+            mainExercise.setStatus(WorkoutExerciseItem.Status.SKIPPED);
+        }
+
+        if (finalScore < 75 || invalidRepsCount > 2) {
+            mainExercise.setFormNotes("Posture warning: " + invalidRepsCount + " incomplete movements detected. Focus on range of motion.");
+        }
+
+        double weightKg = 70.0;
+        User user = localDb.getUser();
+        if (user != null && user.getWeight() > 0) {
+            weightKg = localDb.isMetricUnitsEnabled() ? user.getWeight() : (user.getWeight() / 2.20462);
+        }
+        currentSession.finalizeSessionMetrics(weightKg);
+
+        AiWorkoutEngine.generateAnalysisAndRecommendations(currentSession, localDb);
+
+        localDb.saveWorkoutSession(currentSession);
+
         try {
+            JSONObject notesObj = new JSONObject();
             notesObj.put("average_form_score", finalScore);
+            notesObj.put("invalid_reps", invalidRepsCount);
             notesObj.put("accuracy", (int) overallAccuracy);
             notesObj.put("depth", (int) overallDepth);
-            notesObj.put("balance", (int) overallBalance);
-            notesObj.put("stability", (int) overallStability);
-            notesObj.put("posture", (int) overallPosture);
             notesObj.put("duration_ms", durationMs);
+
+            WorkoutLog log = new WorkoutLog(
+                    currentSession.getSessionId(),
+                    exerciseName,
+                    completedSets,
+                    totalActualReps,
+                    0.0,
+                    notesObj.toString(),
+                    currentSession.getDateStr(),
+                    currentSession.getTimestamp()
+            );
+            localDb.saveWorkoutLog(log);
+            localDb.incrementStreak();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        WorkoutLog log = new WorkoutLog(
-                logId,
-                exerciseName,
-                completedSets,
-                totalReps > 0 ? totalReps : targetReps, // Log actual reps
-                0.0,
-                notesObj.toString(),
-                dateStr,
-                timestamp
-        );
-        
-        localDb.saveWorkoutLog(log);
-
-        // Navigate to Workout Summary Screen
         Intent intent = new Intent(this, WorkoutSummaryActivity.class);
-        intent.putExtra("exercise_name", exerciseName);
-        intent.putExtra("total_reps", totalReps > 0 ? totalReps : targetReps);
-        intent.putExtra("completed_sets", completedSets);
-        intent.putExtra("duration_ms", durationMs);
+        intent.putExtra("session_id", currentSession.getSessionId());
+        intent.putExtra("workout_session", currentSession);
         intent.putExtra("average_form_score", finalScore);
         intent.putExtra("accuracy", (int) overallAccuracy);
         intent.putExtra("depth", (int) overallDepth);
@@ -481,29 +715,9 @@ public class RealTimeFeedbackActivity extends AppCompatActivity {
                 llErrorLayout.setVisibility(View.GONE);
                 startCameraSetup();
             } else {
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                    showPermanentlyDeniedDialog();
-                } else {
-                    showError("FitTrain requires camera permission to scan and correct posture in real-time.");
-                }
+                showError("FitTrain requires camera permission for real-time form check pose tracking.");
             }
         }
-    }
-
-    private void showPermanentlyDeniedDialog() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Camera Permission Required")
-                .setMessage("You have permanently denied camera access. Please enable camera permission in App Settings to use the AI Posture Coach.")
-                .setPositiveButton("Go to Settings", (dialog, which) -> {
-                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    android.net.Uri uri = android.net.Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    showError("Camera permission permanently denied. Enable it in App Settings.");
-                })
-                .show();
     }
 
     @Override

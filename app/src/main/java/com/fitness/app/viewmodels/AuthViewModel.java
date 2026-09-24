@@ -38,6 +38,10 @@ public class AuthViewModel extends ViewModel {
         return userRepository.isEmailVerified();
     }
 
+    public LiveData<UserRepository.Resource<Boolean>> reloadAndCheckEmailVerification() {
+        return userRepository.reloadAndCheckEmailVerification();
+    }
+
     public LiveData<UserRepository.Resource<String>> resendEmailVerification() {
         return userRepository.resendEmailVerification();
     }

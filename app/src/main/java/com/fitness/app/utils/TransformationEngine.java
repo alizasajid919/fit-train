@@ -1,5 +1,7 @@
 package com.fitness.app.utils;
 
+import android.util.Log;
+
 import com.fitness.app.models.TransformationPlan;
 import com.fitness.app.models.TransformationProgress;
 import com.fitness.app.models.TransformationTask;
@@ -62,10 +64,18 @@ public class TransformationEngine {
         String rationale = "Based on your weight difference of " + weightDiff + "kg and goal of " + user.getGoal() 
                 + ", we recommend a " + durationWeeks + "-week program. This provides a healthy fat loss rate of ~0.5kg/week, preserving muscle mass and ensuring permanent results.";
 
+        boolean hasPhotos = (currentPhotoUrl != null && !currentPhotoUrl.isEmpty()) || (idealPhotoUrl != null && !idealPhotoUrl.isEmpty());
+        if (hasPhotos) {
+            rationale += " Visual photo composition analysis incorporated.";
+        }
+
         if (goal.contains("muscle") || goal.contains("gain")) {
             muscleDev = "Sub-optimal mass in deltoids and pectorals.";
             areasToImprove = "Upper body strength and progressive overload capacity.";
             rationale = "A " + durationWeeks + "-week slow lean-bulking plan is chosen. This avoids excess fat gain while providing progressive weight-loading targets.";
+            if (hasPhotos) {
+                rationale += " Visual photo composition analysis incorporated.";
+            }
         }
 
         // Generate milestones
@@ -84,7 +94,7 @@ public class TransformationEngine {
                 milestones.put(m);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("TransformationEngine", "Error generating milestones JSON", e);
         }
 
         return new AssessmentResult(durationWeeks, currentBodyFat, targetBodyFat, muscleDev, areasToImprove, rationale, milestones.toString());
@@ -100,6 +110,10 @@ public class TransformationEngine {
         int baseCalories = 2000;
         int baseSteps = 10000;
         int workoutDurationMin = 30;
+
+        if (plan != null && "COMPLETED".equalsIgnoreCase(plan.getStatus())) {
+            baseCalories += 100; // Maintenance buffer for completed plan
+        }
 
         String goal = user.getGoal() != null ? user.getGoal().toLowerCase() : "general";
         if (goal.contains("lose") || goal.contains("fat")) {
@@ -117,7 +131,7 @@ public class TransformationEngine {
             
             if (compliance < 0.6) {
                 // If workouts missed, lower the base targets to avoid user burnout and ease them back in
-                baseCalories += 100; // Allow slightly more buffer
+                baseCalories += 100; // Allow a larger calorie buffer
                 baseSteps = Math.max(8000, baseSteps - 1500);
                 workoutDurationMin = Math.max(20, workoutDurationMin - 5);
             } else if (compliance > 0.9) {
@@ -129,7 +143,7 @@ public class TransformationEngine {
 
         // 1. Workout Task
         String workoutTitle = "AI Transformation Core workout";
-        String workoutDesc = "Warmup: 5 min stretching. Main: Squats 4x12, Pushups 4x10, Plank 3x60s. Cardio: " + (baseSteps > 10000 ? "20" : "10") + " min run.";
+        String workoutDesc = "Warmup: 5 min stretching. Main: Squats 4x12, Push-ups 4x10, Plank 3x60s. Cardio: " + (baseSteps > 10000 ? "20" : "10") + " min run.";
         tasks.add(new TransformationTask(user.getUid(), date, "WORKOUT", workoutTitle, workoutDesc, workoutDurationMin, 0, false));
 
         // 2. Diet Task
@@ -137,7 +151,7 @@ public class TransformationEngine {
         int fat = (int) (user.getWeight() * 0.8);
         int carbs = (baseCalories - (protein * 4 + fat * 9)) / 4;
         String dietTitle = "Target: " + baseCalories + " kcal";
-        String dietDesc = "Breakfast: Oatmeal with eggs. Lunch: Chicken breast with rice & veggies. Dinner: Salmon with avocado salad. Snacks: Protein shake.";
+        String dietDesc = "Target Macros: " + protein + "g P / " + carbs + "g C / " + fat + "g F. Breakfast: Oatmeal with eggs. Lunch: Chicken breast with rice & veggies. Dinner: Salmon with avocado salad. Snacks: Protein shake.";
         tasks.add(new TransformationTask(user.getUid(), date, "DIET", dietTitle, dietDesc, baseCalories, 0, false));
 
         // 3. Water Task
@@ -149,3 +163,4 @@ public class TransformationEngine {
         return tasks;
     }
 }
+

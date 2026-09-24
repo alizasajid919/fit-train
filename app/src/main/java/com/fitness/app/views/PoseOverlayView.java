@@ -88,6 +88,7 @@ public class PoseOverlayView extends View {
 
         // Draw points (joints keypoints)
         for (PoseLandmark landmark : landmarks) {
+            if (landmark == null || landmark.getInFrameLikelihood() <= 0.4f) continue;
             PointF point = landmark.getPosition();
             float x = point.x * scaleX;
             float y = point.y * scaleY;
@@ -105,7 +106,7 @@ public class PoseOverlayView extends View {
         PoseLandmark start = currentPose.getPoseLandmark(startJoint);
         PoseLandmark end = currentPose.getPoseLandmark(endJoint);
 
-        if (start != null && end != null) {
+        if (start != null && end != null && start.getInFrameLikelihood() > 0.4f && end.getInFrameLikelihood() > 0.4f) {
             PointF startPoint = start.getPosition();
             PointF endPoint = end.getPosition();
 

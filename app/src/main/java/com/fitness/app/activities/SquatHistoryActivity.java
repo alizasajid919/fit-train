@@ -221,6 +221,11 @@ public class SquatHistoryActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, WorkoutSummaryActivity.class);
+        com.fitness.app.models.WorkoutSession session = localDb.getWorkoutSession(log.getId());
+        if (session != null) {
+            intent.putExtra("workout_session", session);
+            intent.putExtra("session_id", session.getSessionId());
+        }
         intent.putExtra("exercise_name", log.getExerciseName());
         intent.putExtra("total_reps", log.getReps());
         intent.putExtra("completed_sets", log.getSets());
@@ -231,6 +236,8 @@ public class SquatHistoryActivity extends AppCompatActivity {
         intent.putExtra("balance", bal);
         intent.putExtra("stability", stab);
         intent.putExtra("posture", post);
+        intent.putExtra("heart_rate_str", "Not available");
+        intent.putExtra("steps_distance_str", "Not applicable");
         startActivity(intent);
     }
 

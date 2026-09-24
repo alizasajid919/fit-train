@@ -102,6 +102,9 @@ public class EditProfileActivity extends AppCompatActivity {
         // Bind Headers
         tvEditProfileName = findViewById(R.id.tvEditProfileName);
         tvEditProfileEmail = findViewById(R.id.tvEditProfileEmail);
+        if (tvEditProfileEmail != null) {
+            tvEditProfileEmail.setVisibility(View.GONE);
+        }
 
         // Bind Form Inputs
         etEditFirstName = findViewById(R.id.etEditFirstName);
@@ -249,7 +252,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         builder.setView(layout);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new 8ArrayList<>(cityList));
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>(cityList));
         listView.setAdapter(adapter);
 
         android.app.AlertDialog dialog = builder.create();
@@ -499,8 +502,8 @@ public class EditProfileActivity extends AppCompatActivity {
             scrollToView(etEditLastName);
             return;
         }
-        if (!com.fitness.app.utils.ValidationUtils.isValidEmail(email)) {
-            etEditEmail.setError("Please enter a valid email address");
+        if (!email.isEmpty() && !com.fitness.app.utils.ValidationUtils.isValidEmail(email)) {
+            etEditEmail.setError("Please enter a valid email address.");
             scrollToView(etEditEmail);
             return;
         }

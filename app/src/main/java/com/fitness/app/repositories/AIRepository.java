@@ -12,7 +12,10 @@ import com.fitness.app.data.room.ChatDao;
 import com.fitness.app.models.ChatMessage;
 import com.fitness.app.models.User;
 import com.fitness.app.data.local.LocalDataManager;
-import com.fitness.app.utils.AIResponseHandler;
+import com.fitness.app.utils.FitTrainAiEngine;
+import com.fitness.app.utils.FitTrainContextBuilder;
+import com.fitness.app.utils.FitTrainDataRetriever;
+import com.fitness.app.utils.FitTrainIntentRouter;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AIRepository implements AINetworkInterface {
@@ -67,16 +71,15 @@ public class AIRepository implements AINetworkInterface {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        // Continue to local fallback if remote call throws network exception
+                        // Continue to local engine fallback if remote call throws network exception
                     }
                 }
 
-                // 4. Local Emulator Fallback if key missing or remote fails
-                Thread.sleep(1200); // Simulate network latency
-                // Get the N latest history messages from Room database to pass into fallback memory
+                // 4. FitTrain AI Engine Fallback if key missing or remote fails
+                Thread.sleep(800); // Simulate realistic response delay
                 List<ChatMessage> history = chatDao.getAllMessages();
-                String fallbackResponse = AIResponseHandler.generateResponse(query, user, history);
-                mainHandler.post(() -> callback.onSuccess(fallbackResponse));
+                String engineResponse = FitTrainAiEngine.processQuery(query, user, history, context);
+                mainHandler.post(() -> callback.onSuccess(engineResponse));
 
             } catch (Exception e) {
                 mainHandler.post(() -> callback.onFailure(e));
@@ -109,13 +112,42 @@ public class AIRepository implements AINetworkInterface {
 
         JSONObject bodyJson = new JSONObject();
 
-        // System Instruction Config
+        // 1. Detect Intent and fetch specific data for context injection
+        FitTrainIntentRouter.Intent intent = FitTrainIntentRouter.detectIntent(currentQuery);
+        String intentRetrievedData = "";
+
+        switch (intent) {
+            case WORKOUT_TODAY:
+            case WORKOUT_PLAN:
+                intentRetrievedData = "RETRIEVED WORKOUT DATA: " + FitTrainDataRetriever.getTodayWorkout(context, user);
+                break;
+            case WORKOUT_HISTORY:
+                intentRetrievedData = "RETRIEVED WORKOUT HISTORY: " + FitTrainDataRetriever.getWorkoutHistory(context);
+                break;
+            case DIET_TODAY:
+            case MEAL_SCHEDULE:
+                intentRetrievedData = "RETRIEVED DIET DATA: " + FitTrainDataRetriever.getTodayDiet(context);
+                break;
+            case CALORIES_BURNED:
+            case STEPS_ACTIVITY:
+            case WATER_HYDRATION:
+            case SLEEP_RECOVERY:
+                intentRetrievedData = "RETRIEVED DAILY ACTIVITY: " + FitTrainDataRetriever.getDailyActivity(context);
+                break;
+            case PROGRESS_STREAK:
+                intentRetrievedData = "RETRIEVED PROGRESS/STREAK: " + FitTrainDataRetriever.getStreakAndProgress(context, user);
+                break;
+            default:
+                break;
+        }
+
+        // System Instruction Config via FitTrainContextBuilder
         LocalDataManager localDb = new LocalDataManager(context);
         boolean noBodyShaming = localDb.isBodyShamingProtectionEnabled();
         String currentLang = localDb.sharedPreferences.getString("app_language_code", "en");
 
         String shamingInstruction = noBodyShaming ? 
-            "You must ALWAYS respond with highly supportive, motivational, empathetic, and respectful language. Avoid negative, critical, or judgmental wording. Show encouraging workout and nutrition suggestions, and display positive achievement messages." :
+            "You must ALWAYS respond with highly supportive, motivational, empathetic, and respectful language. Avoid negative, critical, or judgmental wording." :
             "Use your standard coaching style, remaining professional, direct, and respectful.";
 
         String languageInstruction = "You MUST write your entire response ONLY in ";
@@ -129,58 +161,23 @@ public class AIRepository implements AINetworkInterface {
             languageInstruction += "English language.";
         }
 
-        String systemPrompt = "You are an intelligent, professional, and friendly AI Fitness Coach and virtual assistant. "
-                + shamingInstruction + " " + languageInstruction + " "
-                + "Your goal is to provide fitness guidance, workout recommendations, diet planning, health tips, motivation, "
-                + "but ALSO intelligently and helpfully answer general knowledge, educational, tech, programming, or everyday questions. "
-                + "Do not restrict yourself to fitness if asked about something else, but you can gently relate it to health if contextually appropriate.";
+        String baseSystemPrompt = FitTrainContextBuilder.buildSystemInstruction(context, user);
+        String finalSystemPrompt = baseSystemPrompt + "\n"
+                + "DETECTED USER INTENT: " + intent.name() + "\n"
+                + intentRetrievedData + "\n"
+                + shamingInstruction + " " + languageInstruction;
 
         JSONObject systemInstruction = new JSONObject();
         JSONArray parts = new JSONArray();
         JSONObject textObj = new JSONObject();
-        textObj.put("text", systemPrompt);
+        textObj.put("text", finalSystemPrompt);
         parts.put(textObj);
         systemInstruction.put("parts", parts);
         bodyJson.put("systemInstruction", systemInstruction);
 
-        // Fetch last 15 historical messages for context memory
-        List<ChatMessage> history = chatDao.getAllMessages();
-        int historySize = history.size();
-        int startIndex = Math.max(0, historySize - 15);
-
-        JSONArray contentsArray = new JSONArray();
-
-        // User profile context to pass with first conversation block
-        String userContext = "";
-        if (user != null) {
-            userContext = "User Context Profile - Name: " + user.getFirstName()
-                    + ", goal: " + user.getGoal()
-                    + ", current weight: " + user.getWeight() + " kg, height: " + user.getHeight() + " cm. ";
-        }
-
-        for (int i = startIndex; i < historySize; i++) {
-            ChatMessage msg = history.get(i);
-            if ("AI_TYPING".equals(msg.getSender()) || "TYPING_ID".equals(msg.getId())) {
-                continue;
-            }
-            JSONObject contentObj = new JSONObject();
-            contentObj.put("role", "USER".equals(msg.getSender()) ? "user" : "model");
-            
-            JSONArray contentParts = new JSONArray();
-            JSONObject contentTextObj = new JSONObject();
-            
-            String msgText = msg.getText();
-            if ("USER".equals(msg.getSender()) && i == startIndex && !userContext.isEmpty()) {
-                msgText = "[" + userContext + "] " + msgText;
-            }
-            
-            contentTextObj.put("text", msgText);
-            contentParts.put(contentTextObj);
-            contentObj.put("parts", contentParts);
-            
-            contentsArray.put(contentObj);
-        }
-
+        // Fetch and sanitize history to ensure strictly alternating roles ('user', 'model', 'user', 'model'...)
+        List<ChatMessage> rawHistory = chatDao.getAllMessages();
+        JSONArray contentsArray = sanitizeHistoryForGemini(rawHistory, currentQuery);
         bodyJson.put("contents", contentsArray);
 
         // Send payload
@@ -213,5 +210,88 @@ public class AIRepository implements AINetworkInterface {
             throw new RuntimeException("HTTP error code: " + code);
         }
         return null;
+    }
+
+    public static JSONArray sanitizeHistoryForGemini(List<ChatMessage> rawHistory, String currentQuery) throws Exception {
+        JSONArray contentsArray = new JSONArray();
+        List<JSONObject> turns = new ArrayList<>();
+
+        if (rawHistory != null) {
+            int startIndex = Math.max(0, rawHistory.size() - 15);
+            for (int i = startIndex; i < rawHistory.size(); i++) {
+                ChatMessage msg = rawHistory.get(i);
+                if (msg == null || "AI_TYPING".equals(msg.getSender()) || "TYPING_ID".equals(msg.getId())) {
+                    continue;
+                }
+
+                String role = "USER".equalsIgnoreCase(msg.getSender()) ? "user" : "model";
+                String text = msg.getText() != null ? msg.getText().trim() : "";
+                if (text.isEmpty()) continue;
+
+                if (turns.isEmpty()) {
+                    if ("user".equals(role)) {
+                        JSONObject turn = new JSONObject();
+                        turn.put("role", "user");
+                        turn.put("text", text);
+                        turns.add(turn);
+                    }
+                } else {
+                    JSONObject lastTurn = turns.get(turns.size() - 1);
+                    String lastRole = lastTurn.getString("role");
+
+                    if (role.equals(lastRole)) {
+                        // Merge consecutive same-role messages
+                        String prevText = lastTurn.getString("text");
+                        lastTurn.put("text", prevText + "\n" + text);
+                    } else {
+                        JSONObject turn = new JSONObject();
+                        turn.put("role", role);
+                        turn.put("text", text);
+                        turns.add(turn);
+                    }
+                }
+            }
+        }
+
+        // Handle currentQuery
+        if (currentQuery != null && !currentQuery.trim().isEmpty()) {
+            String cleanQuery = currentQuery.trim();
+            if (turns.isEmpty()) {
+                JSONObject turn = new JSONObject();
+                turn.put("role", "user");
+                turn.put("text", cleanQuery);
+                turns.add(turn);
+            } else {
+                JSONObject lastTurn = turns.get(turns.size() - 1);
+                String lastRole = lastTurn.getString("role");
+                if ("user".equals(lastRole)) {
+                    String prevText = lastTurn.getString("text");
+                    if (!prevText.contains(cleanQuery)) {
+                        lastTurn.put("text", prevText + "\n" + cleanQuery);
+                    }
+                } else {
+                    JSONObject turn = new JSONObject();
+                    turn.put("role", "user");
+                    turn.put("text", cleanQuery);
+                    turns.add(turn);
+                }
+            }
+        }
+
+        // Format into Gemini API structure
+        for (JSONObject t : turns) {
+            JSONObject contentObj = new JSONObject();
+            contentObj.put("role", t.getString("role"));
+
+            JSONArray contentParts = new JSONArray();
+            JSONObject contentTextObj = new JSONObject();
+            contentTextObj.put("text", t.getString("text"));
+            contentParts.put(contentTextObj);
+            contentObj.put("parts", contentParts);
+
+            contentsArray.put(contentObj);
+        }
+
+        return contentsArray;
     }
 }

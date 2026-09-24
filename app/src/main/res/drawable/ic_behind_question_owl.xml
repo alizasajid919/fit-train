@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Circle face background -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M24,4C12.95,4 4,12.95 4,24s8.95,20 20,20 20,-8.95 20,-20S35.05,4 24,4z" />
+    <!-- Glasses left lens -->
+    <path
+        android:strokeColor="#0F172A"
+        android:strokeWidth="2.5"
+        android:fillColor="#FFFFFF"
+        android:pathData="M17,24m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0" />
+    <!-- Glasses right lens -->
+    <path
+        android:strokeColor="#0F172A"
+        android:strokeWidth="2.5"
+        android:fillColor="#FFFFFF"
+        android:pathData="M31,24m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0" />
+    <!-- Glasses bridge -->
+    <path
+        android:strokeColor="#0F172A"
+        android:strokeWidth="2.5"
+        android:pathData="M23,24h2" />
+    <!-- Eyes -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M17,24m-2,0a2,2 0 1,1 4,0a2,2 0 1,1 -4,0" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M31,24m-2,0a2,2 0 1,1 4,0a2,2 0 1,1 -4,0" />
+    <!-- Smile -->
+    <path
+        android:strokeColor="#0F172A"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round"
+        android:pathData="M20,32c2,2 6,2 8,0" />
+</vector>

@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#EFF6FF"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Shield Base -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M100,35l50,20v45c0,35 -25,60 -50,70 -25,-10 -50,-35 -50,-70V55l50,-20z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M100,42l42,17v39c0,30 -21,51 -42,60V42z" />
+
+    <!-- Heartpulse Icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,95h14l5,-12 8,24 6,-18 5,6h12v4H110l-4,-5 -6,17 -8,-24 -5,11H75v-4z" />
+</vector>

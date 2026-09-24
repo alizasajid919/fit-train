@@ -128,7 +128,9 @@ public class ProfileFragment extends Fragment {
         if (user == null) return;
 
         tvProfileName.setText(user.getFirstName() + " " + user.getLastName());
-        tvProfileEmail.setText(user.getEmail());
+        if (tvProfileEmail != null) {
+            tvProfileEmail.setVisibility(View.GONE);
+        }
 
         String goal = user.getGoal() != null && !user.getGoal().isEmpty() ? user.getGoal() : "Improve Fitness";
         tvProfileGoalTitle.setText(goal);

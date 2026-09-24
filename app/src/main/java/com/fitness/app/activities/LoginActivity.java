@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
 
         if (!ValidationUtils.isValidEmail(email)) {
-            etEmail.setError(getString(R.string.err_invalid_email));
+            etEmail.setError("Please enter a valid email address.");
             etEmail.requestFocus();
             return;
         }
@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                         break;
                     case ERROR:
                         progressOverlay.setVisibility(View.GONE);
-                        Toast.makeText(this, "Login Failed: " + resource.message, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, resource.message, Toast.LENGTH_LONG).show();
                         break;
                 }
             }

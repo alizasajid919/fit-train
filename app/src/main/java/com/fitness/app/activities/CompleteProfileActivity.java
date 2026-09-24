@@ -45,7 +45,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
     private Spinner spGender, spActivityLevel, spCountry;
     private TextView tvCity, tvMedicalCondition;
     private ImageView ivCityArrow, ivMedicalConditionArrow;
-    private EditText etDob, etWeight, etHeight;
+    private EditText etDob, etWeight, etHeight, etFullName, etEmail;
     private View progressOverlay;
     private ScrollView scrollView;
     private Button btnRegisterProfile;
@@ -55,8 +55,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
     private String selectedMedicalConditionStr = "";
 
     // View Containers & Inline Error Labels
-    private View containerGender, containerWeight, containerHeight, containerActivityLevel, containerCountry, containerCity, containerMedicalCondition;
-    private TextView tvErrorGender, tvErrorDob, tvErrorWeight, tvErrorHeight, tvErrorActivityLevel, tvErrorCountry, tvErrorCity, tvErrorMedicalCondition;
+    private View containerGender, containerWeight, containerHeight, containerActivityLevel, containerCountry, containerCity, containerMedicalCondition, containerFullName, containerEmail;
+    private TextView tvErrorGender, tvErrorDob, tvErrorWeight, tvErrorHeight, tvErrorActivityLevel, tvErrorCountry, tvErrorCity, tvErrorMedicalCondition, tvErrorFullName, tvErrorEmail;
 
     private AuthViewModel authViewModel;
     private ProfileViewModel profileViewModel;
@@ -97,10 +97,14 @@ public class CompleteProfileActivity extends AppCompatActivity {
         etDob = findViewById(R.id.etDob);
         etWeight = findViewById(R.id.etWeight);
         etHeight = findViewById(R.id.etHeight);
+        etFullName = findViewById(R.id.etFullName);
+        etEmail = findViewById(R.id.etEmail);
         progressOverlay = findViewById(R.id.progressOverlay);
         btnRegisterProfile = findViewById(R.id.btnNext);
 
         // Bind Containers & Inline Error Views
+        containerFullName = findViewById(R.id.containerFullName);
+        containerEmail = findViewById(R.id.containerEmail);
         containerGender = findViewById(R.id.containerGender);
         containerWeight = findViewById(R.id.containerWeight);
         containerHeight = findViewById(R.id.containerHeight);
@@ -109,6 +113,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
         containerCity = findViewById(R.id.containerCity);
         containerMedicalCondition = findViewById(R.id.containerMedicalCondition);
 
+        tvErrorFullName = findViewById(R.id.tvErrorFullName);
+        tvErrorEmail = findViewById(R.id.tvErrorEmail);
         tvErrorGender = findViewById(R.id.tvErrorGender);
         tvErrorDob = findViewById(R.id.tvErrorDob);
         tvErrorWeight = findViewById(R.id.tvErrorWeight);
@@ -335,6 +341,16 @@ public class CompleteProfileActivity extends AppCompatActivity {
     }
 
     private void populateFields(User user) {
+        if (etFullName != null) {
+            String name = (user.getFirstName() != null ? user.getFirstName() : "") + 
+                    (user.getLastName() != null && !user.getLastName().isEmpty() ? " " + user.getLastName() : "");
+            if (!name.trim().isEmpty()) {
+                etFullName.setText(name.trim());
+            }
+        }
+        if (etEmail != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
+            etEmail.setText(user.getEmail());
+        }
         if (user.getGender() != null && !user.getGender().isEmpty()) {
             if ("Male".equalsIgnoreCase(user.getGender())) spGender.setSelection(1);
             else if ("Female".equalsIgnoreCase(user.getGender())) spGender.setSelection(2);
@@ -374,6 +390,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
     }
 
     private void clearAllErrors() {
+        if (tvErrorFullName != null) tvErrorFullName.setVisibility(View.GONE);
+        if (tvErrorEmail != null) tvErrorEmail.setVisibility(View.GONE);
         if (tvErrorGender != null) tvErrorGender.setVisibility(View.GONE);
         if (tvErrorDob != null) tvErrorDob.setVisibility(View.GONE);
         if (tvErrorWeight != null) tvErrorWeight.setVisibility(View.GONE);
@@ -408,6 +426,22 @@ public class CompleteProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Profile data not synchronized. Please try again.", Toast.LENGTH_SHORT).show();
                 return;
             }
+        }
+
+        String fullName = etFullName != null ? etFullName.getText().toString().trim() : "";
+        String email = etEmail != null ? etEmail.getText().toString().trim() : "";
+
+        // 0. Full Name Validation
+        if (ValidationUtils.isEmpty(fullName)) {
+            showFieldError(containerFullName, tvErrorFullName, "Please enter your full name");
+            return;
+        }
+
+        // 0.5. Email Format Validation
+        if (!ValidationUtils.isValidEmail(email)) {
+            showFieldError(containerEmail, tvErrorEmail, "Please enter a valid email address.");
+            if (etEmail != null) etEmail.requestFocus();
+            return;
         }
 
         String gender = spGender.getSelectedItem() != null ? spGender.getSelectedItem().toString() : "";
@@ -475,6 +509,10 @@ public class CompleteProfileActivity extends AppCompatActivity {
         }
 
         // Update User model instance
+        String[] nameParts = fullName.split("\\s+", 2);
+        currentUserModel.setFirstName(nameParts[0]);
+        currentUserModel.setLastName(nameParts.length > 1 ? nameParts[1] : "");
+        currentUserModel.setEmail(email);
         currentUserModel.setGender(gender);
         currentUserModel.setDob(dob);
         currentUserModel.setWeight(parsedWeight);
@@ -517,6 +555,62 @@ public class CompleteProfileActivity extends AppCompatActivity {
     }
 
     private void submitProfileToBackend() {
+        FirebaseUser firebaseUser = authViewModel.getCurrentUser();
+        if (firebaseUser != null && !firebaseUser.isAnonymous()) {
+            authViewModel.reloadAndCheckEmailVerification().observe(this, resource -> {
+                if (resource != null) {
+                    switch (resource.status) {
+                        case SUCCESS:
+                            if (Boolean.TRUE.equals(resource.data)) {
+                                currentUserModel.setProfileCompleted(true);
+                                executeProfileBackendSubmit();
+                            } else {
+                                if (btnRegisterProfile != null) {
+                                    btnRegisterProfile.setEnabled(true);
+                                    btnRegisterProfile.setText("Register Profile");
+                                }
+                                showUnverifiedEmailDialog();
+                            }
+                            break;
+                        case ERROR:
+                            if (btnRegisterProfile != null) {
+                                btnRegisterProfile.setEnabled(true);
+                                btnRegisterProfile.setText("Register Profile");
+                            }
+                            Toast.makeText(this, resource.message, Toast.LENGTH_LONG).show();
+                            break;
+                        case LOADING:
+                            break;
+                    }
+                }
+            });
+        } else {
+            currentUserModel.setProfileCompleted(true);
+            executeProfileBackendSubmit();
+        }
+    }
+
+    private void showUnverifiedEmailDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Email Verification Required");
+        builder.setMessage("A verification email has been sent to your email address. Please verify your email before completing your profile.");
+        builder.setPositiveButton("Check Verification", (dialog, which) -> {
+            submitProfileToBackend();
+        });
+        builder.setNeutralButton("Resend Email", (dialog, which) -> {
+            authViewModel.resendEmailVerification().observe(CompleteProfileActivity.this, res -> {
+                if (res != null && res.status == com.fitness.app.repositories.UserRepository.Resource.Status.SUCCESS) {
+                    Toast.makeText(CompleteProfileActivity.this, res.data, Toast.LENGTH_SHORT).show();
+                } else if (res != null && res.status == com.fitness.app.repositories.UserRepository.Resource.Status.ERROR) {
+                    Toast.makeText(CompleteProfileActivity.this, res.message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    private void executeProfileBackendSubmit() {
         profileViewModel.updateUserProfile(currentUserModel).observe(this, resource -> {
             if (resource != null) {
                 switch (resource.status) {
@@ -528,7 +622,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
                         // Save profile locally in Room DB
                         new com.fitness.app.data.local.LocalDataManager(CompleteProfileActivity.this).saveUser(currentUserModel);
                         
-                        // Show Success State Notification for 2-3 seconds as required
+                        // Show Success State Notification
                         Snackbar.make(findViewById(android.R.id.content), "Your personal data has been successfully saved.", Snackbar.LENGTH_LONG).show();
                         
                         if (btnRegisterProfile != null) {

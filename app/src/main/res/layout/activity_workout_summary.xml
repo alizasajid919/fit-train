@@ -227,7 +227,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:columnCount="2"
-                        app:rowCount="2"
+                        app:rowCount="4"
                         android:alignmentMode="alignMargins"
                         android:columnOrderPreserved="false">
 
@@ -261,23 +261,227 @@
                             android:layout_height="wrap_content"
                             app:layout_columnWeight="1"
                             android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
                             android:layout_marginEnd="8dp">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DURATION" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
                             <TextView android:id="@+id/tvDuration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2m 45s" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
                         </LinearLayout>
 
-                        <!-- Calories -->
+                        <!-- Est Calories -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:layout_columnWeight="1"
                             android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
                             android:layout_marginStart="8dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EST. CALORIES" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EST. CALORIES BURNED" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
                             <TextView android:id="@+id/tvCalories" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="48 kcal" android:textColor="#2563EB" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
                         </LinearLayout>
 
+                        <!-- Completion Rate -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginEnd="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WORKOUT COMPLETION" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvCompletionRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100%" android:textColor="#10B981" android:textSize="16sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Heart Rate -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginStart="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HEART RATE" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvHeartRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Not available" android:textColor="#CBD5E1" android:textSize="14sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <!-- Steps and Distance -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="0dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="STEPS / DISTANCE" android:textColor="#94A3B8" android:textSize="10sp" android:textStyle="bold" />
+                            <TextView android:id="@+id/tvStepsDistance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Not applicable" android:textColor="#CBD5E1" android:textSize="14sp" android:textStyle="bold" android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
                     </androidx.gridlayout.widget.GridLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Exercise-by-Exercise Breakdown Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardExerciseBreakdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EXERCISE-BY-EXERCISE REPORT"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvExerciseBreakdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- User Perceived Exertion (RPE) Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HOW DID THIS SESSION FEEL?"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cgRpe"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipEasy"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Easy" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipModerate"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Moderate" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipDifficult"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Difficult" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipVeryDifficult"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Very Difficult" />
+                    </com.google.android.material.chip.ChipGroup>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- AI Performance Analysis Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/tvAiAnalysisTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI PERFORMANCE ANALYSIS"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvAiAnalysisBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Evaluating workout metrics..."
+                        android:textColor="#E2E8F0"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- AI Personalized Recommendations Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/tvAiRecommendationTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI PERSONALIZED RECOMMENDATIONS"
+                        android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvAiRecommendationBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Generating recommendations..."
+                        android:textColor="#E2E8F0"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -298,7 +502,7 @@
             android:layout_height="48dp"
             android:background="@drawable/bg_button_gradient"
             android:backgroundTint="#475569"
-            android:text="View Session History 📊"
+            android:text="View Session History"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"

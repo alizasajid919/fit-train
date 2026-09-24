@@ -220,11 +220,15 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.cardAiFormCheck).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
             intent.putExtra("exercise_name", "Standard Squats");
+            intent.putExtra("target_reps", 12);
+            intent.putExtra("target_sets", 3);
             startActivity(intent);
         });
         view.findViewById(R.id.btnStartAiFormCheck).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
             intent.putExtra("exercise_name", "Standard Squats");
+            intent.putExtra("target_reps", 12);
+            intent.putExtra("target_sets", 3);
             startActivity(intent);
         });
         view.findViewById(R.id.btnViewSquatHistory).setOnClickListener(v -> {
@@ -344,46 +348,54 @@ public class HomeFragment extends Fragment {
 
         // Steps Card
         int steps = todayLog.getStepsCount();
+        int targetSteps = user.getDailyStepGoal() > 0 ? user.getDailyStepGoal() : 8000;
         tvStepsVal.setText(getString(R.string.home_steps_val, String.valueOf(steps)));
+        pbSteps.setMax(targetSteps);
         pbSteps.setProgress(steps);
-        int stepsPercent = (int) ((steps / 10000.0) * 100);
+        int stepsPercent = (int) ((steps / (double) targetSteps) * 100);
         if (stepsPercent > 100) stepsPercent = 100;
         tvStepsPercent.setText(stepsPercent >= 100 ? getString(R.string.home_steps_goal) : getString(R.string.home_steps_percent, stepsPercent));
 
         // Calories Card
         int calories = todayLog.getCaloriesBurned();
+        int targetCal = user.getDailyCaloriesGoal() > 0 ? user.getDailyCaloriesGoal() : 2000;
         tvCaloriesVal.setText(getString(R.string.home_calories_val, String.valueOf(calories)));
+        pbCalories.setMax(targetCal);
         pbCalories.setProgress(calories);
-        int calPercent = (int) ((calories / 2000.0) * 100);
+        int calPercent = (int) ((calories / (double) targetCal) * 100);
         if (calPercent > 100) calPercent = 100;
         tvCaloriesPercent.setText(getString(R.string.home_calories_percent, calPercent));
 
         // Water Card
         int water = todayLog.getWaterConsumedMl();
+        int targetWater = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : 2500;
         tvWaterVal.setText(getString(R.string.home_water_val, String.valueOf(water)));
+        pbWater.setMax(targetWater);
         pbWater.setProgress(water);
-        int waterPercent = (int) ((water / 2500.0) * 100);
+        int waterPercent = (int) ((water / (double) targetWater) * 100);
         if (waterPercent > 100) waterPercent = 100;
         tvWaterPercent.setText(waterPercent >= 100 ? getString(R.string.home_water_goal) : getString(R.string.home_water_percent, waterPercent));
 
         // Sleep Card
         int sleepMin = todayLog.getSleepDurationMinutes();
+        int targetSleep = user.getDailySleepGoal() > 0 ? user.getDailySleepGoal() : 480;
         int hours = sleepMin / 60;
         int minutes = sleepMin % 60;
         tvSleepVal.setText(getString(R.string.home_sleep_val, hours, minutes));
+        pbSleep.setMax(targetSleep);
         pbSleep.setProgress(sleepMin);
-        int sleepPercent = (int) ((sleepMin / 480.0) * 100);
+        int sleepPercent = (int) ((sleepMin / (double) targetSleep) * 100);
         if (sleepPercent > 100) sleepPercent = 100;
         tvSleepPercent.setText(sleepPercent >= 100 ? getString(R.string.home_sleep_goal) : getString(R.string.home_sleep_percent, sleepPercent));
 
         // CheckBox goals state
-        cbTaskSteps.setChecked(steps >= 10000);
-        cbTaskWater.setChecked(water >= 2500);
-        cbTaskSleep.setChecked(sleepMin >= 480);
+        cbTaskSteps.setChecked(steps >= targetSteps);
+        cbTaskWater.setChecked(water >= targetWater);
+        cbTaskSleep.setChecked(sleepMin >= targetSleep);
 
-        cbTaskSteps.setEnabled(steps < 10000);
-        cbTaskWater.setEnabled(water < 2500);
-        cbTaskSleep.setEnabled(sleepMin < 480);
+        cbTaskSteps.setEnabled(steps < targetSteps);
+        cbTaskWater.setEnabled(water < targetWater);
+        cbTaskSleep.setEnabled(sleepMin < targetSleep);
 
         // BMI Card
         double weight = user.getWeight() > 0 ? user.getWeight() : todayLog.getCurrentWeight();

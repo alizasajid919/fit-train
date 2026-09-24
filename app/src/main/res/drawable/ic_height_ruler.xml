@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Soft Orange Backdrop -->
+    <path
+        android:fillColor="#FFF7ED"
+        android:pathData="M100,10C50.29,10 10,50.29 10,100s40.29,90 90,90 90,-40.29 90,-90S149.71,10 100,10z" />
+
+    <!-- Height Ruler Vertical Tape -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,30h50v140H75z" />
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M75,30h10v140H75z" />
+
+    <!-- Ruler Ticks -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M85,45h20v4H85zm0,15h12v3H85zm0,15h12v3H85zm0,15h24v4H85zm0,15h12v3H85zm0,15h12v3H85zm0,15h24v4H85zm0,15h12v3H85z" />
+
+    <!-- Pointer Arrow Indicator -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M145,90l-15,10 15,10z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M145,96h25v8h-25z" />
+</vector>
