@@ -7,6 +7,7 @@ import com.fitness.app.models.DietPlan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class RecommendationEngine {
@@ -14,20 +15,66 @@ public class RecommendationEngine {
     public static List<String> getRecommendations(User user, Map<String, ProgressLog> logs) {
         List<String> list = new ArrayList<>();
 
-        // Default Recommendations based on Goal
-        String goal = user.getGoal();
-        if ("Lose Fat".equalsIgnoreCase(goal)) {
-            list.add("Focus on calorie-deficit meals. High fiber and low glycemic foods will help keep you full.");
-            list.add("Integrate 30-40 minutes of moderate intensity cardio (HIIT or brisk walking) 3-4 times a week.");
-        } else if ("Gain Muscle".equalsIgnoreCase(goal)) {
-            list.add("Increase protein intake to 1.6g - 2.2g per kg of body weight to support muscle protein synthesis.");
-            list.add("Focus on progressive overload: increase the weight or reps slightly in each workout session.");
-        } else {
-            list.add("Keep a consistent schedule. Balance strength training with active recovery days.");
-            list.add("Prioritize nutrient-dense foods: colorful vegetables, whole grains, and healthy fats.");
+        if (user == null) {
+            list.add("Maintain a balanced schedule with regular activity and hydration.");
+            return list;
         }
 
-        // Analyze recent logs
+        String goal = user.getGoal() != null ? user.getGoal() : "Improve Fitness";
+        String cleanGoal = goal.toLowerCase(Locale.getDefault());
+        String medical = user.getMedicalConditions() != null ? user.getMedicalConditions().toLowerCase(Locale.getDefault()) : "";
+        int age = user.getAge() > 0 ? user.getAge() : 25;
+        double weight = user.getWeight() > 0 ? user.getWeight() : 70.0;
+        double targetWeight = user.getTargetWeight() > 0 ? user.getTargetWeight() : weight;
+
+        // 1. Goal-Specific Recommendations
+        if (cleanGoal.contains("loss") || cleanGoal.contains("fat")) {
+            list.add("Focus on a sustained caloric deficit with high-protein and high-fiber foods to support fat loss while preserving muscle.");
+            list.add("Incorporate 30-45 minutes of brisk walking or moderate cardio 4-5 days a week for steady energy burn.");
+            if (targetWeight < weight && weight > 0) {
+                double remaining = weight - targetWeight;
+                list.add(String.format(Locale.getDefault(), "Target Progress: You have %.1f kg to reach your weight loss goal of %.1f kg.", remaining, targetWeight));
+            }
+        } else if (cleanGoal.contains("gain") || cleanGoal.contains("muscle") || cleanGoal.contains("bulk")) {
+            list.add("Maintain a slight caloric surplus (~300-500 kcal) with 1.6g to 2.2g of protein per kg of body weight.");
+            list.add("Focus on progressive strength overload: add 1 rep or slight resistance every week for key compound exercises.");
+            if (targetWeight > weight && weight > 0) {
+                double remaining = targetWeight - weight;
+                list.add(String.format(Locale.getDefault(), "Target Progress: You have %.1f kg to gain to hit your target of %.1f kg.", remaining, targetWeight));
+            }
+        } else if (cleanGoal.contains("tone") || cleanGoal.contains("shape") || cleanGoal.contains("recomposition")) {
+            list.add("Prioritize body recomposition: keep calories near maintenance while maintaining high protein for lean muscle definition.");
+            list.add("Combine moderate resistance training 3-4 days a week with light active recovery days.");
+        } else if (cleanGoal.contains("endurance") || cleanGoal.contains("cardio") || cleanGoal.contains("energy")) {
+            list.add("Focus on aerobic threshold building and complex carbohydrate intake to sustain daily stamina.");
+            list.add("Build steady workout sessions increasing total active time by 5-10% weekly.");
+        } else {
+            list.add("Keep a consistent routine balancing resistance training, aerobic activity, and rest days.");
+            list.add("Prioritize nutrient-dense whole foods: colorful vegetables, healthy fats, and lean protein sources.");
+        }
+
+        // 2. Health Condition Guardrails
+        if (medical.contains("joint") || medical.contains("arthritis")) {
+            list.add("Joint Protection: Perform low-impact, joint-friendly movements (Chair Squats, Wall Sits, Step-ups). Avoid high-impact jumping.");
+        }
+        if (medical.contains("hypertension") || medical.contains("blood pressure")) {
+            list.add("Cardiovascular Safety: Keep sodium intake below 1500mg daily and practice controlled breathing during workouts.");
+        }
+        if (medical.contains("diabetes")) {
+            list.add("Metabolic Guidance: Choose complex, low-GI carbohydrates and limit added sugars to support stable blood glucose.");
+        }
+        if (medical.contains("asthma") || medical.contains("respiratory")) {
+            list.add("Respiratory Safety: Warm up thoroughly and take 60-90 second rest breaks between exercises.");
+        }
+
+        // 3. Age-Specific Adaptations
+        if (age >= 50) {
+            list.add("Recovery Focus: Prioritize joint flexibility, core stability, and 7-8 hours of sleep for optimal recovery.");
+        } else if (age < 25) {
+            list.add("Performance Focus: Your recovery rate is fast—strive for progressive consistency in strength and activity targets.");
+        }
+
+        // 4. Log Analysis & Progress Checking
         if (logs != null && !logs.isEmpty()) {
             double avgWater = 0;
             double avgSteps = 0;
@@ -41,28 +88,22 @@ public class RecommendationEngine {
             avgSteps /= logs.size();
             avgSleep /= logs.size();
 
-            // Water intake check
-            if (avgWater < 2000) {
-                list.add("Your average water intake is below 2L. Try carrying a water bottle to reach your daily hydration target.");
+            int targetWater = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : (int) (weight * 35);
+            if (avgWater < targetWater) {
+                list.add(String.format(Locale.getDefault(), "Hydration Note: Your average water intake is ~%.0f ml. Aim for your daily target of %d ml.", avgWater, targetWater));
             } else {
-                list.add("Great job keeping hydrated! Hydration supports metabolism and workout recovery.");
+                list.add("Hydration Star: Excellent work keeping your hydration above target level!");
             }
 
-            // Steps check
-            if (avgSteps < 6000) {
-                list.add("Your daily step count is low. Aim for a short 15-minute walk after meals to increase active calorie burn.");
-            } else if (avgSteps > 10000) {
-                list.add("Fantastic daily activity level! Keep maintaining over 10,000 steps daily.");
+            int targetSteps = user.getDailyStepGoal() > 0 ? user.getDailyStepGoal() : 8000;
+            if (avgSteps < targetSteps) {
+                list.add(String.format(Locale.getDefault(), "Activity Level: You average ~%.0f steps/day. A short 15-minute walk will help hit your target of %d steps.", avgSteps, targetSteps));
             }
 
-            // Sleep check
-            if (avgSleep > 0 && avgSleep < 420) { // 7 hours
-                list.add("Sleep is critical for muscle recovery. Try to secure 7-8 hours of restful sleep every night.");
+            if (avgSleep > 0 && avgSleep < 420) {
+                list.add("Sleep Optimization: Sleep averaged under 7 hours. Adequate rest is essential for muscle repair and fat loss.");
             }
         }
-
-        // General wellness advice
-        list.add("Listen to your body. If you feel excessive fatigue, schedule an active recovery day with gentle stretching.");
 
         return list;
     }
@@ -91,51 +132,98 @@ public class RecommendationEngine {
             repsMultiplier = -2;
         }
 
-        String goal = user.getGoal();
-        String equip = user.getAvailableEquipment();
-        if (equip == null || equip.isEmpty()) equip = "Bodyweight";
+        int age = user.getAge() > 0 ? user.getAge() : 25;
+        String goal = user.getGoal() != null ? user.getGoal() : "Improve Fitness";
+        String cleanGoal = goal.toLowerCase(Locale.getDefault());
+        String equip = user.getAvailableEquipment() != null ? user.getAvailableEquipment().toLowerCase(Locale.getDefault()) : "bodyweight";
+        String medical = user.getMedicalConditions() != null ? user.getMedicalConditions().toLowerCase(Locale.getDefault()) : "";
+
+        boolean hasJointIssue = medical.contains("joint") || medical.contains("arthritis");
+        boolean isSenior = age >= 50;
 
         List<WorkoutPlan.Exercise> exercises = new ArrayList<>();
-        
-        if ("Lose Fat".equalsIgnoreCase(goal) || "Lose Weight".equalsIgnoreCase(goal)) {
-            if ("Bodyweight".equalsIgnoreCase(equip)) {
-                exercises.add(new WorkoutPlan.Exercise("Jumping Jacks", "High-intensity cardio warm-up", 3, Math.max(10, 20 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Bodyweight Squats", "Lower body strength builder", 4, Math.max(8, 15 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Mountain Climbers", "Core and stamina push", 3, Math.max(15, 30 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Plank Hold", "Static abdominal hold", 3, 0, Math.max(30, 45 + repsMultiplier * 5)));
-            } else if ("Dumbbells".equalsIgnoreCase(equip)) {
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Goblet Squats", "Weighted squat targeting quads & glutes", 4, Math.max(8, 12 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Shoulder Press", "Upper body press", 3, Math.max(8, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Renegade Rows", "Core stability and back strength", 3, Math.max(8, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Burpees", "Full body cardio burst", 3, Math.max(5, 10 + repsMultiplier), 0));
+
+        if (cleanGoal.contains("loss") || cleanGoal.contains("fat")) {
+            // WEIGHT LOSS WORKOUT PLAN
+            if (hasJointIssue || isSenior) {
+                exercises.add(new WorkoutPlan.Exercise("Chair Squats", "Low-impact quad & glute strengthening", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Wall Push-ups", "Safe upper body push without joint strain", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Seated Knee Tucks", "Core stability exercise", 3, Math.max(10, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Brisk Stationary Marching", "Low-impact aerobic burn", 3, 0, Math.max(60, 90 + repsMultiplier * 10)));
+            } else if (equip.contains("dumbbell")) {
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Goblet Squats", "Weighted squat for quad & core calorie burn", 4, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Shoulder Press", "Overhead press for upper body strength", 3, Math.max(8, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Renegade Rows", "Core stability & back strength", 3, Math.max(8, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Thrusters", "Full-body compound cardio push", 3, Math.max(6, 10 + repsMultiplier), 0));
+            } else if (equip.contains("resistance band") || equip.contains("band")) {
+                exercises.add(new WorkoutPlan.Exercise("Banded Monster Walks", "Glute & hip strength warm-up", 3, Math.max(12, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Banded Chest Press", "Controlled resistance chest builder", 4, Math.max(10, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Banded Rows", "Back strength & posture corrector", 3, Math.max(12, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Banded Squat Pulses", "High-rep lower body burn", 3, Math.max(12, 20 + repsMultiplier), 0));
+            } else if (equip.contains("chair") || equip.contains("bottle") || equip.contains("backpack")) {
+                exercises.add(new WorkoutPlan.Exercise("Backpack Weighted Squats", "Household equipment squat", 4, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Chair Dips", "Tricep & chest push", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Water Bottle Bicep Curls", "Isolated arm conditioning", 3, Math.max(12, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Step-ups on Chair/Stairs", "Lower body cardio burn", 3, Math.max(10, 15 + repsMultiplier), 0));
             } else {
-                exercises.add(new WorkoutPlan.Exercise("Barbell Back Squats", "Core lower body compound movement", 4, Math.max(6, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Bench Press", "Chest builder", 4, Math.max(6, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Lat Pulldown", "Back width builder", 3, Math.max(8, 12 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Treadmill Sprint", "Interval cardio sprint", 1, 0, 300));
+                exercises.add(new WorkoutPlan.Exercise("Jumping Jacks", "High-intensity cardio warm-up", 3, Math.max(15, 25 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Bodyweight Squats", "Lower body strength builder", 4, Math.max(10, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Mountain Climbers", "Core and stamina push", 3, Math.max(15, 30 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Plank Hold", "Static core strength hold", 3, 0, Math.max(30, 45 + repsMultiplier * 5)));
             }
-        } else if ("Gain Muscle".equalsIgnoreCase(goal) || "Build Muscle".equalsIgnoreCase(goal)) {
-            if ("Bodyweight".equalsIgnoreCase(equip)) {
+        } else if (cleanGoal.contains("gain") || cleanGoal.contains("muscle") || cleanGoal.contains("bulk")) {
+            // WEIGHT GAIN / MUSCLE GAIN PLAN
+            if (hasJointIssue || isSenior) {
+                exercises.add(new WorkoutPlan.Exercise("Glute Bridges", "Joint-safe posterior chain builder", 4, Math.max(10, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Incline Bench Push-ups", "Controlled chest builder", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Supported Single-Leg Rows", "Upper back strength", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Bird-Dog Holds", "Core & lower back stability", 3, 0, 30));
+            } else if (equip.contains("dumbbell")) {
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Chest Press", "Chest & tricep hypertrophy", 4, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Romanian Deadlifts", "Hamstring & glute strength", 4, Math.max(8, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Bicep Curls", "Isolated arm builder", 3, Math.max(10, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Dumbbell Lateral Raises", "Shoulder hypertrophy", 3, Math.max(10, 12 + repsMultiplier), 0));
+            } else if (equip.contains("barbell")) {
+                exercises.add(new WorkoutPlan.Exercise("Barbell Deadlifts", "Compound full-body builder", 4, Math.max(4, 8 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Barbell Bench Press", "Chest mass builder", 4, Math.max(6, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Barbell Bent-Over Rows", "Back thickness builder", 4, Math.max(6, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Barbell Overhead Press", "Shoulder strength builder", 3, Math.max(6, 8 + repsMultiplier), 0));
+            } else if (equip.contains("backpack") || equip.contains("resistance band")) {
+                exercises.add(new WorkoutPlan.Exercise("Weighted Backpack Squats", "Loaded progressive squats", 4, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Banded Push-ups", "Resisted chest push", 4, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Backpack Rows", "Loaded back builder", 4, Math.max(10, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Banded Bicep Curls", "Isolated arm resistance", 3, Math.max(12, 15 + repsMultiplier), 0));
+            } else {
                 exercises.add(new WorkoutPlan.Exercise("Push-ups", "Chest, shoulders, and triceps builder", 4, Math.max(8, 15 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Pike Push-ups", "Shoulder strength focus", 3, Math.max(6, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Pike Push-ups", "Shoulder hypertrophy focus", 3, Math.max(6, 10 + repsMultiplier), 0));
                 exercises.add(new WorkoutPlan.Exercise("Bulgarian Split Squats", "Single-leg hypertrophy builder", 3, Math.max(8, 12 + repsMultiplier), 0));
                 exercises.add(new WorkoutPlan.Exercise("Pull-ups", "Back and biceps strength builder", 4, Math.max(4, 8 + repsMultiplier), 0));
-            } else if ("Dumbbells".equalsIgnoreCase(equip)) {
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Chest Press", "Weighted chest builder", 4, Math.max(8, 12 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Romanian Deadlifts", "Hamstrings and glutes builder", 4, Math.max(8, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Bicep Curls", "Isolated arm hypertrophy", 3, Math.max(10, 15 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Dumbbell Lateral Raises", "Shoulder width builder", 3, Math.max(10, 12 + repsMultiplier), 0));
-            } else {
-                exercises.add(new WorkoutPlan.Exercise("Deadlifts", "Heavy full body posterior builder", 4, Math.max(4, 6 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Incline Dumbbell Press", "Upper chest builder", 4, Math.max(8, 12 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Barbell Rows", "Upper back strength", 4, Math.max(8, 10 + repsMultiplier), 0));
-                exercises.add(new WorkoutPlan.Exercise("Tricep Cable Pushdowns", "Arm isolated extension", 3, Math.max(10, 15 + repsMultiplier), 0));
             }
+        } else if (cleanGoal.contains("tone") || cleanGoal.contains("shape") || cleanGoal.contains("recomposition")) {
+            // TONE BODY / LEAN & TONE PLAN
+            if (hasJointIssue || isSenior) {
+                exercises.add(new WorkoutPlan.Exercise("Wall Sit", "Isometric leg toning", 3, 0, Math.max(30, 45 + repsMultiplier * 5)));
+                exercises.add(new WorkoutPlan.Exercise("Standing Side Leg Raises", "Hip & outer thigh toning", 3, Math.max(12, 15 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Knee Push-ups", "Upper body toning", 3, Math.max(8, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Cat-Cow Stretches", "Spinal mobility & core posture", 3, 0, 45));
+            } else {
+                exercises.add(new WorkoutPlan.Exercise("Lunges", "Lower body sculpting & balance", 3, Math.max(10, 12 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Push-up to Side Plank", "Upper body & core toning", 3, Math.max(6, 10 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Glute Bridge Pulses", "Posterior sculpting", 3, Math.max(12, 20 + repsMultiplier), 0));
+                exercises.add(new WorkoutPlan.Exercise("Bicycle Crunches", "Abdominal definition", 3, Math.max(15, 20 + repsMultiplier), 0));
+            }
+        } else if (cleanGoal.contains("endurance") || cleanGoal.contains("cardio") || cleanGoal.contains("energy")) {
+            // ENDURANCE & CARDIO PLAN
+            exercises.add(new WorkoutPlan.Exercise("High Knees", "Cardiovascular stamina push", 4, Math.max(20, 30 + repsMultiplier), 0));
+            exercises.add(new WorkoutPlan.Exercise("Jump Squats", "Explosive leg endurance", 3, Math.max(10, 15 + repsMultiplier), 0));
+            exercises.add(new WorkoutPlan.Exercise("Speed Skaters", "Lateral movement & agility", 3, Math.max(15, 20 + repsMultiplier), 0));
+            exercises.add(new WorkoutPlan.Exercise("Burpees", "Full-body aerobic interval", 3, Math.max(6, 10 + repsMultiplier), 0));
         } else {
-            exercises.add(new WorkoutPlan.Exercise("Burpees", "Full body explosive movement", 3, Math.max(5, 8 + repsMultiplier), 0));
-            exercises.add(new WorkoutPlan.Exercise("Air Squats", "Lower body endurance builder", 4, Math.max(10, 15 + repsMultiplier), 0));
-            exercises.add(new WorkoutPlan.Exercise("Superman Hold", "Lower back and posterior chain builder", 3, 0, Math.max(20, 30 + repsMultiplier * 3)));
-            exercises.add(new WorkoutPlan.Exercise("Jumping Rope", "Steady cardio push", 3, 0, 120));
+            // GENERAL FITNESS & BALANCED MAINTAIN PLAN
+            exercises.add(new WorkoutPlan.Exercise("Air Squats", "Lower body functional movement", 3, Math.max(10, 15 + repsMultiplier), 0));
+            exercises.add(new WorkoutPlan.Exercise("Standard Push-ups", "Upper body push", 3, Math.max(8, 12 + repsMultiplier), 0));
+            exercises.add(new WorkoutPlan.Exercise("Superman Hold", "Lower back & posture hold", 3, 0, Math.max(20, 30 + repsMultiplier * 3)));
+            exercises.add(new WorkoutPlan.Exercise("Jumping Rope / Shadow Skipping", "Cardio coordination", 3, 0, 120));
         }
 
         if ("Hard".equalsIgnoreCase(difficultyFeedback) && !completedYesterday) {

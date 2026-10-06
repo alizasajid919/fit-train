@@ -543,15 +543,16 @@
                                 android:insetBottom="0dp"
                                 android:layout_marginEnd="6dp"
                                 app:cornerRadius="18dp"
-                                app:backgroundTint="@color/primary" />
+                                app:backgroundTint="@color/primary"
+                                android:visibility="gone" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnAIRecommendations"
                                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="36dp"
-                                android:layout_weight="2.2"
-                                android:text="Recommendations"
+                                android:layout_weight="1.0"
+                                android:text="AI Recommendations"
                                 android:textColor="@color/primary"
                                 android:textSize="10sp"
                                 android:textStyle="bold"
@@ -584,15 +585,56 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- [3] Core Features Quick Access Grid -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="AI Fitness Features"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+            <!-- [3] AI Fitness Suite Banner & Features -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                android:layout_marginBottom="12dp">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/onboarding_1"
+                        android:scaleType="centerCrop" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#A60F172A" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AI FITNESS SUITE 🤖"
+                            android:textColor="#38BDF8"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pose Tracking, Posture &amp; History"
+                            android:textColor="#FFFFFF"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="2dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Real-time camera form analysis, posture alignment &amp; logs"
+                            android:textColor="#CBD5E1"
+                            android:textSize="11.5sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
             <androidx.gridlayout.widget.GridLayout
                 android:layout_width="match_parent"
@@ -600,82 +642,7 @@
                 app:columnCount="2"
                 android:layout_marginBottom="16dp">
 
-                <!-- 1. AI Workout Generator -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardEquipmentWorkout"
-                    android:layout_width="0dp"
-                    android:layout_height="84dp"
-                    app:layout_columnWeight="1"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="4dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <LinearLayout
-                        android:id="@+id/btnOpenWorkoutGenerator"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_premium_card">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="AI Generator 🏋️"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Custom workouts"
-                            android:textColor="@color/gray"
-                            android:textSize="10.5sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- 2. Smart Meal Planner -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardSmartMealPlanner"
-                    android:layout_width="0dp"
-                    android:layout_height="84dp"
-                    app:layout_columnWeight="1"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="4dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <!-- Point to direct scanner trigger in Java -->
-                    <LinearLayout
-                        android:id="@+id/btnHomeMealPlanner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_premium_card">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Meal Planner 🥗"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Scan groceries &amp; eat well"
-                            android:textColor="@color/gray"
-                            android:textSize="10.5sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- 3. AI Motion / Form Analyzer -->
+                <!-- 1. Form Check -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardAiFormCheck"
                     android:layout_width="0dp"
@@ -705,16 +672,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="AI posture &amp; squats feedback"
+                            android:text="Live technique &amp; rep counter"
                             android:textColor="@color/gray"
                             android:textSize="10.5sp"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- 4. Weekly Challenges -->
+                <!-- 2. AI Posture -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardFitnessChallenges"
+                    android:id="@+id/cardAiPosture"
                     android:layout_width="0dp"
                     android:layout_height="84dp"
                     app:layout_columnWeight="1"
@@ -725,7 +692,6 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
                     <LinearLayout
-                        android:id="@+id/btnOpenFitnessChallenges"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
@@ -735,21 +701,132 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Challenges 🏆"
+                            android:text="AI Posture 🧍"
                             android:textColor="@color/black"
                             android:textSize="13sp"
                             android:textStyle="bold" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Join streaks &amp; earn XP"
+                            android:text="Body alignment &amp; ergonomics"
                             android:textColor="@color/gray"
                             android:textSize="10.5sp"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- 5. AI Body Transformation -->
+                <!-- 3. Squat History logs -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardSquatHistory"
+                    android:layout_width="0dp"
+                    android:layout_height="84dp"
+                    app:layout_columnWeight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
+                    <LinearLayout
+                        android:id="@+id/btnViewSquatHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_premium_card">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Squat Logs 📊"
+                            android:textColor="@color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Squat history &amp; rep logs"
+                            android:textColor="@color/gray"
+                            android:textSize="10.5sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 4. AI Workout Generator -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardEquipmentWorkout"
+                    android:layout_width="0dp"
+                    android:layout_height="84dp"
+                    app:layout_columnWeight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
+                    <LinearLayout
+                        android:id="@+id/btnOpenWorkoutGenerator"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_premium_card">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AI Generator 🏋️"
+                            android:textColor="@color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Custom workout generator"
+                            android:textColor="@color/gray"
+                            android:textSize="10.5sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 5. Smart Meal Planner -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardSmartMealPlanner"
+                    android:layout_width="0dp"
+                    android:layout_height="84dp"
+                    app:layout_columnWeight="1"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_margin="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
+                    <LinearLayout
+                        android:id="@+id/btnHomeMealPlanner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:background="@drawable/bg_premium_card">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Meal Planner 🥗"
+                            android:textColor="@color/black"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Scan groceries &amp; meal plan"
+                            android:textColor="@color/gray"
+                            android:textSize="10.5sp"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 6. AI Body Transformation -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/btnTransformation"
                     android:layout_width="0dp"
@@ -785,42 +862,6 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- 6. Squat History logs -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardSquatHistory"
-                    android:layout_width="0dp"
-                    android:layout_height="84dp"
-                    app:layout_columnWeight="1"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    android:layout_margin="4dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?android:attr/selectableItemBackground">
-                    <LinearLayout
-                        android:id="@+id/btnViewSquatHistory"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center_vertical"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_premium_card">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Squat Logs 📊"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Posture feedback archive"
-                            android:textColor="@color/gray"
-                            android:textSize="10.5sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
             </androidx.gridlayout.widget.GridLayout>
 
             <!-- [4] Quick Action Logging Row -->
@@ -870,105 +911,6 @@
                     android:textAllCaps="false"
                     android:padding="0dp" />
             </LinearLayout>
-
-            <!-- [5] Today's Workout Recommendation (Featured Card) -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="3dp"
-                android:layout_marginBottom="20dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_blue_gradient"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tvTodayWorkoutTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DAILY RECOMMENDED WORKOUT"
-                        android:textColor="#E0F7FA"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvTodayWorkoutTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Full Body Shred"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvTodayWorkoutTag"
-                        app:layout_constraintEnd_toStartOf="@id/cvWorkoutImageContainer" />
-
-                    <TextView
-                        android:id="@+id/tvTodayWorkoutDesc"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="25 mins • Medium • 220 kcal"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.9"
-                        android:layout_marginTop="4dp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvTodayWorkoutTitle"
-                        app:layout_constraintEnd_toStartOf="@id/cvWorkoutImageContainer" />
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/cvWorkoutImageContainer"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="0dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent">
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/onboarding_1" />
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/bg_gradient_overlay" />
-                        </FrameLayout>
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnStartWorkout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_circle_button"
-                        android:backgroundTint="@color/white"
-                        android:text="Start Workout ⚡"
-                        android:textColor="@color/primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
-                        android:layout_marginTop="12dp"
-                        android:textAllCaps="false"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvTodayWorkoutDesc"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <!-- Stubs to avoid NPE on hidden elements -->
-                    <View android:id="@+id/btnMotivationalStart" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
 
             <!-- [6] Daily Activity Status Metrics Section -->
             <TextView

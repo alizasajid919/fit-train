@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="280dp"
+    android:viewportWidth="280"
+    android:viewportHeight="280">
+
+    <!-- Soft Background Blue Aura Circle -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M140,25 C197.99,25 245,72.01 245,130 C245,187.99 197.99,235 140,235 C82.01,235 35,187.99 35,130 C35,72.01 82.01,25 140,25 Z" />
+
+    <!-- Inner Soft Blue Gradient Halo -->
+    <path
+        android:fillColor="#DBEAFE"
+        android:pathData="M140,45 C186.94,45 225,83.06 225,130 C225,176.94 186.94,215 140,215 C93.06,215 55,176.94 55,130 C55,83.06 93.06,45 140,45 Z" />
+
+    <!-- Female Character Ponytail Hair -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M128,52 C120,49 111,57 108,66 C105,55 117,44 131,46 C139,47 147,53 150,61 C144,57 135,55 128,52 Z" />
+
+    <!-- Head / Skin Tone -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M138,60 C147.94,60 156,68.06 156,78 C156,87.94 147.94,96 138,96 C128.06,96 120,87.94 120,78 C120,68.06 128.06,60 138,60 Z" />
+
+    <!-- Blue Workout Top -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M112,107 C122,103 154,103 164,107 L170,165 H106 L112,107 Z" />
+
+    <!-- Arms Raised in Dynamic Stretch Pose -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M106,112 L82,88 L92,80 L114,106 Z" />
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M170,112 L194,88 L184,80 L162,106 Z" />
+
+    <!-- Dark Leggings -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M106,165 H170 L165,240 H142 L138,188 L134,240 H111 L106,165 Z" />
+
+    <!-- FLOATING UI CARD 1: Workout (Top-Left) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,35 H95 V80 H15 Z" />
+    <!-- Rounded Border Stroke -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M25,48 h35 v3 H25 z" />
+    <!-- Icon & Text Details for Workout Card -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M25,60 h45 v12 H25 z" />
+
+    <!-- FLOATING UI CARD 2: Calories (Top-Right) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M185,35 H265 V80 H185 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M195,48 h45 v3 H195 z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M195,60 h38 v12 H195 z" />
+
+    <!-- FLOATING UI CARD 3: Progress 68% (Bottom-Left) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,185 H100 V230 H15 Z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M25,198 h55 v3 H25 z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M25,210 h40 v10 H25 z" />
+
+    <!-- FLOATING UI CARD 4: Goal Strength (Bottom-Right) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M180,185 H265 V230 H180 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M190,198 h50 v3 H190 z" />
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M190,210 h42 v10 H190 z" />
+
+</vector>

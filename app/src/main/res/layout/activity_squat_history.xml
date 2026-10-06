@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:gravity="center"
-            android:text="Complete a squat form check session to see your AI feedback logs here."
+            android:text="Complete a squat session to view your workout history and rep logs here."
             android:textColor="#64748B"
             android:textSize="13sp" />
 
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Start Squat Analyzer 🦾"
+            android:text="Form Check Squats 🦾"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             app:cornerRadius="20dp"

@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="260dp"
+    android:height="220dp"
+    android:viewportWidth="260"
+    android:viewportHeight="220">
+
+    <!-- Soft background card circle -->
+    <path
+        android:pathData="M130,110 m-95,0 a95,95 0 1,0 190,0 a95,95 0 1,0 -190,0"
+        android:fillColor="#FEF3C7"/>
+
+    <!-- Inner glow ring -->
+    <path
+        android:pathData="M130,110 m-75,0 a75,75 0 1,0 150,0 a75,75 0 1,0 -150,0"
+        android:fillColor="#FFEAD5"/>
+
+    <!-- Hero Fitness Silhouette -->
+    <path
+        android:pathData="M120,50 C120,44.477 124.477,40 130,40 C135.523,40 140,44.477 140,50 C140,55.523 135.523,60 130,60 C124.477,60 120,55.523 120,50 Z"
+        android:fillColor="#0F172A"/>
+    <path
+        android:pathData="M110,75 C110,68 118,65 130,65 C142,65 150,68 150,75 L147,125 C147,128 144,130 141,130 L138,130 L138,175 C138,178 135,180 132,180 L128,180 C125,180 122,178 122,175 L122,130 L119,130 C116,130 113,128 113,125 Z"
+        android:fillColor="#0F172A"/>
+
+    <!-- Left Dumbbell Accent -->
+    <path
+        android:pathData="M55,90 L65,90 A5,5 0 0,1 70,95 L70,125 A5,5 0 0,1 65,130 L55,130 A5,5 0 0,1 50,125 L50,95 A5,5 0 0,1 55,90 Z"
+        android:fillColor="#F97316"/>
+
+    <!-- Floating Badge Top: Personalized AI Coach -->
+    <path
+        android:pathData="M65,18 L195,18 A14,14 0 0,1 209,32 L209,32 A14,14 0 0,1 195,46 L65,46 A14,14 0 0,1 51,32 L51,32 A14,14 0 0,1 65,18 Z"
+        android:fillColor="#0F172A"/>
+
+    <!-- Floating Badge Bottom: Floating Macro Pill -->
+    <path
+        android:pathData="M75,172 L185,172 A14,14 0 0,1 199,186 L199,186 A14,14 0 0,1 185,200 L75,200 A14,14 0 0,1 61,186 L61,186 A14,14 0 0,1 75,172 Z"
+        android:fillColor="#10B981"/>
+</vector>

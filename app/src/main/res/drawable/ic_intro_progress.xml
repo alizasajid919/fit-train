@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="280dp"
+    android:viewportWidth="280"
+    android:viewportHeight="280">
+
+    <!-- Soft Outer Background Circular Aura -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M140,25 C197.99,25 245,72.01 245,130 C245,187.99 197.99,235 140,235 C82.01,235 35,187.99 35,130 C35,72.01 82.01,25 140,25 Z" />
+
+    <!-- Inner Soft Blue Gradient Halo -->
+    <path
+        android:fillColor="#DBEAFE"
+        android:pathData="M140,45 C186.94,45 225,83.06 225,130 C225,176.94 186.94,215 140,215 C93.06,215 55,176.94 55,130 C55,83.06 93.06,45 140,45 Z" />
+
+    <!-- Female Character Standing Confidently on Left Side -->
+    <!-- Hair -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M78,60 C70,57 61,65 58,74 C55,63 67,52 81,54 C89,55 97,61 100,69 C94,65 85,63 78,60 Z" />
+    <!-- Head -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M88,68 C97.94,68 106,76.06 106,86 C106,95.94 97.94,104 88,104 C78.06,104 70,95.94 70,86 C70,76.06 78.06,68 88,68 Z" />
+    <!-- Blue Athletic Top -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M62,115 C72,111 104,111 114,115 L120,173 H56 L62,115 Z" />
+    <!-- Leggings -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M56,173 H120 L115,245 H94 L90,196 L86,245 H65 L56,173 Z" />
+
+    <!-- PROGRESS UI GRAPH CARD (Right Side) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M130,45 H265 V140 H130 Z" />
+
+    <!-- Graph Trend Line (Ocean Blue #0284C7) -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M140,115 L165,95 L190,105 L215,75 L240,60 L245,65 L215,83 L190,113 L165,103 L140,123 Z" />
+
+    <!-- Checkmark Dots (Mon to Fri Checked) -->
+    <!-- Mon Check -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M140,125 C144,125 147,128 147,132 C147,136 144,139 140,139 C136,139 133,136 133,132 C133,128 136,125 140,125 Z" />
+    <!-- Tue Check -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M160,125 C164,125 167,128 167,132 C167,136 164,139 160,139 C156,139 153,136 153,132 C153,128 156,125 160,125 Z" />
+    <!-- Wed Check -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M180,125 C184,125 187,128 187,132 C187,136 184,139 180,139 C176,139 173,136 173,132 C173,128 176,125 180,125 Z" />
+    <!-- Thu Check -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M200,125 C204,125 207,128 207,132 C207,136 204,139 200,139 C196,139 193,136 193,132 C193,128 196,125 200,125 Z" />
+    <!-- Fri Check -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M220,125 C224,125 227,128 227,132 C227,136 224,139 220,139 C216,139 213,136 213,132 C213,128 216,125 220,125 Z" />
+    <!-- Sat Open -->
+    <path
+        android:fillColor="#94A3B8"
+        android:pathData="M240,127 C243,127 245,129 245,132 C245,135 243,137 240,137 C237,137 235,135 235,132 C235,129 237,127 240,127 Z" />
+
+    <!-- FLOATING ACHIEVEMENT STREAK CARD (Bottom Right) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M130,160 H265 V225 H130 Z" />
+
+    <!-- Blue Header Bar in Streak Card -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M142,173 h90 v4 H142 z" />
+    <!-- Progress Bar in Streak Card (78% Goal Fill) -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M142,192 h80 v12 H142 z" />
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M222,192 h20 v12 H222 z" />
+
+    <!-- Flame Accent Icon in Card -->
+    <path
+        android:fillColor="#F97316"
+        android:pathData="M248,172 C248,172 240,186 240,193 C240,198 244,202 248,202 C252,202 256,198 256,193 C256,186 248,172 248,172 Z" />
+
+</vector>

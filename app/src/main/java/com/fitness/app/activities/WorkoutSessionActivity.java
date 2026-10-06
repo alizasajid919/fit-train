@@ -29,13 +29,17 @@ public class WorkoutSessionActivity extends AppCompatActivity {
 
     private TextView tvWorkoutTitle, tvExerciseProgressHeader, tvActiveTimer;
     private TextView tvCurrentExerciseName, tvTargetMuscle, tvCurrentSetStatus, tvTargetReps, tvActualRepsValue;
-    private TextView btnPauseResume;
+    private TextView btnPauseResume, btnSessionVoiceCoach;
 
     private LocalDataManager localDb;
     private WorkoutSession session;
     private int currentExerciseIndex = 0;
     private int currentSetIndex = 1;
     private int currentActualReps = 12;
+
+    private android.speech.tts.TextToSpeech textToSpeech;
+    private boolean isTtsInitialized = false;
+    private boolean isVoiceCoachActive = false;
 
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
     private boolean isPaused = false;
@@ -79,6 +83,8 @@ public class WorkoutSessionActivity extends AppCompatActivity {
         tvActualRepsValue = findViewById(R.id.tvActualRepsValue);
 
         btnPauseResume = findViewById(R.id.btnPauseResume);
+        btnSessionVoiceCoach = findViewById(R.id.btnSessionVoiceCoach);
+
         View btnMinusRep = findViewById(R.id.btnMinusRep);
         View btnPlusRep = findViewById(R.id.btnPlusRep);
         View btnCompleteSet = findViewById(R.id.btnCompleteSet);
@@ -86,11 +92,22 @@ public class WorkoutSessionActivity extends AppCompatActivity {
         View btnCameraFormCheck = findViewById(R.id.btnCameraFormCheck);
         View btnStopWorkout = findViewById(R.id.btnStopWorkout);
 
+        // Setup TTS
+        textToSpeech = new android.speech.tts.TextToSpeech(this, status -> {
+            if (status == android.speech.tts.TextToSpeech.SUCCESS) {
+                textToSpeech.setLanguage(Locale.US);
+                isTtsInitialized = true;
+            }
+        });
+
         // Initialize Session
         initializeWorkoutSession();
 
         // Listeners
         btnPauseResume.setOnClickListener(v -> togglePauseResume());
+        if (btnSessionVoiceCoach != null) {
+            btnSessionVoiceCoach.setOnClickListener(v -> toggleVoiceCoach());
+        }
         btnMinusRep.setOnClickListener(v -> adjustReps(-1));
         btnPlusRep.setOnClickListener(v -> adjustReps(1));
 
@@ -187,6 +204,10 @@ public class WorkoutSessionActivity extends AppCompatActivity {
         }
 
         tvActualRepsValue.setText(String.valueOf(currentActualReps));
+
+        if (isVoiceCoachActive) {
+            speakCurrentExercise();
+        }
     }
 
     private void togglePauseResume() {
@@ -325,9 +346,68 @@ public class WorkoutSessionActivity extends AppCompatActivity {
         finish();
     }
 
+    private void toggleVoiceCoach() {
+        if (isVoiceCoachActive) {
+            stopVoiceCoach();
+            Toast.makeText(this, "Voice Coach Stopped ⏹", Toast.LENGTH_SHORT).show();
+        } else {
+            startVoiceCoachSession();
+        }
+    }
+
+    private void startVoiceCoachSession() {
+        if (!isTtsInitialized) {
+            Toast.makeText(this, "Voice Coach is initializing...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        isVoiceCoachActive = true;
+        if (btnSessionVoiceCoach != null) {
+            btnSessionVoiceCoach.setText("⏹ Stop Voice Coach");
+        }
+        Toast.makeText(this, "Voice Coach Started 🔊", Toast.LENGTH_SHORT).show();
+        speakCurrentExercise();
+    }
+
+    private void speakCurrentExercise() {
+        if (!isTtsInitialized || !isVoiceCoachActive || session == null || session.getExercises() == null) return;
+        List<WorkoutExerciseItem> exercises = session.getExercises();
+        if (currentExerciseIndex < exercises.size()) {
+            WorkoutExerciseItem item = exercises.get(currentExerciseIndex);
+            String text = String.format(Locale.US, "Current exercise: %s. Target: %s. Set %d of %d.",
+                    item.getName(), item.getTargetMuscle(), currentSetIndex, item.getPlannedSets());
+            textToSpeech.speak(text, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "LIVE_COACH_STEP");
+        }
+    }
+
+    private void stopVoiceCoach() {
+        isVoiceCoachActive = false;
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+        }
+        if (btnSessionVoiceCoach != null) {
+            btnSessionVoiceCoach.setText("🔊 Voice Coach");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        stopVoiceCoach();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        stopVoiceCoach();
+        super.onStop();
+    }
+
     @Override
     protected void onDestroy() {
         timerHandler.removeCallbacks(timerRunnable);
+        stopVoiceCoach();
+        if (textToSpeech != null) {
+            textToSpeech.shutdown();
+        }
         super.onDestroy();
     }
 

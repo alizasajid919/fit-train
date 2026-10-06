@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="200dp"
+    android:viewportWidth="240"
+    android:viewportHeight="200">
+
+    <!-- Soft background card circle -->
+    <path
+        android:pathData="M120,100 m-85,0 a85,85 0 1,0 170,0 a85,85 0 1,0 -170,0"
+        android:fillColor="#F1F5F9"/>
+
+    <!-- Accent glow ring -->
+    <path
+        android:pathData="M120,100 m-70,0 a70,70 0 1,0 140,0 a70,70 0 1,0 -140,0"
+        android:fillColor="#FFEAD5"/>
+
+    <!-- Left Silhouette (Current Body - Coral Orange Tone) -->
+    <path
+        android:pathData="M75,65 C75,59.477 79.477,55 85,55 C90.523,55 95,59.477 95,65 C95,70.523 90.523,75 85,75 C79.477,75 75,70.523 75,65 Z"
+        android:fillColor="#F97316"/>
+    <path
+        android:pathData="M70,85 C70,78 76,76 85,76 C94,76 100,78 100,85 L102,125 C102,128 99,130 96,130 L93,130 L93,165 C93,168 90,170 87,170 L83,170 C80,170 77,168 77,165 L77,130 L74,130 C71,130 68,128 68,125 Z"
+        android:fillColor="#F97316"/>
+
+    <!-- Curved Transformation Arrow (Green) -->
+    <path
+        android:pathData="M106,105 C112,98 122,98 128,105"
+        android:strokeColor="#10B981"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M124,98 L130,106 L121,110"
+        android:strokeColor="#10B981"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+
+    <!-- Right Silhouette (Ideal Physique - Emerald Green Tone) -->
+    <path
+        android:pathData="M150,55 C150,49.477 154.477,45 160,45 C165.523,45 170,49.477 170,55 C170,60.523 165.523,65 160,65 C154.477,65 150,60.523 150,55 Z"
+        android:fillColor="#10B981"/>
+    <path
+        android:pathData="M144,75 C144,69 151,67 160,67 C169,67 176,69 176,75 L173,120 C173,123 170,125 167,125 L165,125 L165,170 C165,173 162,175 159,175 L156,175 C153,175 150,173 150,170 L150,125 L148,125 C145,125 142,123 142,120 Z"
+        android:fillColor="#10B981"/>
+
+    <!-- Floating Callout Pill Left: Current -->
+    <path
+        android:pathData="M35,135 L85,135 A12,12 0 0,1 97,147 L97,147 A12,12 0 0,1 85,159 L35,159 A12,12 0 0,1 23,147 L23,147 A12,12 0 0,1 35,135 Z"
+        android:fillColor="#0F172A"/>
+
+    <!-- Floating Callout Pill Right: Target -->
+    <path
+        android:pathData="M150,135 L205,135 A12,12 0 0,1 217,147 L217,147 A12,12 0 0,1 205,159 L150,159 A12,12 0 0,1 138,147 L138,147 A12,12 0 0,1 150,135 Z"
+        android:fillColor="#10B981"/>
+
+    <!-- Badge -25 lbs Top Highlight -->
+    <path
+        android:pathData="M88,15 L148,15 A14,14 0 0,1 162,29 L162,29 A14,14 0 0,1 148,43 L88,43 A14,14 0 0,1 74,29 L74,29 A14,14 0 0,1 88,15 Z"
+        android:fillColor="#F97316"/>
+</vector>

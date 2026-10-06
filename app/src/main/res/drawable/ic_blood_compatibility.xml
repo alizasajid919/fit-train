@@ -1,0 +1,45 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="220dp"
+    android:height="220dp"
+    android:viewportWidth="220"
+    android:viewportHeight="220">
+
+    <!-- Soft Outer Background Circular Aura -->
+    <path
+        android:fillColor="#FEF2F2"
+        android:pathData="M110,15C57.53,15 15,57.53 15,110s42.53,95 95,95 95,-42.53 95,-95S162.47,15 110,15z" />
+
+    <!-- Inner Coral Circle -->
+    <path
+        android:fillColor="#FEE2E2"
+        android:pathData="M110,35C68.58,35 35,68.58 35,110s33.58,75 75,75 75,-33.58 75,-75S151.42,35 110,35z" />
+
+    <!-- Central Glowing Blood Drop -->
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M110,55C110,55 75,100 75,125c0,19.33 15.67,35 35,35s35,-15.67 35,-35C145,100 110,55 110,55z" />
+
+    <!-- Blood Drop Shine Detail -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M95,110c-3,6 -3,14 3,20c-6,-3 -8,-12 -3,-20z" />
+
+    <!-- Heart Pulse Medical Cross Badge Overlay -->
+    <path
+        android:fillColor="#DC2626"
+        android:pathData="M102,118h16v16h-16z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M107,121h6v10h-6z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M103,125h14v2h-14z" />
+
+    <!-- Sparkling Accent Star -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M165,65l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M55,75l2,4 4,2 -4,2 -2,4 -2,-4 -4,-2 4,-2z" />
+</vector>

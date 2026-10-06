@@ -1,0 +1,70 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="220dp"
+    android:height="220dp"
+    android:viewportWidth="220"
+    android:viewportHeight="220">
+
+    <!-- Glowing Backdrop Aura -->
+    <path
+        android:fillColor="#ECFDF5"
+        android:pathData="M110,15C57.53,15 15,57.53 15,110s42.53,95 95,95 95,-42.53 95,-95S162.47,15 110,15z" />
+    <path
+        android:fillColor="#D1FAE5"
+        android:pathData="M110,32C66.92,32 32,66.92 32,110s34.92,78 78,78 78,-34.92 78,-78S153.08,32 110,32z" />
+
+    <!-- Healthy Bowl Base -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M50,110c0,33.14 26.86,60 60,60s60,-26.86 60,-60H50z" />
+    <path
+        android:fillColor="#059669"
+        android:pathData="M50,110c0,5 26.86,10 60,10s60,-5 60,-10H50z" />
+
+    <!-- Fresh Salad Greens (Lettuce Leaves) -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M60,105c-10,-15 5,-30 20,-20 15,-25 35,-10 30,10 -15,10 -35,25 -50,10z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M110,100c-5,-20 15,-30 30,-15 15,-20 30,0 20,20 -15,15 -35,10 -50,-5z" />
+
+    <!-- Avocado Slice -->
+    <path
+        android:fillColor="#A7F3D0"
+        android:pathData="M80,85c-10,-5 -15,15 -5,25 10,10 25,0 20,-15 -2,-5 -7,-8 -15,-10z" />
+    <path
+        android:fillColor="#065F46"
+        android:pathData="M88,95c-3,0 -6,3 -6,6s3,6 6,6 6,-3 6,-6 -3,-6 -6,-6z" />
+
+    <!-- Tomato Slices -->
+    <path
+        android:fillColor="#EF4444"
+        android:pathData="M135,80c8,0 15,7 15,15s-7,15 -15,15 -15,-7 -15,-15 7,-15 15,-15z" />
+    <path
+        android:fillColor="#FCA5A5"
+        android:pathData="M132,88c2,0 4,2 4,4s-2,4 -4,4 -4,-2 -4,-4 2,-4 4,-4zm8,0c2,0 4,2 4,4s-2,4 -4,4 -4,-2 -4,-4 2,-4 4,-4z" />
+
+    <!-- Protein / Steak Element -->
+    <path
+        android:fillColor="#B45309"
+        android:pathData="M100,70c10,-8 25,0 20,12 -5,10 -20,15 -25,5 0,-5 0,-12 5,-17z" />
+
+    <!-- Sparkles & Nutrient Symbols -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M165,45l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M45,60l2.5,5 5,2.5 -5,2.5 -2.5,5 -2.5,-5 -5,-2.5 5,-2.5z" />
+    <path
+        android:fillColor="#EC4899"
+        android:pathData="M175,130l2,4 4,2 -4,2 -2,4 -2,-4 -4,-2 4,-2z" />
+
+    <!-- Organic Leaf Badge -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M100,30c12,0 20,8 20,20 -12,0 -20,-8 -20,-20z" />
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M100,50c0,-12 8,-20 20,-20 -5,12 -12,20 -20,20z" />
+</vector>

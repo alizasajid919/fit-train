@@ -594,6 +594,7 @@ public class DietFragment extends Fragment {
         popup.getMenu().add(0, 6, 5, "Export Meal Plan");
         popup.getMenu().add(0, 7, 6, "Refresh Data");
         popup.getMenu().add(0, 8, 7, "Settings");
+        popup.getMenu().add(0, 9, 8, "Smart Meal Planner & Grocery Scanner 🥗");
 
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -624,6 +625,9 @@ public class DietFragment extends Fragment {
                     return true;
                 case 8:
                     startActivity(new Intent(getActivity(), com.fitness.app.activities.SettingsActivity.class));
+                    return true;
+                case 9:
+                    startActivity(new Intent(getActivity(), com.fitness.app.activities.GroceryScannerActivity.class));
                     return true;
             }
             return false;

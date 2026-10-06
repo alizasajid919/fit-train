@@ -1,22 +1,29 @@
 package com.fitness.app.activities;
 
+import android.animation.ObjectAnimator;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.DatePicker;
@@ -28,15 +35,14 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.fitness.app.R;
 import com.fitness.app.data.local.LocalDataManager;
-import com.fitness.app.models.DietPlan;
 import com.fitness.app.models.User;
-import com.fitness.app.models.WorkoutPlan;
-import com.fitness.app.utils.FitnessCalculator;
-import com.fitness.app.utils.RecommendationEngine;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.Calendar;
@@ -56,16 +62,15 @@ public class OnboardingActivity extends AppCompatActivity {
     private View bottomBar;
     private MaterialButton btnNextStep;
 
-    // Total Flow Steps:
-    // 0..2: Intro Slides (Trophy, Comparison, Satiety)
-    // 3: NEW ONBOARDING INTRO SCREEN ("Let's start with some questions..." - AFTER ALL INTROS, BEFORE NAME)
-    // 4..21: Question & Input Screens (18 questions)
-    // 22: Profile Analysis & Calculation
-    // 23: Welcome & Dashboard Launch
+    // Total Flow Steps: 0 to 23
+    // Step 0: Intro 1, Step 1: Intro 2, Step 2: Intro 3
+    // Steps 3 to 20: Questions 1 to 18 (TOTAL 18 QUESTIONS)
+    // Step 21: Dedicated Profile Setup Screen (Photo Upload & Skip)
+    // Step 22: Plan Generation, Step 23: Welcome & Finish
     private int currentStep = 0;
-    private static final int TOTAL_QUESTION_STEPS = 18; // Steps 4 to 21
+    private static final int TOTAL_QUESTION_STEPS = 18; // Steps 3 to 20
 
-    // User Data State (CRITICAL: ALL SELECTIONS START 100% UNSELECTED & EMPTY FOR NEW USERS)
+    // User Profile & Question State - Starts EMPTY/UNSELECTED
     private String name = "";
     private String dobString = ""; // yyyy-MM-dd
     private int birthYear = 0;
@@ -75,18 +80,18 @@ public class OnboardingActivity extends AppCompatActivity {
 
     private String gender = ""; // UNSELECTED
     private boolean isMetric = true;
-    private String heightInputStr = "";
-    private double heightCm = 0.0; // EMPTY
-    private String weightInputStr = "";
-    private double weightKg = 0.0; // EMPTY
+    private double heightCm = 170.0;
+    private double weightKg = 70.0;
     private String bloodGroup = ""; // UNSELECTED
     private String goal = ""; // UNSELECTED
-    private String targetWeightInputStr = "";
-    private double targetWeightKg = 0.0; // EMPTY
+    private double targetWeightKg = 65.0;
     private String targetPace = ""; // UNSELECTED
 
     private String eatingEnvironment = ""; // UNSELECTED
-    private String eatingOutFrequency = ""; // UNSELECTED
+    private int mealsPerDay = 0; // UNSELECTED
+    private String dietaryPreference = ""; // UNSELECTED
+    private final Set<String> selectedHealthConcerns = new HashSet<>();
+
     private String activityLevel = ""; // UNSELECTED
     private String fitnessExperience = ""; // UNSELECTED
     private String workoutLocation = ""; // UNSELECTED
@@ -95,13 +100,39 @@ public class OnboardingActivity extends AppCompatActivity {
     private int workoutDaysPerWeek = 0; // UNSELECTED
     private String preferredWorkoutTime = ""; // UNSELECTED
 
-    private String dietaryPreference = ""; // UNSELECTED
-    private final Set<String> selectedAllergies = new HashSet<>();
-    private final Set<String> selectedHealthConcerns = new HashSet<>();
-    private String otherHealthConcernText = ""; // Custom "Others" text
-    private int mealsPerDay = 0; // UNSELECTED
-    private String medicalConditions = ""; // UNSELECTED
-    private String injuries = "";
+    private String selectedProfileImageUri = "";
+
+    // Profile Photo Crop Launcher (Pinch-to-zoom, reposition, crop)
+    private final ActivityResultLauncher<Intent> cropLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String croppedUriStr = result.getData().getStringExtra("cropped_uri");
+                    if (croppedUriStr != null && !croppedUriStr.isEmpty()) {
+                        selectedProfileImageUri = croppedUriStr;
+                        if (currentStep == 21) {
+                            renderStep(21);
+                        }
+                    }
+                }
+            }
+    );
+
+    // Gallery Picker Launcher -> Passes image to CropActivity
+    private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    try {
+                        getContentResolver().takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    } catch (Exception ignored) {}
+                    Intent cropIntent = new Intent(OnboardingActivity.this, CropActivity.class);
+                    cropIntent.putExtra("image_uri", imageUri.toString());
+                    cropLauncher.launch(cropIntent);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +146,7 @@ public class OnboardingActivity extends AppCompatActivity {
         tvStepIndicator = findViewById(R.id.tvStepIndicator);
         tvStepError = findViewById(R.id.tvStepError);
         pbOnboardingProgress = findViewById(R.id.pbOnboardingProgress);
+        pbOnboardingProgress.setMax(100);
         stepContainer = findViewById(R.id.stepContainer);
         bottomBar = findViewById(R.id.bottomBar);
         btnNextStep = findViewById(R.id.btnNextStep);
@@ -130,37 +162,36 @@ public class OnboardingActivity extends AppCompatActivity {
         stepContainer.removeAllViews();
 
         if (step <= 2) {
-            // Intro Slides (Trophy, Comparison, Satiety)
             btnBackStep.setVisibility(step > 0 ? View.VISIBLE : View.GONE);
-            tvStepIndicator.setText(String.format(Locale.getDefault(), "FitTrain • Intro %d of 3", step + 1));
+            tvStepIndicator.setText(String.format(Locale.getDefault(), "0%d / 03", step + 1));
             pbOnboardingProgress.setVisibility(View.GONE);
-            btnNextStep.setText("Continue");
-            bottomBar.setVisibility(View.VISIBLE);
-        } else if (step == 3) {
-            // NEW ONBOARDING INTRO SCREEN: "Let's start with some questions..." (AFTER ALL INTROS, BEFORE NAME)
-            btnBackStep.setVisibility(View.VISIBLE);
-            tvStepIndicator.setText("Personalized Setup");
-            pbOnboardingProgress.setVisibility(View.GONE);
-            btnNextStep.setText("Let's Start 🚀");
-            bottomBar.setVisibility(View.VISIBLE);
-        } else if (step >= 4 && step <= 21) {
-            // Question Screens
-            int qNum = step - 3;
+            bottomBar.setVisibility(View.GONE);
+        } else if (step >= 3 && step <= 20) {
+            int qNum = step - 2; // Question 1 to 18
             btnBackStep.setVisibility(View.VISIBLE);
             tvStepIndicator.setText(String.format(Locale.getDefault(), "Question %d of %d", qNum, TOTAL_QUESTION_STEPS));
             pbOnboardingProgress.setVisibility(View.VISIBLE);
-            pbOnboardingProgress.setProgress((qNum * 100) / TOTAL_QUESTION_STEPS);
+            
+            int targetProgress = (qNum * 100) / TOTAL_QUESTION_STEPS;
+            ObjectAnimator.ofInt(pbOnboardingProgress, "progress", pbOnboardingProgress.getProgress(), targetProgress)
+                    .setDuration(300)
+                    .start();
+
+            btnNextStep.setText("Continue");
+            bottomBar.setVisibility(View.VISIBLE);
+        } else if (step == 21) {
+            btnBackStep.setVisibility(View.VISIBLE);
+            tvStepIndicator.setText("Profile Setup");
+            pbOnboardingProgress.setVisibility(View.GONE);
             btnNextStep.setText("Continue");
             bottomBar.setVisibility(View.VISIBLE);
         } else if (step == 22) {
-            // Calculation
             btnBackStep.setVisibility(View.GONE);
             tvStepIndicator.setText("Analyzing Profile");
             pbOnboardingProgress.setVisibility(View.VISIBLE);
             pbOnboardingProgress.setProgress(100);
             bottomBar.setVisibility(View.GONE);
         } else if (step == 23) {
-            // Summary Welcome
             btnBackStep.setVisibility(View.GONE);
             tvStepIndicator.setText("Your Plan Is Ready!");
             pbOnboardingProgress.setVisibility(View.GONE);
@@ -169,47 +200,78 @@ public class OnboardingActivity extends AppCompatActivity {
         }
 
         switch (step) {
-            // Intro Sequence (Steps 0-2)
             case 0: buildIntroTrophySlide(); break;
             case 1: buildIntroComparisonSlide(); break;
             case 2: buildIntroSatietySlide(); break;
 
-            // NEW INTRO START SCREEN (Step 3 - AFTER ALL INTROS, BEFORE NAME)
-            case 3: buildNewIntroStartSlide(); break;
+            case 3: buildNameStep(); break;
+            case 4: buildDateOfBirthStep(); break;
+            case 5: buildGenderStep(); break;
+            case 6: buildHeightStep(); break;
+            case 7: buildWeightStep(); break;
+            case 8: buildBloodGroupStep(); break;
+            case 9: buildGoalStep(); break;
+            case 10: buildTargetWeightStep(); break;
+            case 11: buildTargetPaceStep(); break;
+            case 12: buildEatingEnvironmentsStep(); break;
+            case 13: buildMealsPerDayStep(); break;
+            case 14: buildDietStyleStep(); break;
+            case 15: buildHealthConcernsStep(); break;
+            case 16: buildActivityStep(); break;
+            case 17: buildExperienceStep(); break;
+            case 18: buildWorkoutPreferencesStep(); break;
+            case 19: buildWorkoutScheduleStep(); break;
+            case 20: buildWorkoutTimeStep(); break;
 
-            // Questions (Steps 4-21 - STRICTLY UNSELECTED FOR NEW USERS)
-            case 4: buildNameStep(); break;
-            case 5: buildDateOfBirthStep(); break;
-            case 6: buildGenderStep(); break;
-            case 7: buildHeightStep(); break;
-            case 8: buildWeightStep(); break;
-            case 9: buildBloodGroupStep(); break; // BLOOD GROUP SCREEN
-            case 10: buildGoalStep(); break;
-            case 11: buildTargetWeightStep(); break;
-            case 12: buildMilestoneProjectionSlide(); break;
-            case 13: buildDietSectionIntroSlide(); break;
-            case 14: buildEatingEnvironmentsStep(); break;
-            case 15: buildMealsPerDayStep(); break;
-            case 16: buildNutritionReportSlide(); break;
-            case 17: buildDietStyleStep(); break;
-            case 18: buildHealthConcernsStep(); break; // HEALTH CONCERNS WITH OTHERS
-            case 19: buildActivityStep(); break;
-            case 20: buildExperienceStep(); break;
-            case 21: buildWorkoutPreferencesStep(); break;
-
-            // Plan Generation & Launch (Steps 22-23)
+            case 21: buildProfileSetupStep(); break;
             case 22: buildPlanGenerationStep(); break;
             case 23: buildPersonalizedWelcomeStep(); break;
         }
 
-        // Animated Screen Entrance (Fade + Subtle Slide Up)
+        updateNextButtonState();
+
         AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-        fadeIn.setDuration(240);
-        TranslateAnimation slideUp = new TranslateAnimation(0, 0, 30, 0);
-        slideUp.setDuration(240);
+        fadeIn.setDuration(300);
+        TranslateAnimation slideUp = new TranslateAnimation(0, 0, 40, 0);
+        slideUp.setDuration(300);
 
         stepContainer.startAnimation(fadeIn);
         stepContainer.startAnimation(slideUp);
+    }
+
+    private void updateNextButtonState() {
+        if (currentStep >= 3 && currentStep <= 20) {
+            boolean valid = isStepValid(currentStep);
+            btnNextStep.setEnabled(valid);
+            btnNextStep.setAlpha(valid ? 1.0f : 0.4f);
+        } else {
+            btnNextStep.setEnabled(true);
+            btnNextStep.setAlpha(1.0f);
+        }
+    }
+
+    private boolean isStepValid(int step) {
+        switch (step) {
+            case 3: return !name.trim().isEmpty();
+            case 4: return !dobString.isEmpty() && age > 0;
+            case 5: return !gender.isEmpty();
+            case 6: return heightCm >= 50 && heightCm <= 250;
+            case 7: return weightKg >= 20 && weightKg <= 300;
+            case 8: return !bloodGroup.isEmpty();
+            case 9: return !goal.isEmpty();
+            case 10: return targetWeightKg >= 20 && targetWeightKg <= 300;
+            case 11: return !targetPace.isEmpty();
+            case 12: return !eatingEnvironment.isEmpty();
+            case 13: return mealsPerDay > 0;
+            case 14: return !dietaryPreference.isEmpty();
+            case 15: return !selectedHealthConcerns.isEmpty();
+            case 16: return !activityLevel.isEmpty();
+            case 17: return !fitnessExperience.isEmpty();
+            case 18: return !workoutLocation.isEmpty();
+            case 19: return workoutDuration > 0 && workoutDaysPerWeek > 0;
+            case 20: return !preferredWorkoutTime.isEmpty();
+            default: return true;
+        }
     }
 
     private void navigatePrevious() {
@@ -236,97 +298,111 @@ public class OnboardingActivity extends AppCompatActivity {
     private boolean validateStep(int step) {
         hideError();
         switch (step) {
-            case 4: // Name
+            case 3: // Name
                 if (name.trim().isEmpty()) {
                     showError("Please enter your name to continue.");
                     return false;
                 }
                 break;
-            case 5: // DOB
+            case 4: // DOB
                 if (dobString.isEmpty() || age <= 0) {
                     showError("Please select your date of birth.");
                     return false;
                 }
                 break;
-            case 6: // Gender
+            case 5: // Gender
                 if (gender.isEmpty()) {
                     showError("Please select your gender.");
                     return false;
                 }
                 break;
-            case 7: // Height
-                if (heightCm <= 0) {
-                    showError("Please enter your height.");
+            case 6: // Height
+                if (heightCm < 50 || heightCm > 250) {
+                    showError("Please specify a valid height.");
                     return false;
                 }
                 break;
-            case 8: // Weight
-                if (weightKg <= 0) {
-                    showError("Please enter your current weight.");
+            case 7: // Weight
+                if (weightKg < 20 || weightKg > 300) {
+                    showError("Please specify a valid weight.");
                     return false;
                 }
                 break;
-            case 9: // Blood Group
+            case 8: // Blood Group
                 if (bloodGroup.isEmpty()) {
                     showError("Please select your blood group.");
                     return false;
                 }
                 break;
-            case 10: // Goal
+            case 9: // Goal
                 if (goal.isEmpty()) {
-                    showError("Please select your main goal.");
+                    showError("Please select your primary fitness goal.");
                     return false;
                 }
                 break;
-            case 11: // Target Weight
-                if (targetWeightKg <= 0) {
-                    showError("Please enter your target weight.");
+            case 10: // Target Weight
+                if (targetWeightKg < 20 || targetWeightKg > 300) {
+                    showError("Please specify a target weight.");
                     return false;
                 }
                 break;
-            case 14: // Environment
+            case 11: // Target Pace
+                if (targetPace.isEmpty()) {
+                    showError("Please select a target pace.");
+                    return false;
+                }
+                break;
+            case 12: // Eating Environment
                 if (eatingEnvironment.isEmpty()) {
-                    showError("Please select an eating environment.");
+                    showError("Please select your primary eating environment.");
                     return false;
                 }
                 break;
-            case 15: // Meals
+            case 13: // Meals Per Day
                 if (mealsPerDay <= 0) {
                     showError("Please select your daily meal frequency.");
                     return false;
                 }
                 break;
-            case 17: // Diet Style
+            case 14: // Diet Style
                 if (dietaryPreference.isEmpty()) {
-                    showError("Please select your dietary style.");
+                    showError("Please select a dietary preference.");
                     return false;
                 }
                 break;
-            case 18: // Health Concerns
+            case 15: // Health Concerns
                 if (selectedHealthConcerns.isEmpty()) {
-                    showError("Please select any health concerns or tap 'None'.");
-                    return false;
-                }
-                if (selectedHealthConcerns.contains("Others") && otherHealthConcernText.trim().isEmpty()) {
-                    showError("Please specify your health concern in the text box below.");
+                    showError("Please select at least one option or 'None'.");
                     return false;
                 }
                 break;
-            case 19: // Activity
+            case 16: // Activity Level
                 if (activityLevel.isEmpty()) {
-                    showError("Please select your activity level.");
+                    showError("Please select your daily activity level.");
                     return false;
                 }
                 break;
-            case 20: // Experience
+            case 17: // Experience
                 if (fitnessExperience.isEmpty()) {
                     showError("Please select your fitness level.");
                     return false;
                 }
                 break;
-            case 21: // Location
+            case 18: // Workout Location & Equipment
                 if (workoutLocation.isEmpty()) {
-                    showError("Please select your workout location.");
+                    showError("Please select your preferred workout location.");
+                    return false;
+                }
+                break;
+            case 19: // Workout Schedule
+                if (workoutDuration <= 0 || workoutDaysPerWeek <= 0) {
+                    showError("Please select your workout schedule.");
+                    return false;
+                }
+                break;
+            case 20: // Preferred Workout Time
+                if (preferredWorkoutTime.isEmpty()) {
+                    showError("Please select your preferred workout time.");
                     return false;
                 }
                 break;
@@ -343,336 +419,556 @@ public class OnboardingActivity extends AppCompatActivity {
         tvStepError.setVisibility(View.GONE);
     }
 
-    // ====================================================================
-    // EDUCATIONAL TOOLTIP CARD: "BEHIND THE QUESTION"
-    // ====================================================================
+    // Helper Container Builders
+    private LinearLayout createVerticalContainer() {
+        LinearLayout l = new LinearLayout(this);
+        l.setOrientation(LinearLayout.VERTICAL);
+        l.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        l.setPadding(20, 16, 20, 24);
+        return l;
+    }
 
-    private void addBehindTheQuestionCard(LinearLayout container, String summaryText, String detailText) {
+    private TextView createHeaderTitle(String text) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextSize(22);
+        tv.setTypeface(null, Typeface.BOLD);
+        tv.setTextColor(Color.parseColor("#0F172A")); // Deep Navy
+        tv.setPadding(0, 8, 0, 4);
+        return tv;
+    }
+
+    private TextView createSubTitle(String text) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextSize(14);
+        tv.setTextColor(Color.parseColor("#475569"));
+        tv.setPadding(0, 0, 0, 16);
+        return tv;
+    }
+
+    private View createOptionCard(String title, int iconRes, boolean selected, int activeColor) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(20, 16, 20, 16);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 6, 0, 6);
+        card.setLayoutParams(params);
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(16 * getResources().getDisplayMetrics().density);
+        if (selected) {
+            bg.setColor(Color.parseColor("#F0F9FF")); // Soft Ice Blue tint
+            bg.setStroke((int)(2 * getResources().getDisplayMetrics().density), Color.parseColor("#0284C7"));
+        } else {
+            bg.setColor(Color.WHITE);
+            bg.setStroke((int)(1 * getResources().getDisplayMetrics().density), Color.parseColor("#E2E8F0"));
+        }
+        card.setBackground(bg);
+
+        ImageView iv = new ImageView(this);
+        iv.setImageResource(iconRes);
+        LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams(32, 32);
+        ivParams.setMargins(0, 0, 16, 0);
+        iv.setLayoutParams(ivParams);
+
+        TextView tv = new TextView(this);
+        tv.setText(title);
+        tv.setTextSize(16);
+        tv.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
+        tv.setTextColor(selected ? Color.parseColor("#0284C7") : Color.parseColor("#0F172A"));
+
+        card.addView(iv);
+        card.addView(tv);
+        return card;
+    }
+
+    private void animateSelection(View view) {
+        ScaleAnimation anim = new ScaleAnimation(0.96f, 1.0f, 0.96f, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setDuration(160);
+        view.startAnimation(anim);
+    }
+
+    private void addLargeAnimatedIllustration(ViewGroup parent, int drawableRes, int widthDp, int heightDp) {
+        ImageView iv = new ImageView(this);
+        iv.setImageResource(drawableRes);
+        float density = getResources().getDisplayMetrics().density;
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams((int)(widthDp * density), (int)(heightDp * density));
+        p.gravity = Gravity.CENTER_HORIZONTAL;
+        p.setMargins(0, 12, 0, 16);
+        iv.setLayoutParams(p);
+
+        ScaleAnimation scale = new ScaleAnimation(0.94f, 1.0f, 0.94f, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        scale.setDuration(400);
+        iv.startAnimation(scale);
+
+        parent.addView(iv);
+    }
+
+    private void addBehindTheQuestionCard(ViewGroup parent, String title, String explanation) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        card.setPadding(20, 16, 20, 16);
+        card.setPadding(16, 12, 16, 12);
+        
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.parseColor("#F8FAFC"));
+        bg.setCornerRadius(12 * getResources().getDisplayMetrics().density);
+        bg.setStroke((int)(1 * getResources().getDisplayMetrics().density), Color.parseColor("#E2E8F0"));
+        card.setBackground(bg);
 
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        p.setMargins(0, 0, 0, 12);
+        card.setLayoutParams(p);
+
+        TextView tvTitle = new TextView(this);
+        tvTitle.setText("💡 " + title);
+        tvTitle.setTextSize(13);
+        tvTitle.setTypeface(null, Typeface.BOLD);
+        tvTitle.setTextColor(Color.parseColor("#0F172A"));
+
+        TextView tvExp = new TextView(this);
+        tvExp.setText(explanation);
+        tvExp.setTextSize(12);
+        tvExp.setTextColor(Color.parseColor("#64748B"));
+        tvExp.setPadding(0, 4, 0, 0);
+
+        card.addView(tvTitle);
+        card.addView(tvExp);
+        parent.addView(card);
+    }
+
+    // --- ELEGANT INTRO BOTTOM NAVIGATION BAR (Skip | ● ○ ○ | Next → / Get Started →) ---
+    private View createIntroBottomNav(int activeIndex, String buttonText, View.OnClickListener onNextClick) {
+        float density = getResources().getDisplayMetrics().density;
+
+        LinearLayout bar = new LinearLayout(this);
+        bar.setOrientation(LinearLayout.HORIZONTAL);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar.setPadding(0, (int)(20 * density), 0, (int)(12 * density));
+        bar.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        // 1. Skip Button (Left) -> Routes directly to Question 1 (Step 3)
+        TextView tvSkip = new TextView(this);
+        tvSkip.setText("Skip");
+        tvSkip.setTextSize(15);
+        tvSkip.setTypeface(null, Typeface.BOLD);
+        tvSkip.setTextColor(Color.parseColor("#94A3B8"));
+        tvSkip.setPadding((int)(8 * density), (int)(8 * density), (int)(8 * density), (int)(8 * density));
+        tvSkip.setOnClickListener(v -> {
+            currentStep = 3;
+            renderStep(3);
+        });
+
+        LinearLayout.LayoutParams skipParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        tvSkip.setLayoutParams(skipParams);
+
+        // 2. Pagination Dots (Center: ● ○ ○)
+        LinearLayout dotsLayout = new LinearLayout(this);
+        dotsLayout.setOrientation(LinearLayout.HORIZONTAL);
+        dotsLayout.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams dotsParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        dotsLayout.setLayoutParams(dotsParams);
+
+        for (int i = 0; i < 3; i++) {
+            View dot = new View(this);
+            int sizeDp = (i == activeIndex) ? 10 : 8;
+            LinearLayout.LayoutParams dotP = new LinearLayout.LayoutParams(
+                    (int)(sizeDp * density),
+                    (int)(sizeDp * density)
+            );
+            dotP.setMargins((int)(4 * density), 0, (int)(4 * density), 0);
+            dot.setLayoutParams(dotP);
+
+            GradientDrawable dotBg = new GradientDrawable();
+            dotBg.setShape(GradientDrawable.OVAL);
+            dotBg.setColor(i == activeIndex ? Color.parseColor("#0284C7") : Color.parseColor("#CBD5E1"));
+            dot.setBackground(dotBg);
+            dotsLayout.addView(dot);
+        }
+
+        // 3. Next / Get Started Pill Button (Right)
+        MaterialButton btnNext = new MaterialButton(this);
+        btnNext.setText(buttonText);
+        btnNext.setTextSize(15);
+        btnNext.setTypeface(null, Typeface.BOLD);
+        btnNext.setTextColor(Color.WHITE);
+        btnNext.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#0284C7")));
+        btnNext.setCornerRadius((int)(24 * density));
+        btnNext.setPadding((int)(18 * density), (int)(10 * density), (int)(18 * density), (int)(10 * density));
+        btnNext.setOnClickListener(v -> {
+            animateSelection(btnNext);
+            onNextClick.onClick(v);
+        });
+
+        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.3f);
+        btnNext.setLayoutParams(btnParams);
+
+        bar.addView(tvSkip);
+        bar.addView(dotsLayout);
+        bar.addView(btnNext);
+
+        return bar;
+    }
+
+    // --- STEP BUILDERS ---
+
+    // ====================================================================
+    // RESTORED INTRO SCREEN 01 — MOTIVATION
+    // ====================================================================
+    // ====================================================================
+    // RESTORED INTRO SCREEN 01 — TROPHY & MOTIVATION (Eato Reference)
+    // ====================================================================
+    private void buildIntroTrophySlide() {
+        float density = getResources().getDisplayMetrics().density;
+
+        LinearLayout layout = createVerticalContainer();
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        TextView tvInd = new TextView(this);
+        tvInd.setText("01 / 03");
+        tvInd.setTextSize(13);
+        tvInd.setTypeface(null, Typeface.BOLD);
+        tvInd.setTextColor(Color.parseColor("#94A3B8"));
+        tvInd.setGravity(Gravity.CENTER_HORIZONTAL);
+        tvInd.setPadding(0, (int)(4 * density), 0, (int)(8 * density));
+        layout.addView(tvInd);
+
+        addLargeAnimatedIllustration(layout, R.drawable.ic_intro_trophy, 260, 260);
+
+        TextView tvTitle = createHeaderTitle("Your Stronger Self Starts Here");
+        tvTitle.setTextSize(26);
+        tvTitle.setGravity(Gravity.CENTER);
+        tvTitle.setPadding(0, (int)(12 * density), 0, (int)(8 * density));
+
+        TextView tvSub = createSubTitle("Let's build healthy habits, move with confidence, and become the best version of you.");
+        tvSub.setGravity(Gravity.CENTER);
+        tvSub.setTextSize(14);
+        tvSub.setTextColor(Color.parseColor("#475569"));
+        tvSub.setPadding(0, 0, 0, (int)(16 * density));
+
+        layout.addView(tvTitle);
+        layout.addView(tvSub);
+
+        View navBar = createIntroBottomNav(0, "Next →", v -> {
+            currentStep = 1;
+            renderStep(1);
+        });
+        layout.addView(navBar);
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // RESTORED INTRO SCREEN 02 — PERSONALIZATION (Eato Reference)
+    // ====================================================================
+    private void buildIntroComparisonSlide() {
+        float density = getResources().getDisplayMetrics().density;
+
+        LinearLayout layout = createVerticalContainer();
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        TextView tvInd = new TextView(this);
+        tvInd.setText("02 / 03");
+        tvInd.setTextSize(13);
+        tvInd.setTypeface(null, Typeface.BOLD);
+        tvInd.setTextColor(Color.parseColor("#94A3B8"));
+        tvInd.setGravity(Gravity.CENTER_HORIZONTAL);
+        tvInd.setPadding(0, (int)(4 * density), 0, (int)(8 * density));
+        layout.addView(tvInd);
+
+        addLargeAnimatedIllustration(layout, R.drawable.ic_intro_personalization, 260, 260);
+
+        TextView tvTitle = createHeaderTitle("Workouts Made For You");
+        tvTitle.setTextSize(26);
+        tvTitle.setGravity(Gravity.CENTER);
+        tvTitle.setPadding(0, (int)(12 * density), 0, (int)(8 * density));
+
+        TextView tvSub = createSubTitle("Get personalized workouts designed around your goals, fitness level, and daily routine.");
+        tvSub.setGravity(Gravity.CENTER);
+        tvSub.setTextSize(14);
+        tvSub.setTextColor(Color.parseColor("#475569"));
+        tvSub.setPadding(0, 0, 0, (int)(16 * density));
+
+        layout.addView(tvTitle);
+        layout.addView(tvSub);
+
+        View navBar = createIntroBottomNav(1, "Next →", v -> {
+            currentStep = 2;
+            renderStep(2);
+        });
+        layout.addView(navBar);
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // RESTORED INTRO SCREEN 03 — SATIETY & PROGRESS (Eato Reference)
+    // ====================================================================
+    // ====================================================================
+    // INTRO SCREEN 03 — EXISTING ISSUES VS FITTRAIN SOLUTIONS
+    // ====================================================================
+    private void buildIntroSatietySlide() {
+        float density = getResources().getDisplayMetrics().density;
+
+        LinearLayout layout = createVerticalContainer();
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        TextView tvInd = new TextView(this);
+        tvInd.setText("03 / 03");
+        tvInd.setTextSize(13);
+        tvInd.setTypeface(null, Typeface.BOLD);
+        tvInd.setTextColor(Color.parseColor("#94A3B8"));
+        tvInd.setGravity(Gravity.CENTER_HORIZONTAL);
+        tvInd.setPadding(0, (int)(4 * density), 0, (int)(6 * density));
+        layout.addView(tvInd);
+
+        TextView tvTitle = createHeaderTitle("Existing Issues vs FitTrain Solutions");
+        tvTitle.setTextSize(23);
+        tvTitle.setGravity(Gravity.CENTER);
+        tvTitle.setPadding(0, (int)(4 * density), 0, (int)(4 * density));
+
+        TextView tvSub = createSubTitle("Discover why FitTrain is the smarter, more effective way to reach your goals.");
+        tvSub.setGravity(Gravity.CENTER);
+        tvSub.setTextSize(13);
+        tvSub.setTextColor(Color.parseColor("#475569"));
+        tvSub.setPadding(0, 0, 0, (int)(12 * density));
+
+        layout.addView(tvTitle);
+        layout.addView(tvSub);
+
+        // Comparison Table Container Card
+        LinearLayout tableCard = new LinearLayout(this);
+        tableCard.setOrientation(LinearLayout.VERTICAL);
+        tableCard.setPadding((int)(12 * density), (int)(12 * density), (int)(12 * density), (int)(12 * density));
+        
+        GradientDrawable cardBg = new GradientDrawable();
+        cardBg.setColor(Color.WHITE);
+        cardBg.setCornerRadius(16 * density);
+        cardBg.setStroke((int)(1.5f * density), Color.parseColor("#BAE6FD"));
+        tableCard.setBackground(cardBg);
+
+        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        cardParams.setMargins(0, 0, 0, (int)(12 * density));
+        tableCard.setLayoutParams(cardParams);
+
+        // Column Headers (LEFT: Existing Issues | RIGHT: FitTrain Solutions)
         LinearLayout headerRow = new LinearLayout(this);
         headerRow.setOrientation(LinearLayout.HORIZONTAL);
-        headerRow.setGravity(Gravity.CENTER_VERTICAL);
+        headerRow.setPadding(0, 0, 0, (int)(8 * density));
 
-        ImageView ivIcon = new ImageView(this);
-        ivIcon.setImageResource(R.drawable.ic_behind_question_owl);
-        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(36, 36);
-        iconParams.setMargins(0, 0, 14, 0);
-        ivIcon.setLayoutParams(iconParams);
+        TextView tvColLeft = new TextView(this);
+        tvColLeft.setText("❌ Existing Issues");
+        tvColLeft.setTextSize(13);
+        tvColLeft.setTypeface(null, Typeface.BOLD);
+        tvColLeft.setTextColor(Color.parseColor("#EF4444")); // Crimson Red
+        tvColLeft.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        LinearLayout textCol = new LinearLayout(this);
-        textCol.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams colParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        textCol.setLayoutParams(colParams);
+        TextView tvColRight = new TextView(this);
+        tvColRight.setText("⚡ FitTrain Solution");
+        tvColRight.setTextSize(13);
+        tvColRight.setTypeface(null, Typeface.BOLD);
+        tvColRight.setTextColor(Color.parseColor("#0284C7")); // Ocean Blue
+        tvColRight.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
-        TextView tvHeader = new TextView(this);
-        tvHeader.setText("Behind the question");
-        tvHeader.setTextSize(14);
-        tvHeader.setTypeface(null, Typeface.BOLD);
-        tvHeader.setTextColor(0xFF0F172A);
+        headerRow.addView(tvColLeft);
+        headerRow.addView(tvColRight);
+        tableCard.addView(headerRow);
 
-        TextView tvSummary = new TextView(this);
-        tvSummary.setText(summaryText);
-        tvSummary.setTextSize(12);
-        tvSummary.setTextColor(0xFF64748B);
+        // Divider
+        View divider = new View(this);
+        divider.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(1 * density)));
+        divider.setBackgroundColor(Color.parseColor("#E2E8F0"));
+        tableCard.addView(divider);
 
-        textCol.addView(tvHeader);
-        textCol.addView(tvSummary);
+        // Comparison Rows
+        String[][] comparisons = {
+                {"Generic one-size workout routines", "100% Tailored AI training plans"},
+                {"Calorie & macro guesswork", "Automated smart meal tracking"},
+                {"Risk of bad form & injury", "Real-time AI posture feedback"},
+                {"Loss of motivation & burnout", "Dynamic streaks & progress rewards"}
+        };
 
-        TextView btnMore = new TextView(this);
-        btnMore.setText("More");
-        btnMore.setTextSize(13);
-        btnMore.setTypeface(null, Typeface.BOLD);
-        btnMore.setTextColor(0xFFF97316);
-        btnMore.setPadding(12, 6, 12, 6);
+        for (String[] rowData : comparisons) {
+            LinearLayout row = new LinearLayout(this);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setPadding(0, (int)(8 * density), 0, (int)(8 * density));
+            row.setGravity(Gravity.CENTER_VERTICAL);
 
-        headerRow.addView(ivIcon);
-        headerRow.addView(textCol);
-        headerRow.addView(btnMore);
-        card.addView(headerRow);
+            // Left Side Issue Box
+            LinearLayout leftBox = new LinearLayout(this);
+            leftBox.setOrientation(LinearLayout.HORIZONTAL);
+            leftBox.setPadding((int)(8 * density), (int)(6 * density), (int)(8 * density), (int)(6 * density));
+            GradientDrawable leftBg = new GradientDrawable();
+            leftBg.setColor(Color.parseColor("#FEF2F2")); // Soft Light Red tint
+            leftBg.setCornerRadius(8 * density);
+            leftBox.setBackground(leftBg);
+            LinearLayout.LayoutParams leftP = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            leftP.setMargins(0, 0, (int)(4 * density), 0);
+            leftBox.setLayoutParams(leftP);
 
-        TextView tvDetail = new TextView(this);
-        tvDetail.setText(detailText);
-        tvDetail.setTextSize(12);
-        tvDetail.setTextColor(0xFF475569);
-        tvDetail.setPadding(0, 12, 0, 4);
-        tvDetail.setVisibility(View.GONE);
-        card.addView(tvDetail);
+            TextView tvIssue = new TextView(this);
+            tvIssue.setText(rowData[0]);
+            tvIssue.setTextSize(11);
+            tvIssue.setTextColor(Color.parseColor("#991B1B"));
+            leftBox.addView(tvIssue);
 
-        btnMore.setOnClickListener(v -> {
-            if (tvDetail.getVisibility() == View.GONE) {
-                tvDetail.setVisibility(View.VISIBLE);
-                btnMore.setText("Less");
-            } else {
-                tvDetail.setVisibility(View.GONE);
-                btnMore.setText("More");
-            }
+            // Right Side Solution Box
+            LinearLayout rightBox = new LinearLayout(this);
+            rightBox.setOrientation(LinearLayout.HORIZONTAL);
+            rightBox.setPadding((int)(8 * density), (int)(6 * density), (int)(8 * density), (int)(6 * density));
+            GradientDrawable rightBg = new GradientDrawable();
+            rightBg.setColor(Color.parseColor("#F0F9FF")); // Soft Ice Blue tint
+            rightBg.setCornerRadius(8 * density);
+            rightBox.setBackground(rightBg);
+            LinearLayout.LayoutParams rightP = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            rightP.setMargins((int)(4 * density), 0, 0, 0);
+            rightBox.setLayoutParams(rightP);
+
+            TextView tvSol = new TextView(this);
+            tvSol.setText(rowData[1]);
+            tvSol.setTextSize(11);
+            tvSol.setTypeface(null, Typeface.BOLD);
+            tvSol.setTextColor(Color.parseColor("#0369A1"));
+            rightBox.addView(tvSol);
+
+            row.addView(leftBox);
+            row.addView(rightBox);
+            tableCard.addView(row);
+        }
+
+        layout.addView(tableCard);
+
+        View navBar = createIntroBottomNav(2, "Get Started →", v -> {
+            currentStep = 3; // Question 1
+            renderStep(3);
         });
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 20);
-        card.setLayoutParams(params);
-        container.addView(card);
-    }
-
-    // ====================================================================
-    // INTRO SLIDES (0 to 3)
-    // ====================================================================
-
-    private void buildIntroTrophySlide() {
-        LinearLayout layout = createVerticalContainer();
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
-
-        TextView tvTitle = createHeaderTitle("Goal Weight Will Be Reached In FitTrain");
-        tvTitle.setGravity(Gravity.CENTER);
-        tvTitle.setPadding(0, 16, 0, 8);
-
-        TextView tvSub = createSubTitle("Let's start with a few quick questions to generate your personalized fitness & nutrition plan!");
-        tvSub.setGravity(Gravity.CENTER);
-
-        layout.addView(tvTitle);
-        layout.addView(tvSub);
-
-        addLargeAnimatedIllustration(layout, R.drawable.ic_intro_trophy, 200, 200);
-
-        layout.addView(createFeatureBadge("🎯 Goal-Driven Calorie Deficit Engine"));
-        layout.addView(createFeatureBadge("🏋️ Personalized Workouts for Home or Gym"));
-        layout.addView(createFeatureBadge("🥗 Science-Backed Meal Schedules & Nutrition"));
-        layout.addView(createFeatureBadge("🤖 24/7 AI Personal Fitness Coach Assistant"));
-
-        stepContainer.addView(layout);
-    }
-
-    private void buildIntroComparisonSlide() {
-        LinearLayout layout = createVerticalContainer();
-
-        TextView tvTitle = createHeaderTitle("FitTrain simplifies weight loss and is built for real life");
-        TextView tvSub = createSubTitle("Forget rigid meal prep! FitTrain adapts to your daily lifestyle effortlessly.");
-        layout.addView(tvTitle);
-        layout.addView(tvSub);
-
-        addLargeAnimatedIllustration(layout, R.drawable.ic_ai_meal_scan, 200, 200);
-
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-
-        LinearLayout cardLeft = new LinearLayout(this);
-        cardLeft.setOrientation(LinearLayout.VERTICAL);
-        cardLeft.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        cardLeft.setPadding(20, 20, 20, 20);
-
-        TextView tvLeftTitle = new TextView(this);
-        tvLeftTitle.setText("Traditional\nApproach");
-        tvLeftTitle.setTextSize(16);
-        tvLeftTitle.setTypeface(null, Typeface.BOLD);
-        tvLeftTitle.setTextColor(0xFF0F172A);
-        tvLeftTitle.setPadding(0, 0, 0, 12);
-        cardLeft.addView(tvLeftTitle);
-
-        cardLeft.addView(createBulletItem("✖ Manually weigh every single ingredient"));
-        cardLeft.addView(createBulletItem("✖ Spend hours preparing meals"));
-        cardLeft.addView(createBulletItem("✖ Easily lose motivation"));
-
-        LinearLayout cardRight = new LinearLayout(this);
-        cardRight.setOrientation(LinearLayout.VERTICAL);
-        cardRight.setBackgroundResource(R.drawable.bg_option_card_selected);
-        cardRight.setPadding(20, 20, 20, 20);
-
-        TextView tvRightTitle = new TextView(this);
-        tvRightTitle.setText("With FitTrain\nTracker");
-        tvRightTitle.setTextSize(16);
-        tvRightTitle.setTypeface(null, Typeface.BOLD);
-        tvRightTitle.setTextColor(0xFF6366F1);
-        tvRightTitle.setPadding(0, 0, 0, 12);
-        cardRight.addView(tvRightTitle);
-
-        cardRight.addView(createCheckItem("✔ Enjoy meals anywhere, anytime"));
-        cardRight.addView(createCheckItem("✔ Simply scan before eating"));
-        cardRight.addView(createCheckItem("✔ Achieve results effortlessly"));
-
-        LinearLayout.LayoutParams paramHalf = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        paramHalf.setMargins(6, 0, 6, 0);
-        cardLeft.setLayoutParams(paramHalf);
-        cardRight.setLayoutParams(paramHalf);
-
-        row.addView(cardLeft);
-        row.addView(cardRight);
-        layout.addView(row);
-
-        stepContainer.addView(layout);
-    }
-
-    private void buildIntroSatietySlide() {
-        LinearLayout layout = createVerticalContainer();
-
-        TextView tvTitle = createHeaderTitle("Learn to make better food choices — Same Calories Better Results");
-        TextView tvSub = createSubTitle("High-satiety nutrient meals keep you full longer on the exact same caloric budget.");
-        layout.addView(tvTitle);
-        layout.addView(tvSub);
-
-        addLargeAnimatedIllustration(layout, R.drawable.ic_intro_satiety, 200, 200);
-
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-
-        LinearLayout cardDrink = new LinearLayout(this);
-        cardDrink.setOrientation(LinearLayout.VERTICAL);
-        cardDrink.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        cardDrink.setPadding(16, 16, 16, 16);
-
-        TextView tvCalDrink = new TextView(this);
-        tvCalDrink.setText("590 cal");
-        tvCalDrink.setTextSize(14);
-        tvCalDrink.setTypeface(null, Typeface.BOLD);
-        tvCalDrink.setTextColor(0xFFEA580C);
-
-        TextView tvDrinkTitle = new TextView(this);
-        tvDrinkTitle.setText("That one drink 🥤");
-        tvDrinkTitle.setTextSize(15);
-        tvDrinkTitle.setTypeface(null, Typeface.BOLD);
-        tvDrinkTitle.setTextColor(0xFF0F172A);
-        tvDrinkTitle.setPadding(0, 8, 0, 8);
-
-        cardDrink.addView(tvCalDrink);
-        cardDrink.addView(tvDrinkTitle);
-        cardDrink.addView(createBulletItem("✖ Quick hunger"));
-        cardDrink.addView(createBulletItem("✖ Low nutrients"));
-        cardDrink.addView(createBulletItem("✖ Crashes energy"));
-
-        LinearLayout cardMeal = new LinearLayout(this);
-        cardMeal.setOrientation(LinearLayout.VERTICAL);
-        cardMeal.setBackgroundResource(R.drawable.bg_option_card_selected);
-        cardMeal.setPadding(16, 16, 16, 16);
-
-        TextView tvCalMeal = new TextView(this);
-        tvCalMeal.setText("590 cal");
-        tvCalMeal.setTextSize(14);
-        tvCalMeal.setTypeface(null, Typeface.BOLD);
-        tvCalMeal.setTextColor(0xFF10B981);
-
-        TextView tvMealTitle = new TextView(this);
-        tvMealTitle.setText("An entire meal 🥗");
-        tvMealTitle.setTextSize(15);
-        tvMealTitle.setTypeface(null, Typeface.BOLD);
-        tvMealTitle.setTextColor(0xFF6366F1);
-        tvMealTitle.setPadding(0, 8, 0, 8);
-
-        cardMeal.addView(tvCalMeal);
-        cardMeal.addView(tvMealTitle);
-        cardMeal.addView(createCheckItem("✔ High satiety"));
-        cardMeal.addView(createCheckItem("✔ Rich in nutrients"));
-        cardMeal.addView(createCheckItem("✔ Boosts energy"));
-
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        p.setMargins(6, 0, 6, 0);
-        cardDrink.setLayoutParams(p);
-        cardMeal.setLayoutParams(p);
-
-        row.addView(cardDrink);
-        row.addView(cardMeal);
-        layout.addView(row);
-
-        stepContainer.addView(layout);
-    }
-
-    // NEW ONBOARDING INTRO SCREEN (Step 3: AFTER ALL INTROS, BEFORE NAME)
-    private void buildNewIntroStartSlide() {
-        LinearLayout layout = createVerticalContainer();
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.setPadding(20, 20, 20, 20);
-
-        // Large Start AI Illustration (180x180 dp with smooth Entrance Animation)
-        ImageView ivStart = new ImageView(this);
-        ivStart.setImageResource(R.drawable.ic_onboarding_start);
-        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(180, 180);
-        imgParams.setMargins(0, 12, 0, 20);
-        ivStart.setLayoutParams(imgParams);
-
-        // Animated Image Entrance (Slide Up + Scale Pulse)
-        TranslateAnimation animStartImg = new TranslateAnimation(0, 0, 60, 0);
-        animStartImg.setDuration(400);
-        ScaleAnimation animStartScale = new ScaleAnimation(0.85f, 1.0f, 0.85f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        animStartScale.setDuration(400);
-        ivStart.startAnimation(animStartImg);
-        ivStart.startAnimation(animStartScale);
-
-        layout.addView(ivStart);
-
-        TextView tvTitle = createHeaderTitle("Let's start with some questions to get your custom plan");
-        tvTitle.setGravity(Gravity.CENTER);
-
-        TextView tvSub = createSubTitle("Answer a few simple questions so FitTrain can personalize your daily workout, diet, and calorie targets.");
-        tvSub.setGravity(Gravity.CENTER);
-
-        layout.addView(tvTitle);
-        layout.addView(tvSub);
-
-        // Login Row: "Already have an account? Log In"
-        LinearLayout loginRow = new LinearLayout(this);
-        loginRow.setOrientation(LinearLayout.HORIZONTAL);
-        loginRow.setGravity(Gravity.CENTER);
-        loginRow.setPadding(0, 20, 0, 0);
-
-        TextView tvAlready = new TextView(this);
-        tvAlready.setText("Already have an account? ");
-        tvAlready.setTextSize(14);
-        tvAlready.setTextColor(0xFF64748B);
-
-        TextView tvLoginBtn = new TextView(this);
-        tvLoginBtn.setText("Log In");
-        tvLoginBtn.setTextSize(14);
-        tvLoginBtn.setTypeface(null, Typeface.BOLD);
-        tvLoginBtn.setTextColor(0xFF2563EB);
-        tvLoginBtn.setPadding(6, 6, 6, 6);
-
-        tvLoginBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(OnboardingActivity.this, LoginActivity.class);
-            startActivity(intent);
-        });
-
-        loginRow.addView(tvAlready);
-        loginRow.addView(tvLoginBtn);
-        layout.addView(loginRow);
+        layout.addView(navBar);
 
         stepContainer.addView(layout);
     }
 
     // ====================================================================
-    // QUESTION STEPS (4 to 21 - UNSELECTED INITIAL STATES & VISUALS)
+    // QUESTION 1 of 18 — NAME
     // ====================================================================
-
     private void buildNameStep() {
-        LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("👤 What's your name?"));
-        layout.addView(createSubTitle("We'll use this to personalize your FitTrain experience."));
+        float density = getResources().getDisplayMetrics().density;
 
-        // STRICT: Empty input field
-        EditText etName = createEditText("Enter your name");
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        layout.setPadding((int)(24 * density), (int)(12 * density), (int)(24 * density), (int)(24 * density));
+
+        TextView tvGreeting = new TextView(this);
+        tvGreeting.setText("👋 Hello!");
+        tvGreeting.setTextSize(16);
+        tvGreeting.setTypeface(null, Typeface.BOLD);
+        tvGreeting.setTextColor(Color.parseColor("#0284C7"));
+        tvGreeting.setPadding(0, 0, 0, (int)(4 * density));
+        layout.addView(tvGreeting);
+
+        TextView tvHeadline = new TextView(this);
+        SpannableStringBuilder spanHeadline = new SpannableStringBuilder("What's your name?");
+        spanHeadline.setSpan(new ForegroundColorSpan(Color.parseColor("#0F172A")), 0, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spanHeadline.setSpan(new ForegroundColorSpan(Color.parseColor("#0284C7")), 12, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spanHeadline.setSpan(new StyleSpan(Typeface.BOLD), 0, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tvHeadline.setText(spanHeadline);
+        tvHeadline.setTextSize(26);
+        tvHeadline.setPadding(0, 0, 0, (int)(6 * density));
+        layout.addView(tvHeadline);
+
+        TextView tvSub = new TextView(this);
+        tvSub.setText("Let's get to know you better. Please enter your name to get started.");
+        tvSub.setTextSize(14);
+        tvSub.setTextColor(Color.parseColor("#64748B"));
+        tvSub.setPadding(0, 0, 0, (int)(20 * density));
+        layout.addView(tvSub);
+
+        LinearLayout inputCard = new LinearLayout(this);
+        inputCard.setOrientation(LinearLayout.HORIZONTAL);
+        inputCard.setGravity(Gravity.CENTER_VERTICAL);
+        inputCard.setPadding((int)(18 * density), (int)(14 * density), (int)(18 * density), (int)(14 * density));
+
+        GradientDrawable inputBg = new GradientDrawable();
+        inputBg.setCornerRadius(24 * density);
+        inputBg.setColor(Color.parseColor("#F0F9FF"));
+        inputBg.setStroke((int)(1.5f * density), Color.parseColor("#BAE6FD"));
+        inputCard.setBackground(inputBg);
+
+        LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        cardParams.setMargins(0, 0, 0, (int)(20 * density));
+        inputCard.setLayoutParams(cardParams);
+
+        TextView tvIcon = new TextView(this);
+        tvIcon.setText("👤");
+        tvIcon.setTextSize(20);
+        tvIcon.setPadding(0, 0, (int)(12 * density), 0);
+        inputCard.addView(tvIcon);
+
+        EditText etName = new EditText(this);
+        etName.setHint("Enter your name");
+        etName.setHintTextColor(Color.parseColor("#94A3B8"));
         etName.setText(name);
+        etName.setTextSize(16);
+        etName.setTextColor(Color.parseColor("#0F172A"));
+        etName.setTypeface(null, Typeface.BOLD);
+        etName.setBackground(null);
+        etName.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
         etName.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { name = s.toString(); }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                name = s.toString();
+                updateNextButtonState();
+            }
             @Override public void afterTextChanged(Editable s) {}
         });
-        layout.addView(etName);
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_welcome_person, 240, 240);
+        inputCard.addView(etName);
+        layout.addView(inputCard);
+
+        addLargeAnimatedIllustration(layout, R.drawable.ic_welcome_person, 220, 220);
+
         stepContainer.addView(layout);
     }
 
+    // ====================================================================
+    // QUESTION 2 of 18 — DATE OF BIRTH
+    // ====================================================================
     private void buildDateOfBirthStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Knowing your birth date helps us calculate BMR accurately...", "Basal Metabolic Rate (BMR) declines with age. Selecting your birth date allows FitTrain to accurately calculate your metabolic rate and caloric needs.");
+        addBehindTheQuestionCard(layout, "BMR & Age Calculation", "Basal Metabolic Rate (BMR) changes with age. Selecting your date of birth helps FitTrain accurately calculate your daily caloric expenditure.");
 
-        layout.addView(createHeaderTitle("📅 What's your date of birth?"));
-        layout.addView(createSubTitle("Select your birth date to calculate your age accurately."));
+        layout.addView(createHeaderTitle("What's your date of birth? 🎂"));
+        layout.addView(createSubTitle("Select your birth date to calculate your age and metabolic baseline. 📅"));
 
         MaterialButton btnPicker = new MaterialButton(this);
         btnPicker.setText(dobString.isEmpty() ? "📅 Select your date of birth" : "📅 Date of Birth: " + dobString + " (" + age + " years)");
-        btnPicker.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dobString.isEmpty() ? 0xFFE2E8F0 : 0xFF2563EB));
+        btnPicker.setBackgroundTintList(android.content.res.ColorStateList.valueOf(dobString.isEmpty() ? 0xFFE2E8F0 : 0xFF0284C7));
         btnPicker.setTextColor(dobString.isEmpty() ? 0xFF64748B : 0xFFFFFFFF);
         btnPicker.setPadding(24, 20, 24, 20);
 
@@ -692,34 +988,41 @@ public class OnboardingActivity extends AppCompatActivity {
                 dobString = String.format(Locale.getDefault(), "%04d-%02d-%02d", birthYear, birthMonth, birthDay);
 
                 btnPicker.setText("📅 Date of Birth: " + dobString + " (" + age + " years)");
-                btnPicker.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2563EB));
+                btnPicker.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF0284C7));
                 btnPicker.setTextColor(0xFFFFFFFF);
+                updateNextButtonState();
             }, y, m, d);
             dpd.show();
         });
         layout.addView(btnPicker);
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_calendar_age, 240, 240);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_calendar_age, 220, 220);
 
         stepContainer.addView(layout);
     }
 
+    // ====================================================================
+    // QUESTION 3 of 18 — GENDER
+    // ====================================================================
     private void buildGenderStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Tailored Fitness Plans: Gender...", "Biological gender affects muscle distribution and basal metabolic formulas (Mifflin-St Jeor formula).");
+        addBehindTheQuestionCard(layout, "Metabolic Formula", "Biological gender affects muscle distribution and basal metabolic formulas (Mifflin-St Jeor equation).");
 
-        layout.addView(createHeaderTitle("What is your gender?"));
+        layout.addView(createHeaderTitle("What is your gender? 👤"));
 
-        String[] genders = {"Male", "Female", "Non-binary"};
-        String[] icons = {"👦 Male", "👧 Female", "🧑 Non-binary"};
+        String[] displayGenders = {"Male 👦", "Female 👧", "Non-binary 🧑"};
+        String[] rawGenders = {"Male", "Female", "Non-binary"};
+        int[] icons = {R.drawable.ic_user, R.drawable.ic_gender, R.drawable.ic_name_badge};
+        int[] colors = {0xFF0284C7, 0xFFEC4899, 0xFFF59E0B};
 
-        for (int i = 0; i < genders.length; i++) {
-            final String g = genders[i];
-            View card = createOptionCard(icons[i], g.equalsIgnoreCase(gender), 0xFF6366F1);
+        for (int i = 0; i < displayGenders.length; i++) {
+            final String g = rawGenders[i];
+            final String display = displayGenders[i];
+            View card = createOptionCard(display, icons[i], g.equalsIgnoreCase(gender), colors[i]);
             card.setOnClickListener(v -> {
                 gender = g;
                 animateSelection(card);
-                renderStep(6);
+                renderStep(5);
             });
             layout.addView(card);
         }
@@ -727,11 +1030,14 @@ public class OnboardingActivity extends AppCompatActivity {
         stepContainer.addView(layout);
     }
 
+    // ====================================================================
+    // QUESTION 4 of 18 — HEIGHT
+    // ====================================================================
     private void buildHeightStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Body Surface Metric...", "Height is critical to compute Body Mass Index (BMI) and total energy expenditure.");
+        addBehindTheQuestionCard(layout, "Body Metrics", "Height is required to compute Body Mass Index (BMI) and total energy expenditure.");
 
-        layout.addView(createHeaderTitle("Your Height"));
+        layout.addView(createHeaderTitle("Your Height 📏"));
 
         LinearLayout unitSwitcher = new LinearLayout(this);
         unitSwitcher.setOrientation(LinearLayout.HORIZONTAL);
@@ -739,12 +1045,12 @@ public class OnboardingActivity extends AppCompatActivity {
 
         MaterialButton btnCm = new MaterialButton(this);
         btnCm.setText("cm");
-        btnCm.setBackgroundTintList(android.content.res.ColorStateList.valueOf(isMetric ? 0xFFF97316 : 0xFFE2E8F0));
+        btnCm.setBackgroundTintList(android.content.res.ColorStateList.valueOf(isMetric ? 0xFF0284C7 : 0xFFE2E8F0));
         btnCm.setTextColor(isMetric ? 0xFFFFFFFF : 0xFF64748B);
 
         MaterialButton btnFt = new MaterialButton(this);
         btnFt.setText("ft");
-        btnFt.setBackgroundTintList(android.content.res.ColorStateList.valueOf(!isMetric ? 0xFFF97316 : 0xFFE2E8F0));
+        btnFt.setBackgroundTintList(android.content.res.ColorStateList.valueOf(!isMetric ? 0xFF0284C7 : 0xFFE2E8F0));
         btnFt.setTextColor(!isMetric ? 0xFFFFFFFF : 0xFF64748B);
 
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
@@ -752,15 +1058,14 @@ public class OnboardingActivity extends AppCompatActivity {
         btnCm.setLayoutParams(p);
         btnFt.setLayoutParams(p);
 
-        btnCm.setOnClickListener(v -> { isMetric = true; renderStep(7); });
-        btnFt.setOnClickListener(v -> { isMetric = false; renderStep(7); });
+        btnCm.setOnClickListener(v -> { isMetric = true; renderStep(6); });
+        btnFt.setOnClickListener(v -> { isMetric = false; renderStep(6); });
 
         unitSwitcher.addView(btnFt);
         unitSwitcher.addView(btnCm);
         layout.addView(unitSwitcher);
 
         TextView tvVal = new TextView(this);
-        if (heightCm == 0) heightCm = 165.0;
         tvVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f cm", heightCm) : String.format(Locale.getDefault(), "%d ft %d in", (int)(heightCm/30.48), (int)((heightCm%30.48)/2.54)));
         tvVal.setTextSize(28);
         tvVal.setTypeface(null, Typeface.BOLD);
@@ -782,28 +1087,31 @@ public class OnboardingActivity extends AppCompatActivity {
         });
         layout.addView(sbHeight);
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_height_ruler_full, 260, 260);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_height_ruler_full, 220, 220);
 
         stepContainer.addView(layout);
     }
 
+    // ====================================================================
+    // QUESTION 5 of 18 — WEIGHT
+    // ====================================================================
     private void buildWeightStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Weight & BMR Index...", "Current weight establishes baseline caloric maintenance and hydration goals.");
+        addBehindTheQuestionCard(layout, "Weight Baseline", "Current weight establishes baseline caloric maintenance and hydration goals.");
 
-        layout.addView(createHeaderTitle("What's your current weight?"));
+        layout.addView(createHeaderTitle("What's your current weight? ⚖️"));
 
         LinearLayout unitSwitcher = new LinearLayout(this);
         unitSwitcher.setOrientation(LinearLayout.HORIZONTAL);
 
         MaterialButton btnKg = new MaterialButton(this);
         btnKg.setText("kg");
-        btnKg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(isMetric ? 0xFFF97316 : 0xFFE2E8F0));
+        btnKg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(isMetric ? 0xFF0284C7 : 0xFFE2E8F0));
         btnKg.setTextColor(isMetric ? 0xFFFFFFFF : 0xFF64748B);
 
         MaterialButton btnLbs = new MaterialButton(this);
         btnLbs.setText("lbs");
-        btnLbs.setBackgroundTintList(android.content.res.ColorStateList.valueOf(!isMetric ? 0xFFF97316 : 0xFFE2E8F0));
+        btnLbs.setBackgroundTintList(android.content.res.ColorStateList.valueOf(!isMetric ? 0xFF0284C7 : 0xFFE2E8F0));
         btnLbs.setTextColor(!isMetric ? 0xFFFFFFFF : 0xFF64748B);
 
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
@@ -811,880 +1119,642 @@ public class OnboardingActivity extends AppCompatActivity {
         btnKg.setLayoutParams(p);
         btnLbs.setLayoutParams(p);
 
-        btnKg.setOnClickListener(v -> { isMetric = true; renderStep(8); });
-        btnLbs.setOnClickListener(v -> { isMetric = false; renderStep(8); });
+        btnKg.setOnClickListener(v -> { isMetric = true; renderStep(7); });
+        btnLbs.setOnClickListener(v -> { isMetric = false; renderStep(7); });
 
-        unitSwitcher.addView(btnLbs);
         unitSwitcher.addView(btnKg);
+        unitSwitcher.addView(btnLbs);
         layout.addView(unitSwitcher);
 
-        TextView tvWeightVal = new TextView(this);
-        if (weightKg == 0) weightKg = 70.0;
-        tvWeightVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", weightKg) : String.format(Locale.getDefault(), "%.1f lbs", weightKg * 2.20462));
-        tvWeightVal.setTextSize(34);
-        tvWeightVal.setTypeface(null, Typeface.BOLD);
-        tvWeightVal.setTextColor(0xFF0F172A);
-        tvWeightVal.setGravity(Gravity.CENTER);
-        tvWeightVal.setPadding(0, 16, 0, 8);
-        layout.addView(tvWeightVal);
+        TextView tvVal = new TextView(this);
+        tvVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", weightKg) : String.format(Locale.getDefault(), "%.1f lbs", weightKg * 2.20462));
+        tvVal.setTextSize(28);
+        tvVal.setTypeface(null, Typeface.BOLD);
+        tvVal.setTextColor(0xFF0F172A);
+        tvVal.setGravity(Gravity.CENTER);
+        tvVal.setPadding(0, 16, 0, 16);
+        layout.addView(tvVal);
 
         SeekBar sbWeight = new SeekBar(this);
-        sbWeight.setMax(170);
+        sbWeight.setMax(150);
         sbWeight.setProgress((int) (weightKg - 30));
-
-        LinearLayout bmiBox = new LinearLayout(this);
-        bmiBox.setOrientation(LinearLayout.VERTICAL);
-        bmiBox.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        bmiBox.setPadding(20, 16, 20, 16);
-
-        TextView tvBmiTitle = new TextView(this);
-        double heightM = (heightCm > 0 ? heightCm : 165.0) / 100.0;
-        double bmi = weightKg / (heightM * heightM);
-
-        String category;
-        int categoryColor;
-        if (bmi < 18.5) { category = "Underweight"; categoryColor = 0xFF3B82F6; }
-        else if (bmi < 25.0) { category = "Normal"; categoryColor = 0xFF10B981; }
-        else if (bmi < 30.0) { category = "Overweight"; categoryColor = 0xFFF97316; }
-        else { category = "Obesity"; categoryColor = 0xFFEF4444; }
-
-        tvBmiTitle.setText(String.format(Locale.getDefault(), "Your BMI: %.1f  [%s]", bmi, category));
-        tvBmiTitle.setTextSize(15);
-        tvBmiTitle.setTypeface(null, Typeface.BOLD);
-        tvBmiTitle.setTextColor(categoryColor);
-
-        TextView tvBmiDesc = new TextView(this);
-        tvBmiDesc.setText("We will use your index to tailor a personal deficit plan for you.");
-        tvBmiDesc.setTextSize(12);
-        tvBmiDesc.setTextColor(0xFF64748B);
-        tvBmiDesc.setPadding(0, 4, 0, 0);
-
-        bmiBox.addView(tvBmiTitle);
-        bmiBox.addView(tvBmiDesc);
-
         sbWeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 weightKg = 30 + progress;
-                tvWeightVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", weightKg) : String.format(Locale.getDefault(), "%.1f lbs", weightKg * 2.20462));
-
-                double hM = (heightCm > 0 ? heightCm : 165.0) / 100.0;
-                double b = weightKg / (hM * hM);
-                String cat;
-                int cColor;
-                if (b < 18.5) { cat = "Underweight"; cColor = 0xFF3B82F6; }
-                else if (b < 25.0) { cat = "Normal"; cColor = 0xFF10B981; }
-                else if (b < 30.0) { cat = "Overweight"; cColor = 0xFFF97316; }
-                else { cat = "Obesity"; cColor = 0xFFEF4444; }
-
-                tvBmiTitle.setText(String.format(Locale.getDefault(), "Your BMI: %.1f  [%s]", b, cat));
-                tvBmiTitle.setTextColor(cColor);
+                tvVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", weightKg) : String.format(Locale.getDefault(), "%.1f lbs", weightKg * 2.20462));
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-
         layout.addView(sbWeight);
-        layout.addView(bmiBox);
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_weight_scale_full, 260, 260);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_weight_scale_full, 220, 220);
 
         stepContainer.addView(layout);
     }
 
-    // BLOOD GROUP SCREEN (Step 9)
+    // ====================================================================
+    // QUESTION 6 of 18 — BLOOD GROUP
+    // ====================================================================
     private void buildBloodGroupStep() {
         LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🩸 What's your blood group?"));
-        layout.addView(createSubTitle("Select your blood group for emergency and medical profile context."));
+        addBehindTheQuestionCard(layout, "Health Insights", "Blood group information helps FitTrain provide relevant nutritional recommendations and emergency profile data.");
 
-        String[] groups = {"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Don't know"};
+        layout.addView(createHeaderTitle("Select your Blood Group 🩸"));
 
-        for (String g : groups) {
-            boolean isSel = g.equalsIgnoreCase(bloodGroup);
-            View card = createOptionCard(isSel ? "🩸 " + g : "🩸 " + g, isSel, 0xFFEF4444);
+        String[] displayGroups = {"A+ 🩸", "A- 🩸", "B+ 🩸", "B- 🩸", "O+ 🩸", "O- 🩸", "AB+ 🩸", "AB- 🩸"};
+        String[] rawGroups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"};
+
+        for (int i = 0; i < displayGroups.length; i++) {
+            final String raw = rawGroups[i];
+            final String display = displayGroups[i];
+            View card = createOptionCard(display, R.drawable.ic_blood_drop, raw.equalsIgnoreCase(bloodGroup), 0xFFEF4444);
             card.setOnClickListener(v -> {
-                bloodGroup = g;
+                bloodGroup = raw;
+                animateSelection(card);
+                renderStep(8);
+            });
+            layout.addView(card);
+        }
+
+        addLargeAnimatedIllustration(layout, R.drawable.ic_blood_compatibility, 200, 200);
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // QUESTION 7 of 18 — PRIMARY GOAL
+    // ====================================================================
+    private void buildGoalStep() {
+        LinearLayout layout = createVerticalContainer();
+        addBehindTheQuestionCard(layout, "Caloric Strategy", "Your primary goal determines whether FitTrain sets a calorie deficit, maintenance, or surplus target.");
+
+        layout.addView(createHeaderTitle("What is your primary fitness goal? 🎯"));
+
+        String[] displayGoals = {"Lose Weight 🔥", "Build Muscle 💪", "Maintain Weight ⚖️", "Increase Energy ⚡"};
+        String[] rawGoals = {"Lose Weight", "Build Muscle", "Maintain Weight", "Increase Energy"};
+        int[] icons = {R.drawable.ic_flame, R.drawable.ic_dumbbell, R.drawable.ic_weight_scale_full, R.drawable.ic_flash};
+        int[] colors = {0xFFEF4444, 0xFF0284C7, 0xFF10B981, 0xFFF59E0B};
+
+        for (int i = 0; i < displayGoals.length; i++) {
+            final String raw = rawGoals[i];
+            final String display = displayGoals[i];
+            View card = createOptionCard(display, icons[i], raw.equalsIgnoreCase(goal), colors[i]);
+            card.setOnClickListener(v -> {
+                goal = raw;
                 animateSelection(card);
                 renderStep(9);
             });
             layout.addView(card);
         }
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_blood_drop, 220, 220);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_flame, 180, 180);
 
         stepContainer.addView(layout);
     }
 
-    private void buildGoalStep() {
-        LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🎯 What do you want to achieve?"));
-        layout.addView(createSubTitle("Tap an option to select your goal."));
-
-        String[] goals = {"Lose Weight", "Build Muscle", "Maintain Weight", "Improve Fitness", "Build Strength", "Improve Endurance", "Improve Flexibility"};
-        String[] descs = {
-            "🔥 Burn fat and achieve a leaner body shape",
-            "💪 Gain strength, muscle mass & definition",
-            "⚖️ Keep current weight & balance health",
-            "⚡ Increase endurance & overall energy",
-            "🏋️ Heavy strength training & power",
-            "🏃 Long-distance cardio & stamina",
-            "🧘 Stretching, mobility & active recovery"
-        };
-        String[] icons = {"🔥", "💪", "⚖️", "⚡", "🏋️", "🏃", "🧘"};
-        int[] colors = {0xFFF97316, 0xFF6366F1, 0xFF14B8A6, 0xFF8B5CF6, 0xFF2563EB, 0xFFF59E0B, 0xFFEC4899};
-
-        for (int i = 0; i < goals.length; i++) {
-            final String g = goals[i];
-            View card = createDetailedOptionCard(icons[i] + " " + g, descs[i], g.equalsIgnoreCase(goal), colors[i]);
-            card.setOnClickListener(v -> {
-                goal = g;
-                animateSelection(card);
-                renderStep(10);
-            });
-            layout.addView(card);
-        }
-        addLargeAnimatedIllustration(layout, R.drawable.ic_target_goal, 240, 240);
-        stepContainer.addView(layout);
-    }
-
+    // ====================================================================
+    // QUESTION 8 of 18 — TARGET WEIGHT
+    // ====================================================================
     private void buildTargetWeightStep() {
         LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🎯 What is your target weight?"));
-        layout.addView(createSubTitle("Enter your target goal weight."));
+        addBehindTheQuestionCard(layout, "Target Milestone", "Setting a target weight enables FitTrain to estimate your project timeline and caloric budget.");
 
-        TextView tvTargetVal = new TextView(this);
-        if (targetWeightKg == 0) targetWeightKg = weightKg > 0 ? weightKg - 5.0 : 65.0;
-        tvTargetVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", targetWeightKg) : String.format(Locale.getDefault(), "%.1f lbs", targetWeightKg * 2.20462));
-        tvTargetVal.setTextSize(34);
-        tvTargetVal.setTypeface(null, Typeface.BOLD);
-        tvTargetVal.setTextColor(0xFF2563EB);
-        tvTargetVal.setGravity(Gravity.CENTER);
-        tvTargetVal.setPadding(0, 16, 0, 16);
-        layout.addView(tvTargetVal);
+        layout.addView(createHeaderTitle("What's your target weight? 🎯"));
+
+        TextView tvVal = new TextView(this);
+        tvVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", targetWeightKg) : String.format(Locale.getDefault(), "%.1f lbs", targetWeightKg * 2.20462));
+        tvVal.setTextSize(28);
+        tvVal.setTypeface(null, Typeface.BOLD);
+        tvVal.setTextColor(0xFF0F172A);
+        tvVal.setGravity(Gravity.CENTER);
+        tvVal.setPadding(0, 16, 0, 16);
+        layout.addView(tvVal);
 
         SeekBar sbTarget = new SeekBar(this);
-        sbTarget.setMax(170);
+        sbTarget.setMax(150);
         sbTarget.setProgress((int) (targetWeightKg - 30));
         sbTarget.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 targetWeightKg = 30 + progress;
-                tvTargetVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", targetWeightKg) : String.format(Locale.getDefault(), "%.1f lbs", targetWeightKg * 2.20462));
+                tvVal.setText(isMetric ? String.format(Locale.getDefault(), "%.1f kg", targetWeightKg) : String.format(Locale.getDefault(), "%.1f lbs", targetWeightKg * 2.20462));
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
         layout.addView(sbTarget);
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_target_pace, 240, 240);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_target_pace, 220, 220);
 
         stepContainer.addView(layout);
     }
 
-    private void buildMilestoneProjectionSlide() {
+    // ====================================================================
+    // QUESTION 9 of 18 — TARGET PACE
+    // ====================================================================
+    private void buildTargetPaceStep() {
         LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("With FitTrain, every milestone is within reach"));
-        layout.addView(createSubTitle("Step-by-step guidance to help you reach your goals safely and effectively."));
+        addBehindTheQuestionCard(layout, "Weight Change Speed", "Choosing a sustainable pace ensures safe progression without burnout or loss of muscle mass.");
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_milestone_graph, 240, 240);
+        layout.addView(createHeaderTitle("How fast do you want to reach your goal? ⏱️"));
 
-        LinearLayout cardMilestones = new LinearLayout(this);
-        cardMilestones.setOrientation(LinearLayout.HORIZONTAL);
-        cardMilestones.setBackgroundResource(R.drawable.bg_option_card_selected);
-        cardMilestones.setPadding(20, 20, 20, 20);
+        String[] displayPaces = {
+                "Steady Pace (0.25 kg/wk) 🐢",
+                "Balanced Pace (0.5 kg/wk - Recommended) ⚖️",
+                "Fast Pace (0.75 kg/wk) 🚀",
+                "Intensive Pace (1.0 kg/wk) 🔥"
+        };
+        String[] rawPaces = {"Steady", "Balanced", "Fast", "Intensive"};
+        int[] icons = {R.drawable.ic_track_progress, R.drawable.ic_weight_scale_full, R.drawable.ic_flash, R.drawable.ic_flame};
 
-        double target = targetWeightKg > 0 ? targetWeightKg : 65.0;
-        double current = weightKg > 0 ? weightKg : 70.0;
-        double mid = (current + target) / 2.0;
-
-        cardMilestones.addView(createMilestonePill(String.format(Locale.getDefault(), "%.0f kg", current), 0xFFF87171));
-        cardMilestones.addView(createMilestonePill(String.format(Locale.getDefault(), "%.0f kg", mid), 0xFFFB923C));
-        cardMilestones.addView(createMilestonePill(String.format(Locale.getDefault(), "%.0f kg", target), 0xFF4ADE80));
-
-        layout.addView(cardMilestones);
-        stepContainer.addView(layout);
-    }
-
-    private View createMilestonePill(String weightText, int bgColor) {
-        TextView tv = new TextView(this);
-        tv.setText(weightText);
-        tv.setTextSize(14);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(0xFFFFFFFF);
-        tv.setGravity(Gravity.CENTER);
-        tv.setBackgroundColor(bgColor);
-        tv.setPadding(16, 12, 16, 12);
-
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        p.setMargins(4, 0, 4, 0);
-        tv.setLayoutParams(p);
-        return tv;
-    }
-
-    private void buildDietSectionIntroSlide() {
-        LinearLayout layout = createVerticalContainer();
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.setPadding(20, 20, 20, 20);
-
-        addLargeAnimatedIllustration(layout, R.drawable.ic_ai_meal_scan, 260, 260);
-
-        TextView tvTitle = createHeaderTitle("Let's learn more about your eating habits");
-        tvTitle.setGravity(Gravity.CENTER);
-
-        TextView tvSub = createSubTitle("Making smart food decisions is a big part of weight loss and body transformation.");
-        tvSub.setGravity(Gravity.CENTER);
-
-        layout.addView(tvTitle);
-        layout.addView(tvSub);
+        for (int i = 0; i < displayPaces.length; i++) {
+            final String raw = rawPaces[i];
+            final String display = displayPaces[i];
+            View card = createOptionCard(display, icons[i], raw.equalsIgnoreCase(targetPace), 0xFF0284C7);
+            card.setOnClickListener(v -> {
+                targetPace = raw;
+                animateSelection(card);
+                renderStep(11);
+            });
+            layout.addView(card);
+        }
 
         stepContainer.addView(layout);
     }
 
+    // ====================================================================
+    // QUESTION 10 of 18 — EATING ENVIRONMENT
+    // ====================================================================
     private void buildEatingEnvironmentsStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Nutritional Awareness...", "Where you eat influences your caloric intake and meal choices.");
+        addBehindTheQuestionCard(layout, "Meal Customization", "Your eating environment guides FitTrain's recipe complexity and meal suggestions.");
 
-        layout.addView(createHeaderTitle("In what environments do you usually eat?"));
+        layout.addView(createHeaderTitle("Where do you usually eat? 🍽️"));
 
-        String[] envs = {"At home", "At restaurants", "At the office or school", "Others"};
-        String[] icons = {"🏠 At home", "🥘 At restaurants", "🏫 At the office or school", "🏕️ Others"};
+        String[] displayEnv = {"Home Cooked 🏠", "Restaurants 🍽️", "Meal Prep 📦", "On the Go 🚗"};
+        String[] rawEnv = {"Home Cooked", "Restaurants", "Meal Prep", "On the Go"};
+        int[] icons = {R.drawable.ic_home, R.drawable.ic_fork_knife, R.drawable.ic_diet_plate, R.drawable.ic_activity_runner};
 
-        for (int i = 0; i < envs.length; i++) {
-            final String e = envs[i];
-            View card = createOptionCard(icons[i], e.equalsIgnoreCase(eatingEnvironment), 0xFFF97316);
+        for (int i = 0; i < displayEnv.length; i++) {
+            final String raw = rawEnv[i];
+            final String display = displayEnv[i];
+            View card = createOptionCard(display, icons[i], raw.equalsIgnoreCase(eatingEnvironment), 0xFF0284C7);
             card.setOnClickListener(v -> {
-                eatingEnvironment = e;
+                eatingEnvironment = raw;
+                animateSelection(card);
+                renderStep(12);
+            });
+            layout.addView(card);
+        }
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // QUESTION 11 of 18 — MEALS PER DAY
+    // ====================================================================
+    private void buildMealsPerDayStep() {
+        LinearLayout layout = createVerticalContainer();
+        addBehindTheQuestionCard(layout, "Macro Distribution", "FitTrain splits your total daily calories and macronutrients based on your meal frequency.");
+
+        layout.addView(createHeaderTitle("How many meals do you eat per day? 🥩"));
+
+        String[] displayMeals = {"2 Meals 🥩", "3 Meals 🥗", "4+ Meals 🥬", "Intermittent Fasting ⏱️"};
+        int[] mealVals = {2, 3, 4, 1};
+
+        for (int i = 0; i < displayMeals.length; i++) {
+            final int val = mealVals[i];
+            final String display = displayMeals[i];
+            View card = createOptionCard(display, R.drawable.ic_meal_breakfast, mealsPerDay == val, 0xFF0284C7);
+            card.setOnClickListener(v -> {
+                mealsPerDay = val;
+                animateSelection(card);
+                renderStep(13);
+            });
+            layout.addView(card);
+        }
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // QUESTION 12 of 18 — DIETARY PREFERENCE
+    // ====================================================================
+    private void buildDietStyleStep() {
+        LinearLayout layout = createVerticalContainer();
+        addBehindTheQuestionCard(layout, "Dietary Alignment", "Selected preferences automatically filter recipe recommendations across your daily diet plan.");
+
+        layout.addView(createHeaderTitle("Choose your Dietary Preference 🥗"));
+
+        String[] displayStyle = {"Anything / Balanced 🍳", "Vegetarian 🥬", "Vegan 🥑", "Keto / Low Carb 🥩", "High Protein 🍗"};
+        String[] rawStyle = {"Anything", "Vegetarian", "Vegan", "Keto", "High Protein"};
+
+        for (int i = 0; i < displayStyle.length; i++) {
+            final String raw = rawStyle[i];
+            final String display = displayStyle[i];
+            View card = createOptionCard(display, R.drawable.ic_diet, raw.equalsIgnoreCase(dietaryPreference), 0xFF10B981);
+            card.setOnClickListener(v -> {
+                dietaryPreference = raw;
                 animateSelection(card);
                 renderStep(14);
             });
             layout.addView(card);
         }
-        addLargeAnimatedIllustration(layout, R.drawable.ic_fork_knife, 220, 220);
+
         stepContainer.addView(layout);
     }
 
-    private void buildMealsPerDayStep() {
+    // ====================================================================
+    // QUESTION 13 of 18 — HEALTH CONCERNS
+    // ====================================================================
+    private void buildHealthConcernsStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Energy Stability...", "Meal frequency helps us format your ideal protein and caloric distribution.");
+        addBehindTheQuestionCard(layout, "Safety First", "FitTrain adapts workout intensity and exercise types around known health conditions.");
 
-        layout.addView(createHeaderTitle("How many meals do you have per day?"));
+        layout.addView(createHeaderTitle("Any Health Concerns or Conditions? 🩸"));
 
-        int[] meals = {5, 4, 3, 2};
-        String[] titles = {"5 meals per day (Meals + 2 Snacks)", "4 meals per day (Meals + 1 Snack)", "3 meals per day (Breakfast, Lunch, Dinner)", "2 meals per day (Breakfast & Lunch)"};
-        String[] icons = {"🍳🍝🥘🍟🥨", "🍳🍝🥘🍟", "🍳🍝🥘", "🍳🍝"};
+        String[] displayConcerns = {"None 👍", "Diabetes 💉", "Hypertension 🩸", "Joint Pain 🦴", "Heart Health ❤️"};
+        String[] rawConcerns = {"None", "Diabetes", "Hypertension", "Joint Pain", "Heart Health"};
 
-        for (int i = 0; i < meals.length; i++) {
-            final int m = meals[i];
-            View card = createDetailedOptionCard(icons[i] + "  " + m + " Meals", titles[i], mealsPerDay == m, 0xFFF97316);
+        for (int i = 0; i < displayConcerns.length; i++) {
+            final String raw = rawConcerns[i];
+            final String display = displayConcerns[i];
+            boolean selected = selectedHealthConcerns.contains(raw);
+            View card = createOptionCard(display, R.drawable.ic_health_shield, selected, 0xFFEF4444);
             card.setOnClickListener(v -> {
-                mealsPerDay = m;
+                if (raw.equals("None")) {
+                    selectedHealthConcerns.clear();
+                    selectedHealthConcerns.add("None");
+                } else {
+                    selectedHealthConcerns.remove("None");
+                    if (selected) {
+                        selectedHealthConcerns.remove(raw);
+                    } else {
+                        selectedHealthConcerns.add(raw);
+                    }
+                }
                 animateSelection(card);
                 renderStep(15);
             });
             layout.addView(card);
         }
-        addLargeAnimatedIllustration(layout, R.drawable.ic_diet_plate, 220, 220);
+
         stepContainer.addView(layout);
     }
 
-    private void buildNutritionReportSlide() {
+    // ====================================================================
+    // QUESTION 14 of 18 — ACTIVITY LEVEL
+    // ====================================================================
+    private void buildActivityStep() {
         LinearLayout layout = createVerticalContainer();
-        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+        addBehindTheQuestionCard(layout, "TDEE Multiplier", "Daily activity outside workouts determines Total Daily Energy Expenditure (TDEE).");
 
-        TextView tvTitle = createHeaderTitle("Nutrition report based on your answers");
-        tvTitle.setGravity(Gravity.CENTER);
-        layout.addView(tvTitle);
+        layout.addView(createHeaderTitle("What's your daily activity level? 🏃"));
 
-        LinearLayout cardBmr = new LinearLayout(this);
-        cardBmr.setOrientation(LinearLayout.VERTICAL);
-        cardBmr.setBackgroundResource(R.drawable.bg_option_card_selected);
-        cardBmr.setPadding(24, 20, 24, 20);
-        cardBmr.setGravity(Gravity.CENTER);
+        String[] displayLevels = {"Sedentary (Desk Job) 🪑", "Lightly Active 🚶", "Moderately Active 🏃", "Very Active 🏋️"};
+        String[] rawLevels = {"Sedentary", "Lightly Active", "Moderately Active", "Very Active"};
 
-        TextView tvBmrLabel = new TextView(this);
-        tvBmrLabel.setText("BMR (Basal Metabolic Rate)");
-        tvBmrLabel.setTextSize(13);
-        tvBmrLabel.setTextColor(0xFF64748B);
-        cardBmr.addView(tvBmrLabel);
-
-        TextView tvBmrVal = new TextView(this);
-        tvBmrVal.setText("1450 Cal per day");
-        tvBmrVal.setTextSize(24);
-        tvBmrVal.setTypeface(null, Typeface.BOLD);
-        tvBmrVal.setTextColor(0xFFF97316);
-        cardBmr.addView(tvBmrVal);
-
-        DonutMacroChart chart = new DonutMacroChart(this);
-        LinearLayout.LayoutParams cParams = new LinearLayout.LayoutParams(180, 180);
-        cParams.setMargins(0, 16, 0, 16);
-        chart.setLayoutParams(cParams);
-        cardBmr.addView(chart);
-
-        TextView tvLegend = new TextView(this);
-        tvLegend.setText("🟠 Carbs (50%)   🟢 Protein (30%)   🟡 Fat (20%)");
-        tvLegend.setTextSize(12);
-        tvLegend.setTypeface(null, Typeface.BOLD);
-        tvLegend.setTextColor(0xFF0F172A);
-        cardBmr.addView(tvLegend);
-
-        layout.addView(cardBmr);
-        stepContainer.addView(layout);
-    }
-
-    private void buildDietStyleStep() {
-        LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🥗 What is your dietary style?"));
-
-        String[] diets = {"Balanced", "Non-Vegetarian", "Vegetarian", "Vegan", "Halal", "Low Carb"};
-        String[] icons = {"🍽️ Balanced", "🥩 Non-Vegetarian", "🥗 Vegetarian", "🥬 Vegan", "🕌 Halal", "🥑 Low Carb"};
-
-        for (int i = 0; i < diets.length; i++) {
-            final String d = diets[i];
-            View card = createOptionCard(icons[i], d.equalsIgnoreCase(dietaryPreference), 0xFFF97316);
+        for (int i = 0; i < displayLevels.length; i++) {
+            final String raw = rawLevels[i];
+            final String display = displayLevels[i];
+            View card = createOptionCard(display, R.drawable.ic_activity_runner, raw.equalsIgnoreCase(activityLevel), 0xFFF59E0B);
             card.setOnClickListener(v -> {
-                dietaryPreference = d;
+                activityLevel = raw;
+                animateSelection(card);
+                renderStep(16);
+            });
+            layout.addView(card);
+        }
+
+        stepContainer.addView(layout);
+    }
+
+    // ====================================================================
+    // QUESTION 15 of 18 — FITNESS EXPERIENCE
+    // ====================================================================
+    private void buildExperienceStep() {
+        LinearLayout layout = createVerticalContainer();
+        addBehindTheQuestionCard(layout, "Workout Complexity", "Experience level scales exercise complexity, set volume, and rest periods.");
+
+        layout.addView(createHeaderTitle("What's your fitness experience? 💪"));
+
+        String[] displayExp = {"Beginner 🌱", "Intermediate ⚡", "Advanced 🏆"};
+        String[] rawExp = {"Beginner", "Intermediate", "Advanced"};
+
+        for (int i = 0; i < displayExp.length; i++) {
+            final String raw = rawExp[i];
+            final String display = displayExp[i];
+            View card = createOptionCard(display, R.drawable.ic_dumbbell, raw.equalsIgnoreCase(fitnessExperience), 0xFF0284C7);
+            card.setOnClickListener(v -> {
+                fitnessExperience = raw;
                 animateSelection(card);
                 renderStep(17);
             });
             layout.addView(card);
         }
-        addLargeAnimatedIllustration(layout, R.drawable.ic_diet_plate, 180, 180);
+
         stepContainer.addView(layout);
     }
 
-    // HEALTH CONCERNS SCREEN WITH "OTHERS" EXPANDABLE CUSTOM INPUT FIELD (Step 18)
-    private void buildHealthConcernsStep() {
+    // ====================================================================
+    // QUESTION 16 of 18 — WORKOUT LOCATION & EQUIPMENT
+    // ====================================================================
+    private void buildWorkoutPreferencesStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Safe Exercise Recommendation...", "Informing us of health concerns ensures we generate exercise & diet plans safely.");
+        addBehindTheQuestionCard(layout, "Equipment Matching", "Workouts are generated using only equipment you actually have available.");
 
-        layout.addView(createHeaderTitle("Do you have any health concerns?"));
+        layout.addView(createHeaderTitle("Where do you prefer to workout? 🏋️"));
 
-        String[] concerns = {"None", "Diabetes", "High blood pressure", "Asthma", "Joint/Knee issues", "Back problems", "Heart-related concerns", "Thyroid", "Others"};
-        String[] icons = {"🧘 None", "💉 Diabetes", "🩸 High blood pressure", "🫁 Asthma", "🦵 Joint/Knee issues", "🦴 Back problems", "🫀 Heart-related concerns", "🦋 Thyroid", "➕ Others"};
+        String[] displayLoc = {"At Home 🏠", "At the Gym 🏋️", "Outdoor / Running 🏃"};
+        String[] rawLoc = {"At Home", "At the Gym", "Outdoor"};
 
-        for (int i = 0; i < concerns.length; i++) {
-            final String c = concerns[i];
-            boolean isSel = selectedHealthConcerns.contains(c);
-            View card = createOptionCard(icons[i], isSel, 0xFFEF4444);
+        for (int i = 0; i < displayLoc.length; i++) {
+            final String raw = rawLoc[i];
+            final String display = displayLoc[i];
+            View card = createOptionCard(display, R.drawable.ic_home, raw.equalsIgnoreCase(workoutLocation), 0xFF0284C7);
             card.setOnClickListener(v -> {
-                if ("None".equalsIgnoreCase(c)) {
-                    selectedHealthConcerns.clear();
-                    selectedHealthConcerns.add("None");
-                } else {
-                    selectedHealthConcerns.remove("None");
-                    if (selectedHealthConcerns.contains(c)) selectedHealthConcerns.remove(c);
-                    else selectedHealthConcerns.add(c);
-                }
+                workoutLocation = raw;
                 animateSelection(card);
                 renderStep(18);
             });
             layout.addView(card);
         }
 
-        // Expandable Custom Input Area when "Others" is selected
-        if (selectedHealthConcerns.contains("Others")) {
-            LinearLayout boxOther = new LinearLayout(this);
-            boxOther.setOrientation(LinearLayout.VERTICAL);
-            boxOther.setBackgroundResource(R.drawable.bg_option_card_selected);
-            boxOther.setPadding(20, 16, 20, 16);
-
-            TextView tvPrompt = new TextView(this);
-            tvPrompt.setText("Please tell us about your health concern:");
-            tvPrompt.setTextSize(14);
-            tvPrompt.setTypeface(null, Typeface.BOLD);
-            tvPrompt.setTextColor(0xFF0F172A);
-            boxOther.addView(tvPrompt);
-
-            EditText etOther = createEditText("Enter your specific health concern...");
-            etOther.setText(otherHealthConcernText);
-            etOther.addTextChangedListener(new TextWatcher() {
-                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    otherHealthConcernText = s.toString();
-                }
-                @Override public void afterTextChanged(Editable s) {}
-            });
-            boxOther.addView(etOther);
-
-            LinearLayout.LayoutParams oParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            oParams.setMargins(0, 12, 0, 0);
-            boxOther.setLayoutParams(oParams);
-            layout.addView(boxOther);
-        }
-
-        addLargeAnimatedIllustration(layout, R.drawable.ic_health_shield, 240, 240);
-
         stepContainer.addView(layout);
     }
 
-    private void buildActivityStep() {
+    // ====================================================================
+    // QUESTION 17 of 18 — WORKOUT SCHEDULE (Duration & Days per week)
+    // ====================================================================
+    private void buildWorkoutScheduleStep() {
         LinearLayout layout = createVerticalContainer();
-        addBehindTheQuestionCard(layout, "1. Calorie Needs Calculation...", "Activity level determines Total Daily Energy Expenditure (TDEE).");
+        addBehindTheQuestionCard(layout, "Schedule Optimization", "FitTrain structures your weekly workout split according to your time availability.");
 
-        layout.addView(createHeaderTitle("What is your activity level?"));
+        layout.addView(createHeaderTitle("How often do you plan to workout? 📅"));
 
-        String[] acts = {"Sedentary", "Light active", "Moderately active", "Very active"};
-        String[] actDescs = {
-            "📶 I spend most of my day sitting",
-            "📶 I have made doing exercises a lasting habit",
-            "📶 I work on my feet and move around throughout the day",
-            "📶 I spend most of my day doing physical activities"
-        };
+        layout.addView(createSubTitle("Preferred session duration:"));
+        int[] durations = {15, 30, 45, 60};
+        String[] displayDurations = {"15 min ⏱️", "30 min ⚡", "45 min 💪", "60 min 🏋️"};
 
-        for (int i = 0; i < acts.length; i++) {
-            final String a = acts[i];
-            View card = createDetailedOptionCard(a, actDescs[i], a.equalsIgnoreCase(activityLevel), 0xFF6366F1);
+        LinearLayout durContainer = new LinearLayout(this);
+        durContainer.setOrientation(LinearLayout.HORIZONTAL);
+        for (int i = 0; i < durations.length; i++) {
+            final int d = durations[i];
+            MaterialButton btn = new MaterialButton(this);
+            btn.setText(displayDurations[i]);
+            btn.setTextSize(12);
+            btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(workoutDuration == d ? 0xFF0284C7 : 0xFFE2E8F0));
+            btn.setTextColor(workoutDuration == d ? 0xFFFFFFFF : 0xFF475569);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            p.setMargins(4, 0, 4, 12);
+            btn.setLayoutParams(p);
+            btn.setOnClickListener(v -> {
+                workoutDuration = d;
+                renderStep(19);
+            });
+            durContainer.addView(btn);
+        }
+        layout.addView(durContainer);
+
+        layout.addView(createSubTitle("Days per week:"));
+        int[] daysList = {2, 3, 4, 5, 6};
+        for (int days : daysList) {
+            String title = days + " Days / Week 📆";
+            View card = createOptionCard(title, R.drawable.ic_calendar_age, workoutDaysPerWeek == days, 0xFF0284C7);
             card.setOnClickListener(v -> {
-                activityLevel = a;
+                workoutDaysPerWeek = days;
                 animateSelection(card);
                 renderStep(19);
             });
             layout.addView(card);
         }
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_activity_runner, 240, 240);
-
         stepContainer.addView(layout);
     }
 
-    private void buildExperienceStep() {
+    // ====================================================================
+    // QUESTION 18 of 18 — PREFERRED WORKOUT TIME
+    // ====================================================================
+    private void buildWorkoutTimeStep() {
         LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🌱 What's your fitness level?"));
+        addBehindTheQuestionCard(layout, "Smart Reminders", "Setting your workout time allows FitTrain to send timely workout notifications.");
 
-        String[] exps = {"Beginner", "Intermediate", "Advanced"};
-        String[] expDescs = {"🌱 New to workout routines", "🌿 Active 6+ months", "🌳 Experienced in strength training"};
+        layout.addView(createHeaderTitle("What's your preferred workout time? ⏰"));
 
-        for (int i = 0; i < exps.length; i++) {
-            final String e = exps[i];
-            View card = createDetailedOptionCard(e, expDescs[i], e.equalsIgnoreCase(fitnessExperience), 0xFF6366F1);
+        String[] displayTimes = {"Early Morning 🌅", "Morning ☀️", "Afternoon 🌤️", "Evening 🌇", "Night 🌙"};
+        String[] rawTimes = {"Early Morning", "Morning", "Afternoon", "Evening", "Night"};
+
+        for (int i = 0; i < displayTimes.length; i++) {
+            final String raw = rawTimes[i];
+            final String display = displayTimes[i];
+            View card = createOptionCard(display, R.drawable.ic_track_progress, raw.equalsIgnoreCase(preferredWorkoutTime), 0xFF0284C7);
             card.setOnClickListener(v -> {
-                fitnessExperience = e;
+                preferredWorkoutTime = raw;
                 animateSelection(card);
                 renderStep(20);
             });
             layout.addView(card);
         }
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_fitness_level, 240, 240);
-
         stepContainer.addView(layout);
     }
 
-    private void buildWorkoutPreferencesStep() {
+    // ====================================================================
+    // DEDICATED PROFILE SETUP STEP (Photo Upload & Non-blocking Skip)
+    // ====================================================================
+    private void buildProfileSetupStep() {
+        float density = getResources().getDisplayMetrics().density;
+
         LinearLayout layout = createVerticalContainer();
-        layout.addView(createHeaderTitle("🏠 Where do you work out & equipment?"));
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+        layout.setPadding((int)(20 * density), (int)(16 * density), (int)(20 * density), (int)(24 * density));
 
-        String[] locs = {"Home", "Gym", "Both"};
-        String[] icons = {"🏠 At Home", "🏋️ At the Gym", "🔄 Both Home & Gym"};
+        TextView tvTitle = createHeaderTitle("Set Up Your Profile Photo 📸");
+        tvTitle.setGravity(Gravity.CENTER);
+        tvTitle.setTextSize(24);
 
-        for (int i = 0; i < locs.length; i++) {
-            final String l = locs[i];
-            View card = createOptionCard(icons[i], l.equalsIgnoreCase(workoutLocation), 0xFF6366F1);
-            card.setOnClickListener(v -> {
-                workoutLocation = l;
-                animateSelection(card);
-                renderStep(21);
-            });
-            layout.addView(card);
+        TextView tvSub = createSubTitle("Add a profile photo to personalize your fitness dashboard. You can also skip this step.");
+        tvSub.setGravity(Gravity.CENTER);
+        tvSub.setPadding(0, 0, 0, (int)(20 * density));
+
+        layout.addView(tvTitle);
+        layout.addView(tvSub);
+
+        // Circular Avatar Container
+        ImageView ivAvatar = new ImageView(this);
+        int avatarSize = (int)(140 * density);
+        LinearLayout.LayoutParams avatarParams = new LinearLayout.LayoutParams(avatarSize, avatarSize);
+        avatarParams.gravity = Gravity.CENTER_HORIZONTAL;
+        avatarParams.setMargins(0, (int)(12 * density), 0, (int)(20 * density));
+        ivAvatar.setLayoutParams(avatarParams);
+
+        GradientDrawable avatarBg = new GradientDrawable();
+        avatarBg.setShape(GradientDrawable.OVAL);
+        avatarBg.setColor(Color.parseColor("#F0F9FF"));
+        avatarBg.setStroke((int)(3 * density), Color.parseColor("#0284C7"));
+        ivAvatar.setBackground(avatarBg);
+        ivAvatar.setPadding((int)(4 * density), (int)(4 * density), (int)(4 * density), (int)(4 * density));
+
+        if (!selectedProfileImageUri.isEmpty()) {
+            Glide.with(this)
+                    .load(Uri.parse(selectedProfileImageUri))
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_user)
+                    .into(ivAvatar);
+        } else {
+            ivAvatar.setImageResource(R.drawable.ic_user);
         }
 
-        addLargeAnimatedIllustration(layout, R.drawable.ic_workout_gear, 240, 240);
+        layout.addView(ivAvatar);
+
+        // "Add Profile Photo" / "Edit Photo" Button
+        MaterialButton btnPhotoAction = new MaterialButton(this);
+        btnPhotoAction.setText(selectedProfileImageUri.isEmpty() ? "📷 Add Profile Photo" : "✏️ Edit Photo");
+        btnPhotoAction.setTextSize(15);
+        btnPhotoAction.setTypeface(null, Typeface.BOLD);
+        btnPhotoAction.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#0284C7")));
+        btnPhotoAction.setTextColor(Color.WHITE);
+        btnPhotoAction.setCornerRadius((int)(20 * density));
+        btnPhotoAction.setPadding((int)(24 * density), (int)(12 * density), (int)(24 * density), (int)(12 * density));
+
+        btnPhotoAction.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            imagePickerLauncher.launch(intent);
+        });
+
+        layout.addView(btnPhotoAction);
+
+        // Prominent, Non-blocking Skip Action Button
+        MaterialButton btnSkipPhoto = new MaterialButton(this);
+        btnSkipPhoto.setText("Skip for Now");
+        btnSkipPhoto.setTextSize(14);
+        btnSkipPhoto.setTypeface(null, Typeface.NORMAL);
+        btnSkipPhoto.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.TRANSPARENT));
+        btnSkipPhoto.setTextColor(Color.parseColor("#64748B"));
+        btnSkipPhoto.setRippleColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#E2E8F0")));
+        
+        LinearLayout.LayoutParams skipP = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        skipP.setMargins(0, (int)(12 * density), 0, 0);
+        btnSkipPhoto.setLayoutParams(skipP);
+
+        btnSkipPhoto.setOnClickListener(v -> {
+            selectedProfileImageUri = "";
+            currentStep = 22;
+            renderStep(22);
+        });
+
+        layout.addView(btnSkipPhoto);
 
         stepContainer.addView(layout);
     }
-
-    // ====================================================================
-    // PLAN GENERATION & SUMMARY
-    // ====================================================================
 
     private void buildPlanGenerationStep() {
         LinearLayout layout = createVerticalContainer();
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
-        layout.setPadding(20, 60, 20, 40);
+        layout.setPadding(20, 40, 20, 40);
 
-        ProgressBar pbSpinner = new ProgressBar(this);
-        pbSpinner.setIndeterminate(true);
-        layout.addView(pbSpinner);
+        TextView tvTitle = createHeaderTitle("Building Your Custom FitTrain Plan... 🤖");
+        tvTitle.setGravity(Gravity.CENTER);
+        layout.addView(tvTitle);
 
-        TextView tvGenTitle = createHeaderTitle("Generating Your FitTrain Plan...");
-        tvGenTitle.setGravity(Gravity.CENTER);
-        tvGenTitle.setPadding(0, 24, 0, 12);
-        layout.addView(tvGenTitle);
+        ProgressBar pb = new ProgressBar(this);
+        pb.setIndeterminate(true);
+        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(80, 80);
+        p.setMargins(0, 32, 0, 32);
+        pb.setLayoutParams(p);
+        layout.addView(pb);
 
         TextView tvStatus = new TextView(this);
-        tvStatus.setTextSize(15);
-        tvStatus.setTextColor(0xFF2563EB);
-        tvStatus.setTypeface(null, Typeface.BOLD);
+        tvStatus.setText("Calculating BMR, TDEE & Custom Macros...");
+        tvStatus.setTextSize(14);
+        tvStatus.setTextColor(Color.parseColor("#0284C7"));
         tvStatus.setGravity(Gravity.CENTER);
         layout.addView(tvStatus);
 
         stepContainer.addView(layout);
 
-        String[] statusSteps = {
-            "Analyzing body metrics & BMR...",
-            "Calculating daily calorie deficit & hydration targets...",
-            "Filtering exercise plan for your equipment...",
-            "Generating personalized nutrition schedule...",
-            "Personalizing AI Fitness Coach context..."
-        };
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        for (int i = 0; i < statusSteps.length; i++) {
-            final int index = i;
-            handler.postDelayed(() -> tvStatus.setText(statusSteps[index]), index * 500L);
-        }
-
-        handler.postDelayed(() -> {
-            generateAndSaveUserProfile();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             currentStep = 23;
             renderStep(23);
-        }, 2600L);
-    }
-
-    private void generateAndSaveUserProfile() {
-        User user = new User("user_" + System.currentTimeMillis(), name, "", "", System.currentTimeMillis());
-        user.setProfileCompleted(true);
-        user.setDob(dobString);
-        user.setBloodGroup(bloodGroup.isEmpty() ? "O+" : bloodGroup);
-        user.setAge(age > 0 ? age : 25);
-        user.setGender(gender.isEmpty() ? "Female" : gender);
-        user.setHeight(heightCm > 0 ? heightCm : 165.0);
-        user.setWeight(weightKg > 0 ? weightKg : 70.0);
-        user.setGoal(goal.isEmpty() ? "Lose Weight" : goal);
-        user.setTargetWeight(targetWeightKg > 0 ? targetWeightKg : 65.0);
-        user.setTargetPace(targetPace.isEmpty() ? "Balanced" : targetPace);
-        user.setActivityLevel(activityLevel.isEmpty() ? "Lightly Active" : activityLevel);
-        user.setFitnessExperience(fitnessExperience.isEmpty() ? "Beginner" : fitnessExperience);
-
-        user.setWorkoutLocation(workoutLocation.isEmpty() ? "Home" : workoutLocation);
-        user.setAvailableEquipment(selectedEquipment.isEmpty() ? "No Equipment" : joinSet(selectedEquipment, ", "));
-        user.setWorkoutDuration(workoutDuration > 0 ? workoutDuration : 30);
-        user.setWorkoutDaysPerWeek(workoutDaysPerWeek > 0 ? workoutDaysPerWeek : 4);
-        user.setPreferredWorkoutTime(preferredWorkoutTime.isEmpty() ? "Morning" : preferredWorkoutTime);
-
-        user.setDietaryPreference(dietaryPreference.isEmpty() ? "Balanced" : dietaryPreference);
-        user.setAllergies(selectedAllergies.isEmpty() ? "None" : joinSet(selectedAllergies, ", "));
-        user.setMealsPerDay(mealsPerDay > 0 ? mealsPerDay : 3);
-        user.setEatingEnvironment(eatingEnvironment.isEmpty() ? "At home" : eatingEnvironment);
-        user.setEatingOutFrequency(eatingOutFrequency.isEmpty() ? "1-2 times per week" : eatingOutFrequency);
-
-        String finalHealthConcerns = selectedHealthConcerns.isEmpty() ? "None" : joinSet(selectedHealthConcerns, ", ");
-        if (selectedHealthConcerns.contains("Others") && !otherHealthConcernText.isEmpty()) {
-            finalHealthConcerns += " (" + otherHealthConcernText.trim() + ")";
-        }
-        user.setMedicalConditions(finalHealthConcerns);
-        user.setInjuries(injuries.isEmpty() ? "None" : injuries);
-
-        double w = user.getWeight();
-        double h = user.getHeight();
-        int a = user.getAge();
-
-        double bmr;
-        if ("Male".equalsIgnoreCase(user.getGender())) {
-            bmr = 10 * w + 6.25 * h - 5 * a + 5;
-        } else {
-            bmr = 10 * w + 6.25 * h - 5 * a - 161;
-        }
-
-        double multiplier = 1.375;
-        if (user.getActivityLevel().contains("Sedentary")) multiplier = 1.2;
-        else if (user.getActivityLevel().contains("Light")) multiplier = 1.375;
-        else if (user.getActivityLevel().contains("Moderat")) multiplier = 1.55;
-        else if (user.getActivityLevel().contains("Very")) multiplier = 1.725;
-
-        double tdee = bmr * multiplier;
-        int targetCalories;
-        if ("Lose Weight".equalsIgnoreCase(user.getGoal())) {
-            targetCalories = (int) (tdee - 500);
-        } else if ("Build Muscle".equalsIgnoreCase(user.getGoal()) || "Gain Weight".equalsIgnoreCase(user.getGoal())) {
-            targetCalories = (int) (tdee + 350);
-        } else {
-            targetCalories = (int) tdee;
-        }
-
-        user.setDailyCaloriesGoal(Math.max(1200, targetCalories));
-        user.setDailyWaterGoal(FitnessCalculator.calculateDailyWaterGoal(w));
-        user.setDailyStepGoal(user.getActivityLevel().contains("Sedentary") ? 6000 : 8500);
-        user.setDailySleepGoal(480);
-
-        localDb.setOnboardingSeen(true);
-        localDb.saveUser(user);
-
-        WorkoutPlan workoutPlan = RecommendationEngine.generateDailyWorkoutPlan(user, "Normal", true);
-        localDb.saveWorkoutPlan(workoutPlan);
-
-        DietPlan dietPlan = RecommendationEngine.generateDailyDietPlan(user, "Normal", true);
-        localDb.saveDietPlan(dietPlan);
+        }, 1800);
     }
 
     private void buildPersonalizedWelcomeStep() {
         LinearLayout layout = createVerticalContainer();
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        User u = localDb.getUser();
-        String displayUser = (u != null && u.getFirstName() != null && !u.getFirstName().isEmpty()) ? u.getFirstName() : name;
+        TextView tvTitle = createHeaderTitle("🎉 You're All Set, " + (name.isEmpty() ? "Champion" : name) + "!");
+        tvTitle.setGravity(Gravity.CENTER);
 
-        TextView tvTitle = createHeaderTitle("Welcome to FitTrain, " + displayUser + "! 🎉");
-        TextView tvSub = createSubTitle("Your custom " + (u != null ? u.getGoal() : goal) + " plan is ready. Here is your personalized targets overview:");
+        TextView tvSub = createSubTitle("Your personalized workout routine and custom meal plan have been created.");
+        tvSub.setGravity(Gravity.CENTER);
+
         layout.addView(tvTitle);
         layout.addView(tvSub);
 
-        LinearLayout summaryBox = new LinearLayout(this);
-        summaryBox.setOrientation(LinearLayout.VERTICAL);
-        summaryBox.setBackgroundResource(R.drawable.bg_option_card_selected);
-        summaryBox.setPadding(24, 20, 24, 20);
+        addLargeAnimatedIllustration(layout, R.drawable.ic_intro_motivation, 220, 220);
 
-        summaryBox.addView(createSummaryRow("🎯 Primary Goal", (u != null ? u.getGoal() : goal) + " (Target: " + String.format(Locale.getDefault(), "%.1f kg", (u != null ? u.getTargetWeight() : targetWeightKg)) + ")"));
-        summaryBox.addView(createSummaryRow("🩸 Blood Group", (u != null ? u.getBloodGroup() : bloodGroup)));
-        summaryBox.addView(createSummaryRow("🔥 Daily Calories", (u != null ? u.getDailyCaloriesGoal() : 1800) + " kcal target"));
-        summaryBox.addView(createSummaryRow("💧 Daily Water", (u != null ? u.getDailyWaterGoal() : 2500) + " ml hydration"));
-        summaryBox.addView(createSummaryRow("👣 Daily Step Target", (u != null ? u.getDailyStepGoal() : 8000) + " steps"));
-        summaryBox.addView(createSummaryRow("🏋️ Workout Session", (u != null ? u.getWorkoutDuration() : 30) + " min (" + (u != null ? u.getWorkoutLocation() : "Home") + ")"));
-        summaryBox.addView(createSummaryRow("🥗 Nutrition Style", (u != null ? u.getDietaryPreference() : "Balanced") + " diet"));
-
-        layout.addView(summaryBox);
         stepContainer.addView(layout);
     }
 
-    private View createSummaryRow(String title, String val) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 10, 0, 10);
-
-        TextView tvLabel = new TextView(this);
-        tvLabel.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tvLabel.setText(title);
-        tvLabel.setTextSize(14);
-        tvLabel.setTextColor(0xFF0F172A);
-
-        TextView tvVal = new TextView(this);
-        tvVal.setText(val);
-        tvVal.setTextSize(14);
-        tvVal.setTypeface(null, Typeface.BOLD);
-        tvVal.setTextColor(0xFF2563EB);
-
-        row.addView(tvLabel);
-        row.addView(tvVal);
-        return row;
-    }
-
     private void finishOnboardingAndLaunchHome() {
+        // Build & Save User Data to Local DB & Firestore
+        User user = new User();
+        user.setName(name != null && !name.trim().isEmpty() ? name : "Athlete");
+        user.setAge(age > 0 ? age : (dobString != null && !dobString.isEmpty() ? com.fitness.app.utils.ValidationUtils.calculateAge(dobString) : 25));
+        user.setDob(dobString != null ? dobString : "");
+        user.setGender(gender != null && !gender.isEmpty() ? gender : "Male");
+        user.setHeight(heightCm > 0 ? heightCm : 170.0);
+        user.setWeight(weightKg > 0 ? weightKg : 70.0);
+        user.setBloodGroup(bloodGroup != null ? bloodGroup : "");
+        user.setGoal(goal != null && !goal.isEmpty() ? goal : "Lose Weight");
+        user.setTargetWeight(targetWeightKg > 0 ? targetWeightKg : (weightKg > 0 ? weightKg - 5 : 65.0));
+        user.setTargetPace(targetPace != null ? targetPace : "Balanced");
+        user.setEatingEnvironment(eatingEnvironment != null ? eatingEnvironment : "Home Cooked");
+        user.setMealsPerDay(mealsPerDay > 0 ? mealsPerDay : 3);
+        user.setDietaryPreference(dietaryPreference != null && !dietaryPreference.isEmpty() ? dietaryPreference : "Balanced");
+        user.setActivityLevel(activityLevel != null && !activityLevel.isEmpty() ? activityLevel : "Moderately Active");
+        user.setFitnessExperience(fitnessExperience != null && !fitnessExperience.isEmpty() ? fitnessExperience : "Beginner");
+        user.setWorkoutLocation(workoutLocation != null && !workoutLocation.isEmpty() ? workoutLocation : "At Home");
+        user.setWorkoutDuration(workoutDuration > 0 ? workoutDuration : 30);
+        user.setWorkoutDaysPerWeek(workoutDaysPerWeek > 0 ? workoutDaysPerWeek : 4);
+        user.setPreferredWorkoutTime(preferredWorkoutTime != null && !preferredWorkoutTime.isEmpty() ? preferredWorkoutTime : "Morning");
+
+        if (selectedProfileImageUri != null && !selectedProfileImageUri.isEmpty()) {
+            user.setProfileImageUrl(selectedProfileImageUri);
+        }
+
+        StringBuilder medBuilder = new StringBuilder();
+        if (selectedHealthConcerns != null && !selectedHealthConcerns.isEmpty()) {
+            for (String concern : selectedHealthConcerns) {
+                if (medBuilder.length() > 0) medBuilder.append(", ");
+                medBuilder.append(concern);
+            }
+        }
+        user.setMedicalConditions(medBuilder.toString().isEmpty() ? "None" : medBuilder.toString());
+
+        if (selectedEquipment != null && !selectedEquipment.isEmpty()) {
+            StringBuilder eqBuilder = new StringBuilder();
+            for (String eq : selectedEquipment) {
+                if (eqBuilder.length() > 0) eqBuilder.append(", ");
+                eqBuilder.append(eq);
+            }
+            user.setAvailableEquipment(eqBuilder.toString());
+        } else {
+            user.setAvailableEquipment("Bodyweight");
+        }
+
+        user.setProfileCompleted(true);
+
+        localDb.saveUser(user);
+        localDb.setOnboardingCompleted(true);
+
         Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    private String joinSet(Set<String> set, String delimiter) {
-        if (set == null || set.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (String s : set) {
-            if (!first) sb.append(delimiter);
-            sb.append(s);
-            first = false;
-        }
-        return sb.toString();
-    }
-
-    // ==========================================
-    // SELECTION ANIMATION & CARD BUILDERS
-    // ==========================================
-
-    private void addLargeAnimatedIllustration(LinearLayout container, int drawableResId, int widthDp, int heightDp) {
-        float density = getResources().getDisplayMetrics().density;
-
-        // Eato-style Large Visual Card Container
-        LinearLayout cardBox = new LinearLayout(this);
-        cardBox.setOrientation(LinearLayout.VERTICAL);
-        cardBox.setGravity(Gravity.CENTER);
-        cardBox.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        cardBox.setPadding((int) (16 * density), (int) (16 * density), (int) (16 * density), (int) (16 * density));
-
-        ImageView iv = new ImageView(this);
-        iv.setImageResource(drawableResId);
-        int w = (int) (widthDp * density);
-        int h = (int) (heightDp * density);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(w, h);
-        params.gravity = Gravity.CENTER_HORIZONTAL;
-        iv.setLayoutParams(params);
-
-        cardBox.addView(iv);
-
-        LinearLayout.LayoutParams boxParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        boxParams.setMargins(0, (int) (18 * density), 0, (int) (12 * density));
-        cardBox.setLayoutParams(boxParams);
-
-        // Entrance Micro-Animations: Slide Up + Scale Pulse + Fade In
-        TranslateAnimation animImg = new TranslateAnimation(0, 0, 75 * density, 0);
-        animImg.setDuration(450);
-        ScaleAnimation animScale = new ScaleAnimation(0.82f, 1.0f, 0.82f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        animScale.setDuration(450);
-        AlphaAnimation animAlpha = new AlphaAnimation(0.0f, 1.0f);
-        animAlpha.setDuration(450);
-
-        cardBox.startAnimation(animImg);
-        cardBox.startAnimation(animScale);
-        cardBox.startAnimation(animAlpha);
-
-        container.addView(cardBox);
-    }
-
-    private void animateSelection(View v) {
-        ScaleAnimation scale = new ScaleAnimation(0.97f, 1.0f, 0.97f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scale.setDuration(150);
-        v.startAnimation(scale);
-    }
-
-    private LinearLayout createVerticalContainer() {
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        return layout;
-    }
-
-    private TextView createHeaderTitle(String text) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(22);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(0xFF0F172A);
-        tv.setPadding(0, 0, 0, 8);
-        return tv;
-    }
-
-    private TextView createSubTitle(String text) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(14);
-        tv.setTextColor(0xFF64748B);
-        tv.setPadding(0, 0, 0, 20);
-        return tv;
-    }
-
-    private EditText createEditText(String hint) {
-        EditText et = new EditText(this);
-        et.setHint(hint);
-        et.setTextSize(16);
-        et.setPadding(24, 20, 24, 20);
-        et.setBackgroundResource(R.drawable.bg_edittext);
-        et.setSingleLine(true);
-        return et;
-    }
-
-    // UNSELECTED CARD BUILDER (Default is UNSELECTED)
-    private View createOptionCard(String title, boolean isSelected, int accentColor) {
-        TextView tv = new TextView(this);
-        tv.setText(isSelected ? title + "  ✓" : title);
-        tv.setTextSize(15);
-        tv.setTypeface(null, isSelected ? Typeface.BOLD : Typeface.NORMAL);
-        tv.setTextColor(isSelected ? accentColor : 0xFF0F172A);
-        tv.setBackgroundResource(isSelected ? R.drawable.bg_option_card_selected : R.drawable.bg_option_card_unselected);
-        tv.setPadding(24, 20, 24, 20);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 6, 0, 6);
-        tv.setLayoutParams(params);
-        return tv;
-    }
-
-    private View createDetailedOptionCard(String title, String desc, boolean isSelected, int accentColor) {
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setBackgroundResource(isSelected ? R.drawable.bg_option_card_selected : R.drawable.bg_option_card_unselected);
-        layout.setPadding(24, 18, 24, 18);
-
-        TextView tvTitle = new TextView(this);
-        tvTitle.setText(isSelected ? title + "  ✓" : title);
-        tvTitle.setTextSize(16);
-        tvTitle.setTypeface(null, isSelected ? Typeface.BOLD : Typeface.NORMAL);
-        tvTitle.setTextColor(isSelected ? accentColor : 0xFF0F172A);
-
-        TextView tvDesc = new TextView(this);
-        tvDesc.setText(desc);
-        tvDesc.setTextSize(13);
-        tvDesc.setTextColor(0xFF64748B);
-        tvDesc.setPadding(0, 4, 0, 0);
-
-        layout.addView(tvTitle);
-        layout.addView(tvDesc);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 8, 0, 8);
-        layout.setLayoutParams(params);
-        return layout;
-    }
-
-    private View createBulletItem(String text) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(13);
-        tv.setTextColor(0xFF64748B);
-        tv.setPadding(0, 4, 0, 4);
-        return tv;
-    }
-
-    private View createCheckItem(String text) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(13);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(0xFF10B981);
-        tv.setPadding(0, 4, 0, 4);
-        return tv;
-    }
-
-    private View createFeatureBadge(String text) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextSize(14);
-        tv.setTypeface(null, Typeface.BOLD);
-        tv.setTextColor(0xFF0F172A);
-        tv.setBackgroundResource(R.drawable.bg_option_card_unselected);
-        tv.setPadding(20, 16, 20, 16);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 6, 0, 6);
-        tv.setLayoutParams(params);
-        return tv;
-    }
-
-    // Donut Macro Ring Custom View
-    private static class DonutMacroChart extends View {
-        public DonutMacroChart(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            int width = getWidth();
-            int height = getHeight();
-            int minDim = Math.min(width, height);
-            if (minDim <= 0) return;
-
-            float strokeWidth = minDim * 0.18f;
-            float radius = (minDim - strokeWidth) / 2f;
-            float cx = width / 2f;
-            float cy = height / 2f;
-
-            RectF rect = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
-
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(strokeWidth);
-
-            float startAngle = -90f;
-            // Carbs 50% (Orange)
-            paint.setColor(0xFFF97316);
-            canvas.drawArc(rect, startAngle, 180f, false, paint);
-            startAngle += 180f;
-
-            // Protein 30% (Green)
-            paint.setColor(0xFF84CC16);
-            canvas.drawArc(rect, startAngle, 108f, false, paint);
-            startAngle += 108f;
-
-            // Fat 20% (Yellow)
-            paint.setColor(0xFFFBBF24);
-            canvas.drawArc(rect, startAngle, 72f, false, paint);
-        }
     }
 }

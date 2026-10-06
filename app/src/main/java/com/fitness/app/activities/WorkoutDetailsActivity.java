@@ -32,6 +32,8 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
     private FitnessDao fitnessDao;
     private TextToSpeech textToSpeech;
     private boolean isTtsInitialized = false;
+    private TextView btnVoiceCoach;
+    private boolean isSpeaking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +95,29 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
         }
 
         // Initialize TextToSpeech for Voice Coaching
+        btnVoiceCoach = findViewById(R.id.btnVoiceCoach);
+
         textToSpeech = new TextToSpeech(this, status -> {
             if (status == TextToSpeech.SUCCESS) {
                 textToSpeech.setLanguage(Locale.US);
                 isTtsInitialized = true;
+
+                textToSpeech.setOnUtteranceProgressListener(new android.speech.tts.UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {}
+
+                    @Override
+                    public void onDone(String utteranceId) {
+                        if (utteranceId != null && utteranceId.startsWith("COACH_LAST")) {
+                            runOnUiThread(() -> resetVoiceCoachUi());
+                        }
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+                        runOnUiThread(() -> resetVoiceCoachUi());
+                    }
+                });
             }
         });
 
@@ -104,6 +125,7 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
 
         findViewById(R.id.btnStartWorkoutSession).setOnClickListener(v -> {
+            stopVoiceCoach();
             Intent intent = new Intent(WorkoutDetailsActivity.this, WorkoutSessionActivity.class);
             intent.putExtra("workout_plan", plan);
             startActivity(intent);
@@ -114,8 +136,15 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
         findViewById(R.id.btnPdfDownload).setOnClickListener(v -> downloadWorkoutAsPdfText());
         findViewById(R.id.btnDeleteWorkout).setOnClickListener(v -> deleteWorkoutFromDb());
 
-        // Voice Coach triggers TTS to read workout steps
-        findViewById(R.id.btnVoiceCoach).setOnClickListener(v -> speakWorkoutSteps());
+        // Voice Coach Toggle Trigger (Start / Stop)
+        btnVoiceCoach.setOnClickListener(v -> {
+            if (isSpeaking) {
+                stopVoiceCoach();
+                Toast.makeText(this, "Voice Coach Stopped ⏹", Toast.LENGTH_SHORT).show();
+            } else {
+                startVoiceCoach();
+            }
+        });
     }
 
     private void saveWorkoutToDb() {
@@ -146,7 +175,6 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
 
     private void downloadWorkoutAsPdfText() {
         try {
-            // Write to local external storage cache and share as text file provider
             File cacheDir = getExternalCacheDir();
             File txtFile = new File(cacheDir, plan.getTitle().replaceAll("\\s+", "_") + "_Plan.txt");
             
@@ -192,35 +220,70 @@ public class WorkoutDetailsActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    private void speakWorkoutSteps() {
+    private void startVoiceCoach() {
         if (!isTtsInitialized) {
             Toast.makeText(this, "Voice Coach is initializing. Please tap again in a moment.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
+            isSpeaking = true;
+            if (btnVoiceCoach != null) {
+                btnVoiceCoach.setText("⏹ Stop Voice Coach");
+            }
+            Toast.makeText(this, "Voice Coach Started 🔊", Toast.LENGTH_SHORT).show();
+
             textToSpeech.speak("Starting voice coaching for " + plan.getTitle(), TextToSpeech.QUEUE_FLUSH, null, "COACH_START");
             
             JSONArray arr = new JSONArray(plan.getExercisesJson());
-            for (int i = 0; i < arr.length(); i++) {
+            int total = arr.length();
+            for (int i = 0; i < total; i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                String name = obj.getString("name");
-                int sets = obj.getInt("sets");
-                String reps = obj.getString("reps");
-                String instructions = obj.getString("instructions");
+                String name = obj.optString("name", "Exercise");
+                int sets = obj.optInt("sets", 3);
+                String reps = obj.optString("reps", "12");
+                String instructions = obj.optString("instructions", "");
                 
-                String speechText = String.format("Next exercise is %s. Perform %d sets of %s reps. Guidelines: %s.", name, sets, reps, instructions);
-                textToSpeech.speak(speechText, TextToSpeech.QUEUE_ADD, null, "COACH_STEP_" + i);
+                String speechText = String.format("Exercise %d: %s. Perform %d sets of %s reps. Guidance: %s.", (i + 1), name, sets, reps, instructions);
+                String utteranceId = (i == total - 1) ? "COACH_LAST_" + i : "COACH_STEP_" + i;
+                textToSpeech.speak(speechText, TextToSpeech.QUEUE_ADD, null, utteranceId);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            resetVoiceCoachUi();
+        }
+    }
+
+    private void stopVoiceCoach() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+        }
+        resetVoiceCoachUi();
+    }
+
+    private void resetVoiceCoachUi() {
+        isSpeaking = false;
+        if (btnVoiceCoach != null) {
+            btnVoiceCoach.setText("🔊 Voice Coach");
         }
     }
 
     @Override
+    protected void onPause() {
+        stopVoiceCoach();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        stopVoiceCoach();
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
+        stopVoiceCoach();
         if (textToSpeech != null) {
-            textToSpeech.stop();
             textToSpeech.shutdown();
         }
         super.onDestroy();

@@ -4,7 +4,7 @@
     xmlns:tools="http://tools.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
+    android:background="#FAF9F5"
     tools:context=".activities.LearningTutorialActivity">
 
     <!-- Header Toolbar -->
@@ -12,8 +12,7 @@
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/white"
-        android:elevation="4dp"
+        android:background="#FAF9F5"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
@@ -25,6 +24,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_back_chevron"
+            app:tint="#0F172A"
             android:contentDescription="Back" />
 
         <TextView
@@ -52,7 +52,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:visibility="gone"
-        android:indeterminateTint="#3B82F6"
+        android:indeterminateTint="#F97316"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,17 +93,19 @@
             android:textSize="14sp"
             android:textAlignment="center" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
             android:layout_width="200dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_button_gradient"
+            app:backgroundTint="#0F172A"
+            app:cornerRadius="24dp"
             android:text="Retry"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:elevation="4dp" />
+            android:textAllCaps="false"
+            app:elevation="4dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

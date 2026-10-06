@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+
+    <!-- Soft Background Shadow -->
+    <path
+        android:pathData="M22,22 m-18,0 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0"
+        android:fillColor="#F1F5F9" />
+
+    <!-- Main Calendar Page Body (White with rounded corners) -->
+    <path
+        android:pathData="M11,14 L33,14 C35,14 36,15 36,17 L36,33 C36,35 35,36 33,36 L11,36 C9,36 8,35 8,33 L8,17 C8,15 9,14 11,14 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Calendar Top Banner Header (Vibrant Blue) -->
+    <path
+        android:pathData="M11,14 L33,14 C35,14 36,15 36,17 L36,21 L8,21 L8,17 C8,15 9,14 11,14 Z"
+        android:fillColor="#2563EB" />
+
+    <!-- Ring Binders (Silver Metallic Pins) -->
+    <path
+        android:pathData="M14,10 L16,10 L16,15 L14,15 Z"
+        android:fillColor="#64748B" />
+    <path
+        android:pathData="M28,10 L30,10 L30,15 L28,15 Z"
+        android:fillColor="#64748B" />
+
+    <!-- Month Label Text "July" Bar -->
+    <path
+        android:pathData="M16,17 L28,17 L28,19 L16,19 Z"
+        android:fillColor="#DBEAFE" />
+
+    <!-- Date "17" Grid Pattern Dots -->
+    <path
+        android:pathData="M13,24 L17,24 L17,32 L15,32 L15,26 L13,26 Z"
+        android:fillColor="#1E293B" />
+    <path
+        android:pathData="M20,24 L27,24 L24,32 L22,32 L25,26 L20,26 Z"
+        android:fillColor="#1E293B" />
+</vector>

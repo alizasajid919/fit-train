@@ -113,124 +113,149 @@ public class GroceryScannerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_scanner);
 
-        AppDatabase db = AppDatabase.getInstance(this);
-        dao = db.fitnessDao();
-        localDb = new LocalDataManager(this);
-        currentUser = localDb.getUser();
+        try {
+            AppDatabase db = AppDatabase.getInstance(this);
+            dao = db.fitnessDao();
+            localDb = new LocalDataManager(this);
+            currentUser = GroceryAiEngine.getSafeUser(localDb.getUser());
 
-        // Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        }
-
-        // Layouts
-        tabLayout = findViewById(R.id.tabLayout);
-        loadingLayout = findViewById(R.id.loadingLayout);
-        tvLoadingText = findViewById(R.id.tvLoadingText);
-
-        tabScannerLayout = findViewById(R.id.tabScannerLayout);
-        tabRecipesLayout = findViewById(R.id.tabRecipesLayout);
-        tabShoppingLayout = findViewById(R.id.tabShoppingLayout);
-        tabPlannerLayout = findViewById(R.id.tabPlannerLayout);
-        tabVoiceLayout = findViewById(R.id.tabVoiceLayout);
-
-        ivScannedPreview = findViewById(R.id.ivScannedPreview);
-        tvVoiceAssistantResponse = findViewById(R.id.tvVoiceAssistantResponse);
-        etVoiceQuery = findViewById(R.id.etVoiceQuery);
-        layoutImageActions = findViewById(R.id.layoutImageActions);
-
-        // RecyclerViews
-        rvScannedIngredients = findViewById(R.id.rvScannedIngredients);
-        rvRecipes = findViewById(R.id.rvRecipes);
-        rvShoppingList = findViewById(R.id.rvShoppingList);
-        rvWeeklyPlanner = findViewById(R.id.rvWeeklyPlanner);
-
-        setupRecyclerViews();
-        setupLaunchers();
-        setupTTS();
-
-        // Triggers
-        findViewById(R.id.btnCameraScan).setOnClickListener(v -> checkCameraPermissionAndLaunch());
-        findViewById(R.id.btnGalleryScan).setOnClickListener(v -> openGallery());
-        findViewById(R.id.btnAddShoppingItem).setOnClickListener(v -> showAddShoppingItemDialog());
-        findViewById(R.id.btnVoiceMic).setOnClickListener(v -> startVoiceRecognition());
-        findViewById(R.id.btnSendVoiceQuery).setOnClickListener(v -> processTypedVoiceQuery());
-
-        findViewById(R.id.btnEditImage).setOnClickListener(v -> showEditImageOptionsDialog());
-        findViewById(R.id.btnDeleteImage).setOnClickListener(v -> showDeleteImageConfirmationDialog());
-
-        // Tab 2 Chips Setup
-        findViewById(R.id.chipMealAll).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipMealBreakfast).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipMealLunch).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipMealDinner).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipMealSnack).setOnClickListener(v -> filterRecipesAndReload());
-
-        findViewById(R.id.chipDietAll).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietVeg).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietVegan).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietHighProtein).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietLowCarb).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietWeightLoss).setOnClickListener(v -> filterRecipesAndReload());
-        findViewById(R.id.chipDietMuscleGain).setOnClickListener(v -> filterRecipesAndReload());
-
-        // Tab 4 Regeneration Triggers
-        findViewById(R.id.btnRegenerateFullWeek).setOnClickListener(v -> regenerateFullWeekPlanner());
-
-        // Tab Switching
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                switchTab(tab.getPosition());
-                if (tab.getPosition() == 4) {
-                    loadVoiceHistory();
-                } else if (tab.getPosition() == 3) {
-                    if (weeklyPlanDays.isEmpty()) {
-                        regenerateFullWeekPlanner();
-                    }
+            // Toolbar
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                setSupportActionBar(toolbar);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    toolbar.setNavigationOnClickListener(v -> onBackPressed());
                 }
             }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            // Layouts
+            tabLayout = findViewById(R.id.tabLayout);
+            loadingLayout = findViewById(R.id.loadingLayout);
+            tvLoadingText = findViewById(R.id.tvLoadingText);
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
-        });
+            tabScannerLayout = findViewById(R.id.tabScannerLayout);
+            tabRecipesLayout = findViewById(R.id.tabRecipesLayout);
+            tabShoppingLayout = findViewById(R.id.tabShoppingLayout);
+            tabPlannerLayout = findViewById(R.id.tabPlannerLayout);
+            tabVoiceLayout = findViewById(R.id.tabVoiceLayout);
 
-        // Initialize Image Action Visibility
-        String activeUri = getActiveImageUri();
-        if (activeUri != null) {
-            ivScannedPreview.setImageURI(Uri.parse(activeUri));
-            layoutImageActions.setVisibility(View.VISIBLE);
-        } else {
-            ivScannedPreview.setImageResource(R.drawable.onboarding_1);
-            layoutImageActions.setVisibility(View.GONE);
+            ivScannedPreview = findViewById(R.id.ivScannedPreview);
+            tvVoiceAssistantResponse = findViewById(R.id.tvVoiceAssistantResponse);
+            etVoiceQuery = findViewById(R.id.etVoiceQuery);
+            layoutImageActions = findViewById(R.id.layoutImageActions);
+
+            // RecyclerViews
+            rvScannedIngredients = findViewById(R.id.rvScannedIngredients);
+            rvRecipes = findViewById(R.id.rvRecipes);
+            rvShoppingList = findViewById(R.id.rvShoppingList);
+            rvWeeklyPlanner = findViewById(R.id.rvWeeklyPlanner);
+
+            setupRecyclerViews();
+            setupLaunchers();
+            setupTTS();
+
+            // Triggers
+            setClickListenerIfNotNull(R.id.btnCameraScan, v -> checkCameraPermissionAndLaunch());
+            setClickListenerIfNotNull(R.id.btnGalleryScan, v -> openGallery());
+            setClickListenerIfNotNull(R.id.btnAddShoppingItem, v -> showAddShoppingItemDialog());
+            setClickListenerIfNotNull(R.id.btnVoiceMic, v -> startVoiceRecognition());
+            setClickListenerIfNotNull(R.id.btnSendVoiceQuery, v -> processTypedVoiceQuery());
+
+            setClickListenerIfNotNull(R.id.btnEditImage, v -> showEditImageOptionsDialog());
+            setClickListenerIfNotNull(R.id.btnDeleteImage, v -> showDeleteImageConfirmationDialog());
+
+            // Tab 2 Chips Setup
+            setClickListenerIfNotNull(R.id.chipMealAll, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipMealBreakfast, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipMealLunch, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipMealDinner, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipMealSnack, v -> filterRecipesAndReload());
+
+            setClickListenerIfNotNull(R.id.chipDietAll, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietVeg, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietVegan, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietHighProtein, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietLowCarb, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietWeightLoss, v -> filterRecipesAndReload());
+            setClickListenerIfNotNull(R.id.chipDietMuscleGain, v -> filterRecipesAndReload());
+
+            // Tab 4 Regeneration Triggers
+            setClickListenerIfNotNull(R.id.btnRegenerateFullWeek, v -> regenerateFullWeekPlanner());
+
+            // Tab Switching
+            if (tabLayout != null) {
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        switchTab(tab.getPosition());
+                        if (tab.getPosition() == 4) {
+                            loadVoiceHistory();
+                        } else if (tab.getPosition() == 3) {
+                            if (weeklyPlanDays.isEmpty()) {
+                                regenerateFullWeekPlanner();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {}
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {}
+                });
+            }
+
+            // Initialize Image Action Visibility
+            String activeUri = getActiveImageUri();
+            if (ivScannedPreview != null) {
+                if (activeUri != null) {
+                    ivScannedPreview.setImageURI(Uri.parse(activeUri));
+                    if (layoutImageActions != null) layoutImageActions.setVisibility(View.VISIBLE);
+                } else {
+                    ivScannedPreview.setImageResource(R.drawable.onboarding_1);
+                    if (layoutImageActions != null) layoutImageActions.setVisibility(View.GONE);
+                }
+            }
+
+            // Load DB Data
+            loadDataFromDatabase();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        // Load DB Data
-        loadDataFromDatabase();
+    private void setClickListenerIfNotNull(int resId, View.OnClickListener listener) {
+        View v = findViewById(resId);
+        if (v != null) {
+            v.setOnClickListener(listener);
+        }
     }
 
     private void setupRecyclerViews() {
         ingredientAdapter = new IngredientAdapter(scannedIngredients);
-        rvScannedIngredients.setLayoutManager(new LinearLayoutManager(this));
-        rvScannedIngredients.setAdapter(ingredientAdapter);
+        if (rvScannedIngredients != null) {
+            rvScannedIngredients.setLayoutManager(new LinearLayoutManager(this));
+            rvScannedIngredients.setAdapter(ingredientAdapter);
+        }
 
         recipeAdapter = new RecipeAdapter(groceryRecipes, this::showRecipeDetailDialog, this::toggleRecipeSavedState);
-        rvRecipes.setLayoutManager(new LinearLayoutManager(this));
-        rvRecipes.setAdapter(recipeAdapter);
+        if (rvRecipes != null) {
+            rvRecipes.setLayoutManager(new LinearLayoutManager(this));
+            rvRecipes.setAdapter(recipeAdapter);
+        }
 
         shoppingAdapter = new ShoppingAdapter(shoppingItems, this::onShoppingItemChanged, this::onShoppingItemDeleted, this::showEditShoppingItemDialog);
-        rvShoppingList.setLayoutManager(new LinearLayoutManager(this));
-        rvShoppingList.setAdapter(shoppingAdapter);
+        if (rvShoppingList != null) {
+            rvShoppingList.setLayoutManager(new LinearLayoutManager(this));
+            rvShoppingList.setAdapter(shoppingAdapter);
+        }
 
         plannerAdapter = new PlannerAdapter(weeklyPlanDays, this::showDayMealDetailDialog);
-        rvWeeklyPlanner.setLayoutManager(new LinearLayoutManager(this));
-        rvWeeklyPlanner.setAdapter(plannerAdapter);
+        if (rvWeeklyPlanner != null) {
+            rvWeeklyPlanner.setLayoutManager(new LinearLayoutManager(this));
+            rvWeeklyPlanner.setAdapter(plannerAdapter);
+        }
     }
 
     private void setupLaunchers() {
@@ -492,9 +517,9 @@ public class GroceryScannerActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: Image bitmap is empty.", Toast.LENGTH_SHORT).show();
             return;
         }
-        showLoading("Analyzing grocery product package...");
+        showLoading("Analyzing food or beverage item...");
 
-        GroceryAiEngine.analyzeProductScan(this, bitmap, new GroceryAiEngine.ProductScanCallback() {
+        GroceryAiEngine.analyzeProductScan(this, bitmap, currentUser, new GroceryAiEngine.ProductScanCallback() {
             @Override
             public void onSuccess(GroceryProductScan report) {
                 hideLoading();
@@ -506,14 +531,15 @@ public class GroceryScannerActivity extends AppCompatActivity {
                     // Map package ingredients dynamically to ScannedIngredient list
                     dao.clearScannedIngredients();
                     long now = System.currentTimeMillis();
-                    String[] splitIngs = report.getIngredients().split(",");
+                    String ingsStr = report.getIngredients() != null ? report.getIngredients() : report.getProductName();
+                    String[] splitIngs = ingsStr.split(",");
                     for (String s : splitIngs) {
                         String trim = s.trim();
                         if (!trim.isEmpty()) {
                             dao.insertScannedIngredient(new ScannedIngredient(
                                     UUID.randomUUID().toString(),
                                     trim,
-                                    report.getFoodCategory(),
+                                    report.getFoodCategory() != null ? report.getFoodCategory() : "General",
                                     98,
                                     "1 unit",
                                     (int)(report.getCalories() / Math.max(1, splitIngs.length)),
@@ -523,7 +549,7 @@ public class GroceryScannerActivity extends AppCompatActivity {
                                     report.getFiber() / Math.max(1, splitIngs.length),
                                     report.getSugar() / Math.max(1, splitIngs.length),
                                     report.getSodium() / Math.max(1, splitIngs.length),
-                                    report.getVitaminsMinerals(),
+                                    report.getVitaminsMinerals() != null ? report.getVitaminsMinerals() : "None",
                                     "None",
                                     "Fresh",
                                     "",
@@ -546,56 +572,80 @@ public class GroceryScannerActivity extends AppCompatActivity {
                 hideLoading();
                 cleanUpTemporaryImages();
                 new AlertDialog.Builder(GroceryScannerActivity.this)
-                        .setTitle("Scan Failed")
-                        .setMessage(errorMsg)
-                        .setPositiveButton("Try Again", null)
+                        .setTitle("Recognition Notice")
+                        .setMessage(errorMsg != null ? errorMsg : "Unable to analyze this image. Please try again with a clearer photo.")
+                        .setPositiveButton("OK", null)
                         .show();
             }
         });
     }
 
     private void displayProductReportCard(GroceryProductScan report) {
-        findViewById(R.id.cvProductReport).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tvReportProductName)).setText(report.getProductName());
-        ((TextView) findViewById(R.id.tvReportBrandCategory)).setText(report.getBrand() + " • " + report.getFoodCategory());
+        if (report == null) return;
+        View cvReport = findViewById(R.id.cvProductReport);
+        if (cvReport != null) cvReport.setVisibility(View.VISIBLE);
         
-        TextView tvHealth = findViewById(R.id.tvReportHealthScore);
-        tvHealth.setText(report.getHealthScore() + "/100");
-        if (report.getHealthScore() >= 80) tvHealth.setTextColor(0xFF2563EB); // Blue
-        else if (report.getHealthScore() >= 50) tvHealth.setTextColor(0xFFF59E0B); // Yellow
-        else tvHealth.setTextColor(0xFFEF4444); // Red
+        TextView tvName = findViewById(R.id.tvReportProductName);
+        if (tvName != null) tvName.setText(report.getProductName() != null ? report.getProductName() : "Scanned Item");
         
-        TextView tvNutrition = findViewById(R.id.tvReportNutritionScore);
-        tvNutrition.setText(report.getNutritionScore() + "/100");
-        if (report.getNutritionScore() >= 80) tvNutrition.setTextColor(0xFF2563EB);
-        else if (report.getNutritionScore() >= 50) tvNutrition.setTextColor(0xFFF59E0B);
-        else tvNutrition.setTextColor(0xFFEF4444);
-        
-        TextView tvRec = findViewById(R.id.tvReportRecommendation);
-        tvRec.setText(report.getAiRecommendation());
-        if ("Highly Recommended".equalsIgnoreCase(report.getAiRecommendation()) || "Recommended".equalsIgnoreCase(report.getAiRecommendation())) {
-            tvRec.setTextColor(0xFF2563EB);
-        } else if ("Avoid".equalsIgnoreCase(report.getAiRecommendation())) {
-            tvRec.setTextColor(0xFFEF4444);
-        } else {
-            tvRec.setTextColor(0xFFF59E0B);
+        TextView tvBrand = findViewById(R.id.tvReportBrandCategory);
+        if (tvBrand != null) {
+            String brand = report.getBrand() != null ? report.getBrand() : "General";
+            String cat = report.getFoodCategory() != null ? report.getFoodCategory() : "Food";
+            tvBrand.setText(brand + " • " + cat);
         }
         
-        ((TextView) findViewById(R.id.tvReportWhy)).setText(report.getWhyRecommended());
-        ((TextView) findViewById(R.id.tvReportIngredients)).setText(report.getIngredients());
+        TextView tvHealth = findViewById(R.id.tvReportHealthScore);
+        if (tvHealth != null) {
+            tvHealth.setText(report.getHealthScore() + "/100");
+            if (report.getHealthScore() >= 80) tvHealth.setTextColor(0xFF2563EB); // Blue
+            else if (report.getHealthScore() >= 50) tvHealth.setTextColor(0xFFF59E0B); // Yellow
+            else tvHealth.setTextColor(0xFFEF4444); // Red
+        }
         
-        StringBuilder props = new StringBuilder();
-        if (report.isHealthy()) props.append("• Healthy ");
-        else props.append("• Unhealthy ");
-        if (report.isHighlyProcessed()) props.append("• Processed ");
-        if (report.isOrganic()) props.append("• Organic ");
-        if (report.isSuitableWeightLoss()) props.append("• Weight Loss ");
-        if (report.isSuitableWeightGain()) props.append("• Weight Gain ");
-        if (report.isSuitableMuscleGain()) props.append("• Muscle Gain ");
-        if (report.isSuitableDiabetic()) props.append("• Diabetic Safe ");
+        TextView tvNutrition = findViewById(R.id.tvReportNutritionScore);
+        if (tvNutrition != null) {
+            tvNutrition.setText(report.getNutritionScore() + "/100");
+            if (report.getNutritionScore() >= 80) tvNutrition.setTextColor(0xFF2563EB);
+            else if (report.getNutritionScore() >= 50) tvNutrition.setTextColor(0xFFF59E0B);
+            else tvNutrition.setTextColor(0xFFEF4444);
+        }
         
-        ((TextView) findViewById(R.id.tvReportClassifications)).setText(props.toString());
-        ((TextView) findViewById(R.id.tvReportAlternatives)).setText(report.getAlternativeProducts());
+        TextView tvRec = findViewById(R.id.tvReportRecommendation);
+        if (tvRec != null) {
+            String rec = report.getAiRecommendation() != null ? report.getAiRecommendation() : "Recommended";
+            tvRec.setText(rec);
+            if ("Highly Recommended".equalsIgnoreCase(rec) || "Recommended".equalsIgnoreCase(rec)) {
+                tvRec.setTextColor(0xFF2563EB);
+            } else if ("Avoid".equalsIgnoreCase(rec)) {
+                tvRec.setTextColor(0xFFEF4444);
+            } else {
+                tvRec.setTextColor(0xFFF59E0B);
+            }
+        }
+        
+        TextView tvWhy = findViewById(R.id.tvReportWhy);
+        if (tvWhy != null) tvWhy.setText(report.getWhyRecommended() != null ? report.getWhyRecommended() : "Nutritious option matching your fitness profile.");
+        
+        TextView tvIng = findViewById(R.id.tvReportIngredients);
+        if (tvIng != null) tvIng.setText(report.getIngredients() != null ? report.getIngredients() : report.getProductName());
+        
+        TextView tvProps = findViewById(R.id.tvReportClassifications);
+        if (tvProps != null) {
+            StringBuilder props = new StringBuilder();
+            if (report.isHealthy()) props.append("• Healthy ");
+            else props.append("• Unhealthy ");
+            if (report.isHighlyProcessed()) props.append("• Processed ");
+            if (report.isOrganic()) props.append("• Organic ");
+            if (report.isSuitableWeightLoss()) props.append("• Weight Loss ");
+            if (report.isSuitableWeightGain()) props.append("• Weight Gain ");
+            if (report.isSuitableMuscleGain()) props.append("• Muscle Gain ");
+            if (report.isSuitableDiabetic()) props.append("• Diabetic Safe ");
+            tvProps.setText(props.toString());
+        }
+        
+        TextView tvAlt = findViewById(R.id.tvReportAlternatives);
+        if (tvAlt != null) tvAlt.setText(report.getAlternativeProducts() != null ? report.getAlternativeProducts() : "Fresh Whole Foods");
     }
 
     private void triggerAiRecipeGeneration(List<ScannedIngredient> ingredients) {
@@ -638,22 +688,28 @@ public class GroceryScannerActivity extends AppCompatActivity {
     }
 
     private String getActiveMealFilter() {
-        int checkedId = ((com.google.android.material.chip.ChipGroup) findViewById(R.id.cgRecipeMealType)).getCheckedChipId();
-        if (checkedId == R.id.chipMealBreakfast) return "Breakfast";
-        if (checkedId == R.id.chipMealLunch) return "Lunch";
-        if (checkedId == R.id.chipMealDinner) return "Dinner";
-        if (checkedId == R.id.chipMealSnack) return "Snack";
+        View v = findViewById(R.id.cgRecipeMealType);
+        if (v instanceof com.google.android.material.chip.ChipGroup) {
+            int checkedId = ((com.google.android.material.chip.ChipGroup) v).getCheckedChipId();
+            if (checkedId == R.id.chipMealBreakfast) return "Breakfast";
+            if (checkedId == R.id.chipMealLunch) return "Lunch";
+            if (checkedId == R.id.chipMealDinner) return "Dinner";
+            if (checkedId == R.id.chipMealSnack) return "Snack";
+        }
         return "All Meals";
     }
 
     private String getActiveDietFilter() {
-        int checkedId = ((com.google.android.material.chip.ChipGroup) findViewById(R.id.cgRecipeDietTarget)).getCheckedChipId();
-        if (checkedId == R.id.chipDietVeg) return "Vegetarian";
-        if (checkedId == R.id.chipDietVegan) return "Vegan";
-        if (checkedId == R.id.chipDietHighProtein) return "High Protein";
-        if (checkedId == R.id.chipDietLowCarb) return "Low Carb";
-        if (checkedId == R.id.chipDietWeightLoss) return "Weight Loss";
-        if (checkedId == R.id.chipDietMuscleGain) return "Muscle Gain";
+        View v = findViewById(R.id.cgRecipeDietTarget);
+        if (v instanceof com.google.android.material.chip.ChipGroup) {
+            int checkedId = ((com.google.android.material.chip.ChipGroup) v).getCheckedChipId();
+            if (checkedId == R.id.chipDietVeg) return "Vegetarian";
+            if (checkedId == R.id.chipDietVegan) return "Vegan";
+            if (checkedId == R.id.chipDietHighProtein) return "High Protein";
+            if (checkedId == R.id.chipDietLowCarb) return "Low Carb";
+            if (checkedId == R.id.chipDietWeightLoss) return "Weight Loss";
+            if (checkedId == R.id.chipDietMuscleGain) return "Muscle Gain";
+        }
         return "All Diets";
     }
 
@@ -868,10 +924,10 @@ public class GroceryScannerActivity extends AppCompatActivity {
                     // Call API key retrieval directly
                     SharedPreferences prefs = getSharedPreferences("ai_prefs", Context.MODE_PRIVATE);
                     String directKey = prefs.getString("gemini_api_key", null);
-                    
-                    java.lang.reflect.Method method = GroceryAiEngine.class.getDeclaredMethod("callGeminiTextAPI", String.class, String.class, boolean.class);
-                    method.setAccessible(true);
-                    String jsonResp = (String) method.invoke(null, directKey, prompt, true);
+                    if (directKey == null) {
+                        directKey = GroceryAiEngine.getApiKey(this);
+                    }
+                    String jsonResp = GroceryAiEngine.callGeminiTextAPI(directKey, prompt, true);
 
                     if (jsonResp != null && !jsonResp.trim().isEmpty()) {
                         JSONObject obj = new JSONObject(jsonResp);
@@ -933,9 +989,7 @@ public class GroceryScannerActivity extends AppCompatActivity {
                 }
                 
                 // Get a realistic detail JSON using the helper in GroceryAiEngine
-                java.lang.reflect.Method detailMethod = GroceryAiEngine.class.getDeclaredMethod("buildMealDetailJson", String.class, int.class, String.class, User.class);
-                detailMethod.setAccessible(true);
-                String simulatedJson = (String) detailMethod.invoke(null, recipeName, calories, mealType, currentUser);
+                String simulatedJson = GroceryAiEngine.buildMealDetailJson(recipeName, calories, mealType, currentUser);
                 
                 if ("Breakfast".equalsIgnoreCase(mealType)) {
                     dayPlan.setBreakfastRecipeName(recipeName);
@@ -1049,37 +1103,61 @@ public class GroceryScannerActivity extends AppCompatActivity {
 
     private void loadDataFromDatabase() {
         new Thread(() -> {
-            List<ScannedIngredient> dbIngs = dao.getAllScannedIngredients();
-            List<GroceryRecipe> dbRecs = dao.getAllGroceryRecipes();
-            List<ShoppingListItem> dbShop = dao.getAllShoppingListItems();
-            List<WeeklyMealPlanDay> dbPlan = dao.getWeeklyMealPlan();
+            try {
+                List<ScannedIngredient> dbIngs = dao != null ? dao.getAllScannedIngredients() : null;
+                List<GroceryRecipe> dbRecs = dao != null ? dao.getAllGroceryRecipes() : null;
+                List<ShoppingListItem> dbShop = dao != null ? dao.getAllShoppingListItems() : null;
+                List<WeeklyMealPlanDay> dbPlan = dao != null ? dao.getWeeklyMealPlan() : null;
+                List<GroceryProductScan> productScans = dao != null ? dao.getAllProductScans() : null;
 
-            // Load last scan report if available
-            List<GroceryProductScan> productScans = dao.getAllProductScans();
-            
-            runOnUiThread(() -> {
-                scannedIngredients.clear();
-                scannedIngredients.addAll(dbIngs);
-                ingredientAdapter.notifyDataSetChanged();
-
-                groceryRecipes.clear();
-                groceryRecipes.addAll(dbRecs);
-                recipeAdapter.notifyDataSetChanged();
-
-                shoppingItems.clear();
-                shoppingItems.addAll(dbShop);
-                shoppingAdapter.notifyDataSetChanged();
-
-                weeklyPlanDays.clear();
-                weeklyPlanDays.addAll(dbPlan);
-                plannerAdapter.notifyDataSetChanged();
-
-                if (!productScans.isEmpty()) {
-                    displayProductReportCard(productScans.get(0));
-                } else {
-                    findViewById(R.id.cvProductReport).setVisibility(View.GONE);
+                // Auto-generate initial 7-day weekly plan if database has no meal plan yet
+                if ((dbPlan == null || dbPlan.isEmpty()) && currentUser != null) {
+                    dbPlan = GroceryAiEngine.generateWeeklyMealPlan(currentUser);
+                    if (dbPlan != null && dao != null) {
+                        for (WeeklyMealPlanDay day : dbPlan) {
+                            dao.insertWeeklyMealPlanDay(day);
+                        }
+                        populateLoggedMealsFromWeeklyPlan(dbPlan);
+                    }
                 }
-            });
+
+                final List<ScannedIngredient> finalIngs = dbIngs != null ? dbIngs : new ArrayList<>();
+                final List<GroceryRecipe> finalRecs = dbRecs != null ? dbRecs : new ArrayList<>();
+                final List<ShoppingListItem> finalShop = dbShop != null ? dbShop : new ArrayList<>();
+                final List<WeeklyMealPlanDay> finalPlan = dbPlan != null ? dbPlan : new ArrayList<>();
+                final List<GroceryProductScan> finalScans = productScans != null ? productScans : new ArrayList<>();
+
+                runOnUiThread(() -> {
+                    try {
+                        scannedIngredients.clear();
+                        scannedIngredients.addAll(finalIngs);
+                        if (ingredientAdapter != null) ingredientAdapter.notifyDataSetChanged();
+
+                        groceryRecipes.clear();
+                        groceryRecipes.addAll(finalRecs);
+                        if (recipeAdapter != null) recipeAdapter.notifyDataSetChanged();
+
+                        shoppingItems.clear();
+                        shoppingItems.addAll(finalShop);
+                        if (shoppingAdapter != null) shoppingAdapter.notifyDataSetChanged();
+
+                        weeklyPlanDays.clear();
+                        weeklyPlanDays.addAll(finalPlan);
+                        if (plannerAdapter != null) plannerAdapter.notifyDataSetChanged();
+
+                        View cvReport = findViewById(R.id.cvProductReport);
+                        if (!finalScans.isEmpty() && finalScans.get(0) != null) {
+                            displayProductReportCard(finalScans.get(0));
+                        } else if (cvReport != null) {
+                            cvReport.setVisibility(View.GONE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 
@@ -1092,7 +1170,14 @@ public class GroceryScannerActivity extends AppCompatActivity {
     }
 
     private void showLoading(String msg) {
-        tvLoadingText.setText(msg);
+        if (tvLoadingText != null) tvLoadingText.setText(msg);
+        View btnCam = findViewById(R.id.btnCameraScan);
+        if (btnCam != null) btnCam.setEnabled(false);
+        View btnGal = findViewById(R.id.btnGalleryScan);
+        if (btnGal != null) btnGal.setEnabled(false);
+        View btnRegen = findViewById(R.id.btnRegenerateFullWeek);
+        if (btnRegen != null) btnRegen.setEnabled(false);
+
         tabScannerLayout.setVisibility(View.GONE);
         tabRecipesLayout.setVisibility(View.GONE);
         tabShoppingLayout.setVisibility(View.GONE);
@@ -1102,8 +1187,17 @@ public class GroceryScannerActivity extends AppCompatActivity {
     }
 
     private void hideLoading() {
+        View btnCam = findViewById(R.id.btnCameraScan);
+        if (btnCam != null) btnCam.setEnabled(true);
+        View btnGal = findViewById(R.id.btnGalleryScan);
+        if (btnGal != null) btnGal.setEnabled(true);
+        View btnRegen = findViewById(R.id.btnRegenerateFullWeek);
+        if (btnRegen != null) btnRegen.setEnabled(true);
+
         loadingLayout.setVisibility(View.GONE);
-        switchTab(tabLayout.getSelectedTabPosition());
+        if (tabLayout != null) {
+            switchTab(tabLayout.getSelectedTabPosition());
+        }
     }
 
     private void showAddShoppingItemDialog() {

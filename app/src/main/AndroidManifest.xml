@@ -75,6 +75,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".activities.PostureAnalysisActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".activities.TransformationIntroActivity"
             android:exported="false" />
 

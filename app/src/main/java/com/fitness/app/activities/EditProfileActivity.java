@@ -49,11 +49,11 @@ public class EditProfileActivity extends AppCompatActivity {
     private static final int CROP_IMAGE = 102;
     private static final int CAMERA_PERMISSION_REQUEST = 104;
 
-    private EditText etEditFirstName, etEditLastName, etEditEmail, etEditDob;
-    private AutoCompleteTextView etEditCity, etEditGender, etEditCountry, etEditBloodGroup, etEditActivityLevel, etEditGoal, etEditDietary, etEditConditions;
+    private EditText etEditFirstName, etEditLastName, etEditDob;
+    private AutoCompleteTextView etEditGender, etEditBloodGroup, etEditActivityLevel, etEditGoal, etEditDietary, etEditConditions;
     private EditText etEditHeight, etEditWeight, etEditTargetWeight;
 
-    private TextView tvEditProfileName, tvEditProfileEmail;
+    private TextView tvEditProfileName;
     private ImageView ivEditProfilePic;
     private Button btnRemovePic;
     private com.google.android.material.button.MaterialButton btnCancel, btnSaveProfile;
@@ -101,21 +101,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Bind Headers
         tvEditProfileName = findViewById(R.id.tvEditProfileName);
-        tvEditProfileEmail = findViewById(R.id.tvEditProfileEmail);
-        if (tvEditProfileEmail != null) {
-            tvEditProfileEmail.setVisibility(View.GONE);
-        }
 
         // Bind Form Inputs
         etEditFirstName = findViewById(R.id.etEditFirstName);
         etEditLastName = findViewById(R.id.etEditLastName);
-        etEditEmail = findViewById(R.id.etEditEmail);
         etEditDob = findViewById(R.id.etEditDob);
-        etEditCity = findViewById(R.id.etEditCity);
         
         // AutoComplete Dropdowns
         etEditGender = findViewById(R.id.etEditGender);
-        etEditCountry = findViewById(R.id.etEditCountry);
         etEditBloodGroup = findViewById(R.id.etEditBloodGroup);
         etEditActivityLevel = findViewById(R.id.etEditActivityLevel);
         etEditGoal = findViewById(R.id.etEditGoal);
@@ -164,26 +157,6 @@ public class EditProfileActivity extends AppCompatActivity {
         ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, diets);
         etEditDietary.setAdapter(dietAdapter);
 
-        List<String> countries = com.fitness.app.utils.LocationUtils.getCountries();
-        ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, countries);
-        etEditCountry.setAdapter(countryAdapter);
-
-        etEditCountry.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedCountry = etEditCountry.getText().toString();
-            etEditCity.setText("");
-            updateCityDropdown(selectedCountry);
-        });
-
-        etEditCity.setOnClickListener(v -> {
-            String country = etEditCountry.getText().toString().trim();
-            if (country.isEmpty() || !com.fitness.app.utils.ValidationUtils.isValidCountry(country)) {
-                etEditCountry.setError("Please select a valid country first");
-                scrollToView(etEditCountry);
-                return;
-            }
-            showCitySearchDialog(country);
-        });
-
         tilEditConditions = findViewById(R.id.tilEditConditions);
 
         String[] conditions = {"None", "Hypertension (High BP)", "Diabetes (Type 1 / Type 2)", "Asthma / Respiratory", "Heart Condition", "Joint / Arthritis", "Thyroid Disorder", "Other"};
@@ -220,79 +193,13 @@ public class EditProfileActivity extends AppCompatActivity {
             .show();
     }
 
-    private void updateCityDropdown(String country) {
-        List<String> cities = com.fitness.app.utils.LocationUtils.getCitiesForCountry(country);
-        ArrayAdapter<String> cityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, cities);
-        etEditCity.setAdapter(cityAdapter);
-    }
-
-    private void showCitySearchDialog(String country) {
-        List<String> cityList = com.fitness.app.utils.LocationUtils.getCitiesForCountry(country);
-        if (cityList == null || cityList.isEmpty()) {
-            Toast.makeText(this, "No cities available for " + country, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Select City for " + country);
-
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(32, 24, 32, 16);
-
-        EditText etSearch = new EditText(this);
-        etSearch.setHint("🔍 Search city...");
-        etSearch.setPadding(24, 20, 24, 20);
-        etSearch.setBackgroundResource(R.drawable.bg_edittext);
-        layout.addView(etSearch);
-
-        android.widget.ListView listView = new android.widget.ListView(this);
-        listView.setPadding(0, 16, 0, 0);
-        layout.addView(listView);
-
-        builder.setView(layout);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<>(cityList));
-        listView.setAdapter(adapter);
-
-        android.app.AlertDialog dialog = builder.create();
-
-        etSearch.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
-        });
-
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedCity = adapter.getItem(position);
-            if (selectedCity != null) {
-                etEditCity.setText(selectedCity);
-                etEditCity.setError(null);
-            }
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
     private void loadUserData() {
         tvEditProfileName.setText(user.getFirstName() + " " + user.getLastName());
-        tvEditProfileEmail.setText(user.getEmail());
 
         etEditFirstName.setText(user.getFirstName());
         etEditLastName.setText(user.getLastName());
-        etEditEmail.setText(user.getEmail());
         etEditDob.setText(user.getDob() != null ? user.getDob() : "");
         etEditGender.setText(user.getGender() != null ? user.getGender() : "", false);
-        etEditCountry.setText(user.getCountry() != null ? user.getCountry() : "", false);
-        etEditCity.setText(user.getCity() != null ? user.getCity() : "");
         etEditBloodGroup.setText(user.getBloodGroup() != null ? user.getBloodGroup() : "", false);
 
         boolean isMetric = localDb.isMetricUnitsEnabled();
@@ -486,10 +393,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfileData() {
         String firstName = etEditFirstName.getText().toString().trim();
         String lastName = etEditLastName.getText().toString().trim();
-        String email = etEditEmail.getText().toString().trim();
         String dob = etEditDob.getText().toString().trim();
-        String country = etEditCountry.getText().toString().trim();
-        String city = etEditCity.getText().toString().trim();
         String conditions = etEditConditions.getText().toString().trim();
 
         if (!com.fitness.app.utils.ValidationUtils.isValidName(firstName)) {
@@ -500,11 +404,6 @@ public class EditProfileActivity extends AppCompatActivity {
         if (!com.fitness.app.utils.ValidationUtils.isValidName(lastName)) {
             etEditLastName.setError("Please enter a valid last name (letters only)");
             scrollToView(etEditLastName);
-            return;
-        }
-        if (!email.isEmpty() && !com.fitness.app.utils.ValidationUtils.isValidEmail(email)) {
-            etEditEmail.setError("Please enter a valid email address.");
-            scrollToView(etEditEmail);
             return;
         }
         if (dob.isEmpty()) {
@@ -550,18 +449,6 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        if (!com.fitness.app.utils.ValidationUtils.isValidCountry(country)) {
-            etEditCountry.setError("Please select a valid country");
-            scrollToView(etEditCountry);
-            return;
-        }
-
-        if (!com.fitness.app.utils.LocationUtils.isValidCityForCountry(country, city)) {
-            etEditCity.setError("Please enter or select a valid city for " + country);
-            scrollToView(etEditCity);
-            return;
-        }
-
         if (!com.fitness.app.utils.ValidationUtils.isValidMedicalCondition(conditions)) {
             etEditConditions.setError("Please select a valid medical condition option");
             scrollToView(etEditConditions);
@@ -570,11 +457,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        user.setEmail(email);
         user.setDob(dob);
         user.setGender(etEditGender.getText().toString().trim());
-        user.setCountry(country);
-        user.setCity(city);
         user.setBloodGroup(etEditBloodGroup.getText().toString().trim());
         user.setHeight(heightVal);
         user.setWeight(weightVal);
@@ -697,8 +581,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void showSuccessNotificationAndFinish() {
-        Toast.makeText(this, "Your personal data has been successfully saved.", Toast.LENGTH_LONG).show();
-        btnSaveProfile.postDelayed(this::finish, 2000);
+        Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @Override

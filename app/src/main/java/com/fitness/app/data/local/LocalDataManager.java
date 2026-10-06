@@ -62,6 +62,14 @@ public class LocalDataManager {
         return sharedPreferences.getBoolean(KEY_ONBOARDING_SEEN, false);
     }
 
+    public void setOnboardingCompleted(boolean completed) {
+        setOnboardingSeen(completed);
+    }
+
+    public boolean isOnboardingCompleted() {
+        return isOnboardingSeen();
+    }
+
     // User Profile
     public void saveUser(User user) {
         if (user == null) {
@@ -75,6 +83,12 @@ public class LocalDataManager {
                 String newGoal = user.getGoal() != null ? user.getGoal() : "";
                 double oldWeight = existingUser.getWeight();
                 double newWeight = user.getWeight();
+                double oldHeight = existingUser.getHeight();
+                double newHeight = user.getHeight();
+                double oldTargetWeight = existingUser.getTargetWeight();
+                double newTargetWeight = user.getTargetWeight();
+                int oldAge = existingUser.getAge();
+                int newAge = user.getAge();
                 int oldCal = existingUser.getDailyCaloriesGoal();
                 int newCal = user.getDailyCaloriesGoal();
                 String oldDiet = existingUser.getDietaryPreference() != null ? existingUser.getDietaryPreference() : "";
@@ -85,14 +99,20 @@ public class LocalDataManager {
                 String newMedical = user.getMedicalConditions() != null ? user.getMedicalConditions() : "";
                 String oldActivity = existingUser.getActivityLevel() != null ? existingUser.getActivityLevel() : "";
                 String newActivity = user.getActivityLevel() != null ? user.getActivityLevel() : "";
-                
+                String oldEquip = existingUser.getAvailableEquipment() != null ? existingUser.getAvailableEquipment() : "";
+                String newEquip = user.getAvailableEquipment() != null ? user.getAvailableEquipment() : "";
+
                 if (!oldGoal.equalsIgnoreCase(newGoal) ||
                     Double.compare(oldWeight, newWeight) != 0 ||
+                    Double.compare(oldHeight, newHeight) != 0 ||
+                    Double.compare(oldTargetWeight, newTargetWeight) != 0 ||
+                    oldAge != newAge ||
                     oldCal != newCal ||
                     !oldDiet.equalsIgnoreCase(newDiet) ||
                     !oldAllergies.equalsIgnoreCase(newAllergies) ||
                     !oldMedical.equalsIgnoreCase(newMedical) ||
-                    !oldActivity.equalsIgnoreCase(newActivity)) {
+                    !oldActivity.equalsIgnoreCase(newActivity) ||
+                    !oldEquip.equalsIgnoreCase(newEquip)) {
                     
                     editor.remove(KEY_DIET_PLAN);
                     editor.remove(KEY_WORKOUT_PLAN);

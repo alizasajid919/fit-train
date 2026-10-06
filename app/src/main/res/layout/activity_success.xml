@@ -1,46 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/apk/res/tools"
+    xmlns:tools="http://tools.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#FAF9F5"
     tools:context=".activities.SuccessActivity">
 
-    <!-- Center illustration -->
-    <ImageView
-        android:id="@+id/ivSuccessIllustration"
+    <!-- Center illustration & floating badge container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containerIllustration"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/success_illustration"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
         app:layout_constraintBottom_toTopOf="@id/llText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:contentDescription="Success Illustration" />
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <ImageView
+            android:id="@+id/ivSuccessIllustration"
+            android:layout_width="260dp"
+            android:layout_height="220dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/success_illustration"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="Success Illustration" />
+
+        <!-- Floating Achievement Callout Badge -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plan Ready &amp; Customized! 🎯"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_rounded_black_pill"
+            android:backgroundTint="#F97316"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="6dp"
+            android:elevation="6dp"
+            app:layout_constraintBottom_toBottomOf="@id/ivSuccessIllustration"
+            app:layout_constraintEnd_toEndOf="@id/ivSuccessIllustration"
+            app:layout_constraintStart_toStartOf="@id/ivSuccessIllustration"
+            android:layout_marginBottom="8dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Text Block -->
     <LinearLayout
         android:id="@+id/llText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingStart="40dp"
         android:paddingEnd="40dp"
         app:layout_constraintBottom_toTopOf="@id/btnGoToHome"
-        app:layout_constraintTop_toBottomOf="@id/ivSuccessIllustration">
+        app:layout_constraintTop_toBottomOf="@id/containerIllustration">
 
         <TextView
             android:id="@+id/tvWelcomeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="#0F172A"
             android:textSize="22sp"
             android:textStyle="bold"
             tools:text="Welcome, Stefani" />
@@ -51,24 +77,26 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:text="@string/success_message"
-            android:textColor="@color/gray"
+            android:textColor="#64748B"
             android:textSize="14sp"
             android:lineSpacingExtra="4dp" />
 
     </LinearLayout>
 
     <!-- Go To Home button -->
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnGoToHome"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="56dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="40dp"
-        android:background="@drawable/bg_button_gradient"
+        app:backgroundTint="#0F172A"
+        app:cornerRadius="28dp"
+        app:elevation="4dp"
         android:text="@string/go_to_home"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

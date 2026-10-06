@@ -82,7 +82,22 @@ public class EquipmentSelectionActivity extends AppCompatActivity {
         rvWorkoutHistory = findViewById(R.id.rvWorkoutHistory);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
-        findViewById(R.id.btnSubmitGeneration).setOnClickListener(v -> generateWorkoutPlan());
+        View btnSubmit = findViewById(R.id.btnSubmitGeneration);
+        if (btnSubmit != null) {
+            btnSubmit.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(100).start();
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                        break;
+                }
+                return false;
+            });
+            btnSubmit.setOnClickListener(v -> generateWorkoutPlan());
+        }
 
         // Setup Mutually Exclusive Selection for No Equipment
         setupExclusionRules();

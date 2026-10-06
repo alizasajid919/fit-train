@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/apk/res/tools"
+    xmlns:tools="http://tools.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
     app:cardCornerRadius="24dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="@android:color/transparent">
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="#FFFFFF">
 
-    <!-- Linear Layout inside Card with gradient background -->
+    <!-- Linear Layout inside Card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_blue_gradient"
+        android:background="#FFFFFF"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="24dp">
@@ -34,18 +34,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textColor="@color/white"
+            android:textColor="#0F172A"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Improve Shape" />
 
-        <!-- Divider -->
+        <!-- Accent Divider Line -->
         <View
             android:layout_width="50dp"
-            android:layout_height="1.5dp"
+            android:layout_height="3dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/white" />
+            android:background="#F97316" />
 
         <!-- Description -->
         <TextView
@@ -54,7 +54,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="#64748B"
             android:textSize="13sp"
             android:lineSpacingExtra="2dp"
             tools:text="I have a low amount of body fat and need / want to build more muscle" />

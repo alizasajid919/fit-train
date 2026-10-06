@@ -39,15 +39,16 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView tvProfileName, tvProfileEmail, tvProfileGoal, tvProfileStreak;
+    private TextView tvProfileName, tvProfileGoal, tvProfileStreak;
     private TextView tvSummaryWorkouts, tvSummaryCalories, tvSummarySteps, tvSummaryBmi;
     private TextView tvProfileAiTip, tvProfileMotivation;
     private TextView tvProfileGoalTitle, tvProfileGoalPercent;
     private ProgressBar pbProfileGoal;
     private ImageView ivProfilePic;
-    private View layoutActionEditProfile, layoutActionHelp, layoutActionPrivacy, layoutActionLogout;
+    private View layoutActionEditProfileDetails, layoutActionEditProfile, layoutActionHelp, layoutActionPrivacy, layoutActionLogout;
 
     private TextView tvProfileMobile, tvProfileDob, tvProfileGender, tvProfileHeightWeight, tvProfileLevel, tvProfileCalorieGoal;
+    private TextView tvProfileBloodGroup, tvProfileTargetWeight, tvProfileWorkoutLocation, tvProfileWorkoutSchedule, tvProfileDietStyle, tvProfileMedicalConditions;
 
     private LocalDataManager localDb;
     private AuthViewModel authViewModel;
@@ -73,7 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
         // Bind Views
         ivProfilePic = findViewById(R.id.ivProfilePic);
         tvProfileName = findViewById(R.id.tvProfileName);
-        tvProfileEmail = findViewById(R.id.tvProfileEmail);
         tvProfileGoal = findViewById(R.id.tvProfileGoal);
         tvProfileStreak = findViewById(R.id.tvProfileStreak);
 
@@ -89,16 +89,29 @@ public class ProfileActivity extends AppCompatActivity {
         tvProfileHeightWeight = findViewById(R.id.tvProfileHeightWeight);
         tvProfileLevel = findViewById(R.id.tvProfileLevel);
         tvProfileCalorieGoal = findViewById(R.id.tvProfileCalorieGoal);
+        tvProfileBloodGroup = findViewById(R.id.tvProfileBloodGroup);
+        tvProfileTargetWeight = findViewById(R.id.tvProfileTargetWeight);
+        tvProfileWorkoutLocation = findViewById(R.id.tvProfileWorkoutLocation);
+        tvProfileWorkoutSchedule = findViewById(R.id.tvProfileWorkoutSchedule);
+        tvProfileDietStyle = findViewById(R.id.tvProfileDietStyle);
+        tvProfileMedicalConditions = findViewById(R.id.tvProfileMedicalConditions);
 
         tvSummaryWorkouts = findViewById(R.id.tvSummaryWorkouts);
         tvSummaryCalories = findViewById(R.id.tvSummaryCalories);
         tvSummarySteps = findViewById(R.id.tvSummarySteps);
         tvSummaryBmi = findViewById(R.id.tvSummaryBmi);
 
+        layoutActionEditProfileDetails = findViewById(R.id.layoutActionEditProfileDetails);
         layoutActionEditProfile = findViewById(R.id.layoutActionEditProfile);
         layoutActionHelp = findViewById(R.id.layoutActionHelp);
         layoutActionPrivacy = findViewById(R.id.layoutActionPrivacy);
         layoutActionLogout = findViewById(R.id.layoutActionLogout);
+
+        if (layoutActionEditProfileDetails != null) {
+            layoutActionEditProfileDetails.setOnClickListener(v -> {
+                startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
+            });
+        }
 
         findViewById(R.id.fabEditProfile).setOnClickListener(v -> {
             startActivity(new Intent(ProfileActivity.this, EditProfileActivity.class));
@@ -126,17 +139,49 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         tvProfileName.setText(user.getFirstName() + " " + user.getLastName());
-        tvProfileEmail.setText(user.getEmail());
 
         String goal = user.getGoal() != null && !user.getGoal().isEmpty() ? user.getGoal() : "Improve Shape";
         tvProfileGoal.setText("Goal: " + goal + " • Lvl 2 (370 XP)");
         tvProfileGoalTitle.setText(goal);
 
         tvProfileMobile.setText(user.getMobileNumber() != null && !user.getMobileNumber().isEmpty() ? user.getMobileNumber() : "N/A");
-        tvProfileDob.setText(user.getDob() != null && !user.getDob().isEmpty() ? user.getDob() : "N/A");
+        tvProfileDob.setText((user.getDob() != null && !user.getDob().isEmpty() ? user.getDob() : "N/A") + (user.getAge() > 0 ? " (" + user.getAge() + " yrs)" : ""));
         tvProfileGender.setText(user.getGender() != null && !user.getGender().isEmpty() ? user.getGender() : "N/A");
         tvProfileHeightWeight.setText((int) user.getHeight() + " cm / " + (int) user.getWeight() + " kg");
-        tvProfileLevel.setText(user.getActivityLevel() != null && !user.getActivityLevel().isEmpty() ? user.getActivityLevel() : "N/A");
+        if (tvProfileBloodGroup != null) tvProfileBloodGroup.setText(user.getBloodGroup() != null && !user.getBloodGroup().isEmpty() ? user.getBloodGroup() : "N/A");
+        
+        String exp = user.getFitnessExperience() != null && !user.getFitnessExperience().isEmpty() ? user.getFitnessExperience() : "Beginner";
+        String act = user.getActivityLevel() != null && !user.getActivityLevel().isEmpty() ? user.getActivityLevel() : "Moderate";
+        tvProfileLevel.setText(exp + " • " + act);
+
+        if (tvProfileTargetWeight != null) {
+            String pace = user.getTargetPace() != null && !user.getTargetPace().isEmpty() ? user.getTargetPace() : "Balanced";
+            tvProfileTargetWeight.setText((int) user.getTargetWeight() + " kg (" + pace + " Pace)");
+        }
+
+        if (tvProfileWorkoutLocation != null) {
+            String loc = user.getWorkoutLocation() != null && !user.getWorkoutLocation().isEmpty() ? user.getWorkoutLocation() : "At Home";
+            String equip = user.getAvailableEquipment() != null && !user.getAvailableEquipment().isEmpty() ? user.getAvailableEquipment() : "Bodyweight";
+            tvProfileWorkoutLocation.setText(loc + " (" + equip + ")");
+        }
+
+        if (tvProfileWorkoutSchedule != null) {
+            int dur = user.getWorkoutDuration() > 0 ? user.getWorkoutDuration() : 30;
+            int days = user.getWorkoutDaysPerWeek() > 0 ? user.getWorkoutDaysPerWeek() : 4;
+            String time = user.getPreferredWorkoutTime() != null && !user.getPreferredWorkoutTime().isEmpty() ? user.getPreferredWorkoutTime() : "Morning";
+            tvProfileWorkoutSchedule.setText(dur + " min • " + days + " days/wk • " + time);
+        }
+
+        if (tvProfileDietStyle != null) {
+            String diet = user.getDietaryPreference() != null && !user.getDietaryPreference().isEmpty() ? user.getDietaryPreference() : "Balanced";
+            int meals = user.getMealsPerDay() > 0 ? user.getMealsPerDay() : 3;
+            String env = user.getEatingEnvironment() != null && !user.getEatingEnvironment().isEmpty() ? user.getEatingEnvironment() : "Home";
+            tvProfileDietStyle.setText(diet + " • " + meals + " meals/day (" + env + ")");
+        }
+
+        if (tvProfileMedicalConditions != null) {
+            tvProfileMedicalConditions.setText(user.getMedicalConditions() != null && !user.getMedicalConditions().isEmpty() ? user.getMedicalConditions() : "None");
+        }
 
         int targetCal = 2000;
         if (goal.toLowerCase().contains("lose")) {
@@ -263,17 +308,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void performLogout() {
         new AlertDialog.Builder(this)
-                .setTitle("Logout")
-                .setMessage("Are you sure you want to log out? This will clear your local cached settings and workouts.")
-                .setPositiveButton("Yes, Logout", (dialog, which) -> {
+                .setTitle("Confirm Logout")
+                .setMessage("Are you sure you want to log out of your FitTrain account?")
+                .setPositiveButton("Logout", (dialog, which) -> {
+                    com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
                     localDb.clearAll();
-                    authViewModel.getCurrentUser();
-                    profileViewModel.logout();
-                    Toast.makeText(this, "Logged out and local cache cleared.", Toast.LENGTH_SHORT).show();
-                    authViewModel.signInAnonymously(localDb).observe(this, resource -> {
-                        startActivity(new Intent(ProfileActivity.this, OnboardingActivity.class));
-                        finishAffinity();
-                    });
+                    localDb.setOnboardingSeen(false);
+                    Toast.makeText(this, "Logged out successfully.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ProfileActivity.this, OnboardingActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finishAffinity();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

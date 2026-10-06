@@ -134,6 +134,18 @@ public class CompleteProfileActivity extends AppCompatActivity {
 
         findViewById(R.id.fabAddPhoto).setOnClickListener(v -> selectImage());
         if (btnRegisterProfile != null) {
+            btnRegisterProfile.setOnTouchListener((v, event) -> {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(100).start();
+                        break;
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                        break;
+                }
+                return false;
+            });
             btnRegisterProfile.setOnClickListener(v -> saveProfileDetails());
         }
 

@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+
+    <!-- Soft Background Circle -->
+    <path
+        android:pathData="M22,22 m-18,0 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0"
+        android:fillColor="#FEF3C7" />
+
+    <!-- Metallic Shackle (Silver Arch) -->
+    <path
+        android:pathData="M16,19 L16,15 C16,11.7 18.7,9 22,9 C25.3,9 28,11.7 28,15 L28,19"
+        android:strokeColor="#94A3B8"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Lock Body (Gold / Yellow Pill) -->
+    <path
+        android:pathData="M13,20 C13,18 15,18 17,18 L27,18 C29,18 31,18 31,20 L31,32 C31,34 29,35 27,35 L17,35 C15,35 13,34 13,32 Z"
+        android:fillColor="#F59E0B" />
+
+    <!-- Lock Body Front Bevel Highlight -->
+    <path
+        android:pathData="M15,20 C15,19.5 16,19 17,19 L27,19 C28,19 29,19.5 29,20 L29,30 C29,31 28,32 27,32 L17,32 C16,32 15,31 15,30 Z"
+        android:fillColor="#FBBF24" />
+
+    <!-- Keyhole Outer Circle -->
+    <path
+        android:pathData="M22,25.5 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0"
+        android:fillColor="#78350F" />
+
+    <!-- Keyhole Slot -->
+    <path
+        android:pathData="M21,25.5 L23,25.5 L23.5,29.5 L20.5,29.5 Z"
+        android:fillColor="#78350F" />
+</vector>

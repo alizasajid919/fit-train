@@ -86,15 +86,7 @@
                         android:textSize="28sp"
                         android:textStyle="bold" />
 
-                    <!-- User Email: 16sp, Secondary Text -->
-                    <TextView
-                        android:id="@+id/tvProfileEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="guest@fittrain.com"
-                        android:textColor="@color/gray"
-                        android:textSize="16sp"
-                        android:layout_marginTop="4dp" />
+
 
                     <!-- Badges Row -->
                     <LinearLayout

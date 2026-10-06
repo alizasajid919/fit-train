@@ -1,0 +1,46 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="44dp"
+    android:height="44dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+
+    <!-- Outer Glow / Soft Shadow -->
+    <path
+        android:pathData="M22,22 m-18,0 a18,18 0 1,0 36,0 a18,18 0 1,0 -36,0"
+        android:fillColor="#F1F5F9" />
+
+    <!-- Yellow Flash Burst Icon at top left -->
+    <path
+        android:pathData="M11,10 L14,7 L13,12 L16,11 L11,16 L12,12 Z"
+        android:fillColor="#F59E0B" />
+
+    <!-- Camera Main Body (Dark Metallic Gray) -->
+    <path
+        android:pathData="M10,17 C10,15 12,15 13,15 L31,15 C32,15 34,15 34,17 L34,31 C34,33 32,34 30,34 L14,34 C12,34 10,33 10,31 Z"
+        android:fillColor="#334155" />
+
+    <!-- Camera Top Bump / Prism -->
+    <path
+        android:pathData="M17,15 L19,12 L25,12 L27,15 Z"
+        android:fillColor="#475569" />
+
+    <!-- Camera Shutter Button Accent -->
+    <path
+        android:pathData="M12,13 L15,13 L15,15 L12,15 Z"
+        android:fillColor="#EF4444" />
+
+    <!-- Outer Lens Ring (Light Silver/Gray) -->
+    <path
+        android:pathData="M22,24.5 m-6.5,0 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0"
+        android:fillColor="#94A3B8" />
+
+    <!-- Inner Lens Glass (Dark Blue/Cyan Gloss) -->
+    <path
+        android:pathData="M22,24.5 m-4.5,0 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0"
+        android:fillColor="#0284C7" />
+
+    <!-- Lens Reflection Highlight Spot -->
+    <path
+        android:pathData="M20,23 m-1.2,0 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0"
+        android:fillColor="#E0F2FE" />
+</vector>

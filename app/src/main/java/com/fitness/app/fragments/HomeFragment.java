@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.fitness.app.R;
-import com.fitness.app.activities.AICoachActivity;
 import com.fitness.app.activities.DetailTrackerActivity;
 import com.fitness.app.activities.LogWorkoutActivity;
 import com.fitness.app.activities.ProfileActivity;
@@ -170,9 +169,30 @@ public class HomeFragment extends Fragment {
         });
 
         // Smart Meal Planner Scanner Shortcut
-        btnHomeMealPlanner.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), com.fitness.app.activities.GroceryScannerActivity.class));
-        });
+        View cardSmartMealPlanner = view.findViewById(R.id.cardSmartMealPlanner);
+        View.OnClickListener openMealPlanner = v -> {
+            try {
+                if (getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), com.fitness.app.activities.GroceryScannerActivity.class);
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getContext() != null) {
+                    android.widget.Toast.makeText(getContext(), "Unable to open Meal Planner right now. Please try again.", android.widget.Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        if (cardSmartMealPlanner != null) {
+            cardSmartMealPlanner.setOnClickListener(openMealPlanner);
+        }
+        if (btnHomeMealPlanner != null) {
+            btnHomeMealPlanner.setOnClickListener(openMealPlanner);
+        }
+        if (tvDailyTaskDiet != null) {
+            tvDailyTaskDiet.setOnClickListener(openMealPlanner);
+        }
 
         // Header click -> Switch tab to Profile for consistency
         view.findViewById(R.id.profileCard).setOnClickListener(v -> {
@@ -193,48 +213,75 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.cardSleep).setOnClickListener(v -> startActivity(new Intent(getActivity(), com.fitness.app.activities.SleepTrackerActivity.class)));
         view.findViewById(R.id.cardBmi).setOnClickListener(v -> startDetailTracker("bmi"));
 
-        // Daily Recommended Workout Button
-        view.findViewById(R.id.btnStartWorkout).setOnClickListener(v -> startFeaturedWorkout("Full Body Shred"));
+        // Safe setup for optional / hidden elements
+        View btnStartWorkout = view.findViewById(R.id.btnStartWorkout);
+        if (btnStartWorkout != null) {
+            btnStartWorkout.setOnClickListener(v -> startFeaturedWorkout("Full Body Shred"));
+        }
 
-        // Safe setup for hidden elements (to avoid breaking constraints / compilation)
         View btnAICoach = view.findViewById(R.id.btnAICoach);
         if (btnAICoach != null) {
             btnAICoach.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), AICoachActivity.class);
-                intent.putExtra("select_tab", 1);
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.AIRecommendationsActivity.class));
+            });
+        }
+        View btnAICoachChat = view.findViewById(R.id.btnAICoachChat);
+        if (btnAICoachChat != null) {
+            btnAICoachChat.setVisibility(View.GONE);
+            btnAICoachChat.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.AIRecommendationsActivity.class));
+            });
+        }
+        View btnOpenWorkoutGenerator = view.findViewById(R.id.btnOpenWorkoutGenerator);
+        if (btnOpenWorkoutGenerator != null) {
+            btnOpenWorkoutGenerator.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.EquipmentSelectionActivity.class));
+            });
+        }
+
+        // 1. Form Check (Exercise technique & live rep tracker)
+        View cardAiFormCheck = view.findViewById(R.id.cardAiFormCheck);
+        if (cardAiFormCheck != null) {
+            cardAiFormCheck.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
+                intent.putExtra("exercise_name", "Standard Squats");
+                intent.putExtra("target_reps", 12);
+                intent.putExtra("target_sets", 3);
                 startActivity(intent);
             });
         }
-        view.findViewById(R.id.btnAICoachChat).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AICoachActivity.class);
-            intent.putExtra("select_tab", 1);
-            startActivity(intent);
-        });
-        view.findViewById(R.id.btnOpenWorkoutGenerator).setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), com.fitness.app.activities.EquipmentSelectionActivity.class));
-        });
-        view.findViewById(R.id.btnOpenFitnessChallenges).setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), com.fitness.app.activities.ChallengesHubActivity.class));
-        });
+        View btnStartAiFormCheck = view.findViewById(R.id.btnStartAiFormCheck);
+        if (btnStartAiFormCheck != null) {
+            btnStartAiFormCheck.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
+                intent.putExtra("exercise_name", "Standard Squats");
+                intent.putExtra("target_reps", 12);
+                intent.putExtra("target_sets", 3);
+                startActivity(intent);
+            });
+        }
 
-        view.findViewById(R.id.cardAiFormCheck).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
-            intent.putExtra("exercise_name", "Standard Squats");
-            intent.putExtra("target_reps", 12);
-            intent.putExtra("target_sets", 3);
-            startActivity(intent);
-        });
-        view.findViewById(R.id.btnStartAiFormCheck).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), com.fitness.app.activities.RealTimeFeedbackActivity.class);
-            intent.putExtra("exercise_name", "Standard Squats");
-            intent.putExtra("target_reps", 12);
-            intent.putExtra("target_sets", 3);
-            startActivity(intent);
-        });
-        view.findViewById(R.id.btnViewSquatHistory).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), com.fitness.app.activities.SquatHistoryActivity.class);
-            startActivity(intent);
-        });
+        // 2. AI Posture (General standing / sitting posture alignment)
+        View cardAiPosture = view.findViewById(R.id.cardAiPosture);
+        if (cardAiPosture != null) {
+            cardAiPosture.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.PostureAnalysisActivity.class));
+            });
+        }
+
+        // 3. Squat Logs (Squat history & session progress)
+        View cardSquatHistory = view.findViewById(R.id.cardSquatHistory);
+        if (cardSquatHistory != null) {
+            cardSquatHistory.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.SquatHistoryActivity.class));
+            });
+        }
+        View btnViewSquatHistory = view.findViewById(R.id.btnViewSquatHistory);
+        if (btnViewSquatHistory != null) {
+            btnViewSquatHistory.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.SquatHistoryActivity.class));
+            });
+        }
 
         View btnAIRecommendations = view.findViewById(R.id.btnAIRecommendations);
         if (btnAIRecommendations != null) {
@@ -242,11 +289,20 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), com.fitness.app.activities.AIRecommendationsActivity.class));
             });
         }
-        view.findViewById(R.id.btnTransformation).setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), com.fitness.app.activities.TransformationIntroActivity.class));
-        });
-        view.findViewById(R.id.btnLogWorkout).setOnClickListener(v -> startActivity(new Intent(getActivity(), LogWorkoutActivity.class)));
-        view.findViewById(R.id.btnLogMetrics).setOnClickListener(v -> startActivity(new Intent(getActivity(), ProgressTrackerActivity.class)));
+        View btnTransformation = view.findViewById(R.id.btnTransformation);
+        if (btnTransformation != null) {
+            btnTransformation.setOnClickListener(v -> {
+                startActivity(new Intent(getActivity(), com.fitness.app.activities.TransformationIntroActivity.class));
+            });
+        }
+        View btnLogWorkout = view.findViewById(R.id.btnLogWorkout);
+        if (btnLogWorkout != null) {
+            btnLogWorkout.setOnClickListener(v -> startActivity(new Intent(getActivity(), LogWorkoutActivity.class)));
+        }
+        View btnLogMetrics = view.findViewById(R.id.btnLogMetrics);
+        if (btnLogMetrics != null) {
+            btnLogMetrics.setOnClickListener(v -> startActivity(new Intent(getActivity(), ProgressTrackerActivity.class)));
+        }
 
         return view;
     }
@@ -346,9 +402,14 @@ public class HomeFragment extends Fragment {
         String today = todayStr;
         ProgressLog todayLog = localDb.getProgressLog(today);
 
+        // Calculate dynamic calorie, water, step targets from user profile
+        double bmr = com.fitness.app.utils.FitnessCalculator.calculateBmr(user.getWeight(), user.getHeight(), user.getAge(), user.getGender());
+        double tdee = com.fitness.app.utils.FitnessCalculator.calculateTdee(bmr, user.getActivityLevel());
+        int calcCalTarget = com.fitness.app.utils.FitnessCalculator.calculateDailyCalorieTarget(tdee, user.getGoal());
+
         // Steps Card
         int steps = todayLog.getStepsCount();
-        int targetSteps = user.getDailyStepGoal() > 0 ? user.getDailyStepGoal() : 8000;
+        int targetSteps = user.getDailyStepGoal() > 0 ? user.getDailyStepGoal() : (user.getGoal() != null && user.getGoal().toLowerCase().contains("loss") ? 10000 : 8000);
         tvStepsVal.setText(getString(R.string.home_steps_val, String.valueOf(steps)));
         pbSteps.setMax(targetSteps);
         pbSteps.setProgress(steps);
@@ -358,7 +419,7 @@ public class HomeFragment extends Fragment {
 
         // Calories Card
         int calories = todayLog.getCaloriesBurned();
-        int targetCal = user.getDailyCaloriesGoal() > 0 ? user.getDailyCaloriesGoal() : 2000;
+        int targetCal = user.getDailyCaloriesGoal() > 0 ? user.getDailyCaloriesGoal() : calcCalTarget;
         tvCaloriesVal.setText(getString(R.string.home_calories_val, String.valueOf(calories)));
         pbCalories.setMax(targetCal);
         pbCalories.setProgress(calories);
@@ -368,7 +429,8 @@ public class HomeFragment extends Fragment {
 
         // Water Card
         int water = todayLog.getWaterConsumedMl();
-        int targetWater = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : 2500;
+        int calcWaterTarget = com.fitness.app.utils.FitnessCalculator.calculateDailyWaterGoal(user.getWeight());
+        int targetWater = user.getDailyWaterGoal() > 0 ? user.getDailyWaterGoal() : Math.max(2000, calcWaterTarget);
         tvWaterVal.setText(getString(R.string.home_water_val, String.valueOf(water)));
         pbWater.setMax(targetWater);
         pbWater.setProgress(water);

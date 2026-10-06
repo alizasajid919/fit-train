@@ -75,6 +75,21 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
+    public String getName() {
+        if (firstName != null && !firstName.isEmpty()) {
+            return (lastName != null && !lastName.isEmpty()) ? firstName + " " + lastName : firstName;
+        }
+        return "";
+    }
+
+    public void setName(String name) {
+        if (name != null) {
+            String[] parts = name.trim().split("\\s+", 2);
+            this.firstName = parts[0];
+            this.lastName = parts.length > 1 ? parts[1] : "";
+        }
+    }
+
     public String getEmail() {
         return email;
     }

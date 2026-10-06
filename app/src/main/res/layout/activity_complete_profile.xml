@@ -4,7 +4,7 @@
     xmlns:tools="http://tools.android.com/apk/res/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#FAF9F5"
     tools:context=".activities.CompleteProfileActivity">
 
     <ScrollView
@@ -126,7 +126,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_name_badge"
                         android:contentDescription="Full Name" />
 
                     <EditText
@@ -216,7 +216,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_gender"
                         android:contentDescription="Gender" />
 
                     <Spinner
@@ -393,7 +393,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_activity_runner"
                         android:contentDescription="Activity Level" />
 
                     <Spinner
@@ -432,7 +432,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_location_pin"
                         android:contentDescription="Country" />
 
                     <Spinner
@@ -473,7 +473,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_location_pin"
                         android:contentDescription="City" />
 
                     <TextView
@@ -530,7 +530,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_user"
+                        android:src="@drawable/ic_health_shield"
                         android:contentDescription="Medical Condition" />
 
                     <TextView
@@ -573,18 +573,20 @@
             </LinearLayout>
 
             <!-- Next Button -->
-            <androidx.appcompat.widget.AppCompatButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnNext"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="56dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/bg_button_gradient"
-                android:text="@string/next_btn"
+                android:backgroundTint="#0F172A"
+                android:text="Register Profile"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                app:cornerRadius="28dp"
+                app:elevation="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/llForm" />
 

@@ -121,15 +121,7 @@
                         android:textStyle="bold"
                         android:layout_marginTop="12dp" />
 
-                    <!-- User Email: 16sp, Secondary Text -->
-                    <TextView
-                        android:id="@+id/tvEditProfileEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="guest@fittrain.com"
-                        android:textColor="@color/gray"
-                        android:textSize="16sp"
-                        android:layout_marginTop="4dp" />
+
 
                     <!-- Badges Row -->
                     <LinearLayout
@@ -273,38 +265,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Email -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="1dp"
-                        android:backgroundTint="#FFFFFF">
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Email"
-                            app:hintTextColor="#6C63FF"
-                            android:textColorHint="#64748B"
-                            app:startIconDrawable="@drawable/ic_mail"
-                            app:startIconTint="#6C63FF"
-                            app:boxStrokeColor="@color/text_input_stroke_color"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp">
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etEditEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:inputType="textEmailAddress"
-                                android:background="@android:color/transparent" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </androidx.cardview.widget.CardView>
+
 
 
 
@@ -377,72 +338,7 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <!-- Country (Material Exposed Dropdown) -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="1dp"
-                        android:backgroundTint="#FFFFFF">
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Country"
-                            app:hintTextColor="#6C63FF"
-                            android:textColorHint="#64748B"
-                            app:startIconDrawable="@drawable/ic_home"
-                            app:startIconTint="#6C63FF"
-                            app:boxStrokeColor="@color/text_input_stroke_color"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp">
-                            <AutoCompleteTextView
-                                android:id="@+id/etEditCountry"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="none"
-                                android:focusable="false"
-                                android:clickable="true"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:background="@android:color/transparent" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </androidx.cardview.widget.CardView>
 
-                    <!-- City (Material Exposed Dropdown) -->
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        app:cardCornerRadius="14dp"
-                        app:cardElevation="1dp"
-                        android:backgroundTint="#FFFFFF">
-                        <com.google.android.material.textfield.TextInputLayout
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="City"
-                            app:hintTextColor="#6C63FF"
-                            android:textColorHint="#64748B"
-                            app:startIconDrawable="@drawable/ic_home"
-                            app:startIconTint="#6C63FF"
-                            app:boxStrokeColor="@color/text_input_stroke_color"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusBottomEnd="14dp">
-                            <AutoCompleteTextView
-                                android:id="@+id/etEditCity"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:background="@android:color/transparent" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </androidx.cardview.widget.CardView>
 
                     <!-- Blood Group (Material Exposed Dropdown) -->
                     <androidx.cardview.widget.CardView

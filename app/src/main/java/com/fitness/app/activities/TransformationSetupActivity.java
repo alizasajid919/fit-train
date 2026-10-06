@@ -3,6 +3,7 @@ package com.fitness.app.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import com.fitness.app.data.room.AppDatabase;
 import com.fitness.app.models.TransformationPlan;
 import com.fitness.app.models.TransformationTask;
 import com.fitness.app.models.User;
+import com.fitness.app.utils.FileUtils;
 import com.fitness.app.utils.TransformationEngine;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -46,6 +48,7 @@ public class TransformationSetupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         setContentView(R.layout.activity_transformation_setup);
 
         localDb = new LocalDataManager(this);
@@ -61,17 +64,52 @@ public class TransformationSetupActivity extends AppCompatActivity {
         llLoadingStatus = findViewById(R.id.llLoadingStatus);
         tvLoadingMsg = findViewById(R.id.tvLoadingMsg);
 
-        findViewById(R.id.cardCurrentFront).setOnClickListener(v -> pickImage(PICK_FRONT_CODE));
-        findViewById(R.id.cardCurrentSide).setOnClickListener(v -> pickImage(PICK_SIDE_CODE));
-        findViewById(R.id.cardTargetGoal).setOnClickListener(v -> pickImage(PICK_GOAL_CODE));
+        View cardFront = findViewById(R.id.cardCurrentFront);
+        View cardSide = findViewById(R.id.cardCurrentSide);
+        View cardGoal = findViewById(R.id.cardTargetGoal);
+        View btnGenerate = findViewById(R.id.btnGeneratePlan);
 
-        findViewById(R.id.btnGeneratePlan).setOnClickListener(v -> uploadAndProcessPlan());
+        if (cardFront != null) {
+            attachTouchScaleAnimation(cardFront);
+            cardFront.setOnClickListener(v -> pickImage(PICK_FRONT_CODE));
+        }
+        if (cardSide != null) {
+            attachTouchScaleAnimation(cardSide);
+            cardSide.setOnClickListener(v -> pickImage(PICK_SIDE_CODE));
+        }
+        if (cardGoal != null) {
+            attachTouchScaleAnimation(cardGoal);
+            cardGoal.setOnClickListener(v -> pickImage(PICK_GOAL_CODE));
+        }
+        if (btnGenerate != null) {
+            attachTouchScaleAnimation(btnGenerate);
+            btnGenerate.setOnClickListener(v -> uploadAndProcessPlan());
+        }
+    }
+
+    private void attachTouchScaleAnimation(View view) {
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.animate().scaleX(0.96f).scaleY(0.96f).setDuration(100).start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                    break;
+            }
+            return false;
+        });
     }
 
     private void pickImage(int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, requestCode);
+        try {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, requestCode);
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not open image picker", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -79,28 +117,27 @@ public class TransformationSetupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri selectedUri = data.getData();
-            if (requestCode == PICK_FRONT_CODE) {
-                String localPath = com.fitness.app.utils.FileUtils.copyUriToInternalStorage(this, selectedUri, "current_front.jpg");
-                frontUri = Uri.parse(localPath);
-                ivCurrentFront.setImageURI(frontUri);
-            } else if (requestCode == PICK_SIDE_CODE) {
-                String localPath = com.fitness.app.utils.FileUtils.copyUriToInternalStorage(this, selectedUri, "current_side.jpg");
-                sideUri = Uri.parse(localPath);
-                ivCurrentSide.setImageURI(sideUri);
-            } else if (requestCode == PICK_GOAL_CODE) {
-                String localPath = com.fitness.app.utils.FileUtils.copyUriToInternalStorage(this, selectedUri, "ideal_target.jpg");
-                goalUri = Uri.parse(localPath);
-                ivTargetGoal.setImageURI(goalUri);
+            try {
+                if (requestCode == PICK_FRONT_CODE) {
+                    String localPath = FileUtils.copyUriToInternalStorage(this, selectedUri, "current_front.jpg");
+                    frontUri = Uri.parse(localPath);
+                    ivCurrentFront.setImageURI(frontUri);
+                } else if (requestCode == PICK_SIDE_CODE) {
+                    String localPath = FileUtils.copyUriToInternalStorage(this, selectedUri, "current_side.jpg");
+                    sideUri = Uri.parse(localPath);
+                    ivCurrentSide.setImageURI(sideUri);
+                } else if (requestCode == PICK_GOAL_CODE) {
+                    String localPath = FileUtils.copyUriToInternalStorage(this, selectedUri, "ideal_target.jpg");
+                    goalUri = Uri.parse(localPath);
+                    ivTargetGoal.setImageURI(goalUri);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
     private void uploadAndProcessPlan() {
-        if (frontUri == null || goalUri == null) {
-            Toast.makeText(this, "Please select at least Current Front and Desired body photos.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
         User user = localDb.getUser();
         if (user == null) {
             Toast.makeText(this, "User profile not found.", Toast.LENGTH_SHORT).show();
@@ -110,28 +147,37 @@ public class TransformationSetupActivity extends AppCompatActivity {
         llLoadingStatus.setVisibility(View.VISIBLE);
         findViewById(R.id.btnGeneratePlan).setEnabled(false);
 
-        // Upload front image
-        tvLoadingMsg.setText("Securing & encrypting current physique photo...");
-        uploadImage(frontUri, "current_front.jpg", user.getUid(), url1 -> {
-            frontUrl = url1;
-            
-            // Upload goal image
-            runOnUiThread(() -> tvLoadingMsg.setText("Securing & encrypting desired physique target..."));
-            uploadImage(goalUri, "ideal_target.jpg", user.getUid(), url2 -> {
-                goalUrl = url2;
-                
-                // If side image is chosen, upload it too
-                if (sideUri != null) {
-                    runOnUiThread(() -> tvLoadingMsg.setText("Securing & encrypting optional side angle..."));
-                    uploadImage(sideUri, "current_side.jpg", user.getUid(), url3 -> {
-                        sideUrl = url3;
+        // Use fallback drawables if user hasn't chosen custom gallery images yet
+        if (frontUri == null) {
+            frontUrl = "android.resource://" + getPackageName() + "/" + R.drawable.onboarding_2;
+        }
+        if (goalUri == null) {
+            goalUrl = "android.resource://" + getPackageName() + "/" + R.drawable.onboarding_1;
+        }
+
+        if (frontUri != null) {
+            tvLoadingMsg.setText("Securing & encrypting current physique photo...");
+            uploadImage(frontUri, "current_front.jpg", user.getUid(), url1 -> {
+                frontUrl = url1;
+                if (goalUri != null) {
+                    runOnUiThread(() -> tvLoadingMsg.setText("Securing & encrypting desired physique target..."));
+                    uploadImage(goalUri, "ideal_target.jpg", user.getUid(), url2 -> {
+                        goalUrl = url2;
                         createTransformationPlan(user);
                     });
                 } else {
                     createTransformationPlan(user);
                 }
             });
-        });
+        } else if (goalUri != null) {
+            tvLoadingMsg.setText("Securing & encrypting desired physique target...");
+            uploadImage(goalUri, "ideal_target.jpg", user.getUid(), url2 -> {
+                goalUrl = url2;
+                createTransformationPlan(user);
+            });
+        } else {
+            createTransformationPlan(user);
+        }
     }
 
     private interface UploadCallback {
@@ -139,28 +185,24 @@ public class TransformationSetupActivity extends AppCompatActivity {
     }
 
     private void uploadImage(Uri uri, String filename, String uid, UploadCallback callback) {
-        // Encrypted folder path: private to user
-        StorageReference fileRef = firebaseStorage.getReference().child("transformation_photos/" + uid + "/" + filename);
-        
-        fileRef.putFile(uri)
-            .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
-                .addOnSuccessListener(downloadUri -> callback.onUploadComplete(downloadUri.toString()))
-                .addOnFailureListener(e -> {
-                    // Local Fallback if url fetch fails
-                    callback.onUploadComplete(uri.toString());
-                }))
-            .addOnFailureListener(e -> {
-                // Local Fallback if storage upload fails (e.g. offline mode)
-                callback.onUploadComplete(uri.toString());
-            });
+        try {
+            StorageReference fileRef = firebaseStorage.getReference().child("transformation_photos/" + uid + "/" + filename);
+            fileRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl()
+                    .addOnSuccessListener(downloadUri -> callback.onUploadComplete(downloadUri.toString()))
+                    .addOnFailureListener(e -> callback.onUploadComplete(uri.toString())))
+                .addOnFailureListener(e -> callback.onUploadComplete(uri.toString()));
+        } catch (Exception e) {
+            callback.onUploadComplete(uri.toString());
+        }
     }
 
     private void createTransformationPlan(User user) {
-        runOnUiThread(() -> tvLoadingMsg.setText("AI is analyzing visual composition details..."));
+        runOnUiThread(() -> tvLoadingMsg.setText("AI is analyzing visual composition & profile metrics..."));
 
         new Thread(() -> {
             try {
-                // Run engine analyzer
+                // Run engine analyzer using profile and photos
                 TransformationEngine.AssessmentResult assessment = TransformationEngine.analyzeTransformation(user, frontUrl, goalUrl);
                 
                 String milestonesJson = assessment.milestonesJson;
@@ -197,7 +239,7 @@ public class TransformationSetupActivity extends AppCompatActivity {
                 // Navigate to dashboard
                 runOnUiThread(() -> {
                     llLoadingStatus.setVisibility(View.GONE);
-                    Toast.makeText(this, "AI Transformation Plan Generated Successfully!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "AI Transformation Plan Generated Successfully! 🎉", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(TransformationSetupActivity.this, TransformationDashboardActivity.class));
                     finish();
                 });
@@ -210,5 +252,11 @@ public class TransformationSetupActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

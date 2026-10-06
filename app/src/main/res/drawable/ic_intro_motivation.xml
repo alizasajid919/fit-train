@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="280dp"
+    android:height="280dp"
+    android:viewportWidth="280"
+    android:viewportHeight="280">
+
+    <!-- Soft Background Blue Aura Circle 1 -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M140,20 C200.75,20 250,69.25 250,130 C250,190.75 200.75,240 140,240 C79.25,240 30,190.75 30,130 C30,69.25 79.25,20 140,20 Z" />
+
+    <!-- Secondary Soft Outer Ring 2 -->
+    <path
+        android:fillColor="#DBEAFE"
+        android:pathData="M140,38 C190.81,38 232,79.19 232,130 C232,180.81 190.81,222 140,222 C89.19,222 48,180.81 48,130 C48,79.19 89.19,38 140,38 Z" />
+
+    <!-- Inner Vibrant Blue Gradient Halo Circle 3 -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M140,55 C181.42,55 215,88.58 215,130 C215,171.42 181.42,205 140,205 C98.58,205 65,171.42 65,130 C65,88.58 98.58,55 140,55 Z" />
+
+    <!-- Female Character Ponytail Hair -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M125,50 C117,47 108,55 105,64 C102,53 114,42 128,44 C136,45 144,51 147,59 C141,55 132,53 125,50 Z" />
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M140,48 C153,45 164,54 167,67 C161,59 150,54 140,48 Z" />
+
+    <!-- Head / Skin Tone -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M135,58 C145.49,58 154,66.51 154,77 C154,87.49 145.49,96 135,96 C124.51,96 116,87.49 116,77 C116,66.51 124.51,58 135,58 Z" />
+
+    <!-- Hair Front Fringe Detail -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M116,74 C116,63 124,58 135,58 C144,58 151,63 153,72 C145,65 135,63 126,67 C121,69 118,72 116,74 Z" />
+
+    <!-- Ear & Earbud Detail -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M152,76 C153.5,76 155,77.5 155,79 C155,80.5 153.5,82 152,82 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M154,77 C155,77 156,78 156,79 L155.5,82 H154.5 Z" />
+
+    <!-- Neck -->
+    <path
+        android:fillColor="#FB923C"
+        android:pathData="M130,93 H140 V105 H130 Z" />
+
+    <!-- Modest Royal Blue Athletic Workout Top -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M108,105 C119,101 151,101 162,105 L168,162 H102 L108,105 Z" />
+
+    <!-- Top Collar & Seam Accent Details -->
+    <path
+        android:fillColor="#1D4ED8"
+        android:pathData="M124,105 C129,110 141,110 146,105 C141,107 129,107 124,105 Z" />
+    <path
+        android:fillColor="#60A5FA"
+        android:pathData="M113,110 L117,162 H121 L117,110 Z" />
+    <path
+        android:fillColor="#60A5FA"
+        android:pathData="M157,110 L153,162 H149 L153,110 Z" />
+
+    <!-- Deep Navy Leggings / Lower Body -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M102,162 H168 L163,240 H140 L135,185 L130,240 H107 L102,162 Z" />
+
+    <!-- Shoulder Gym Bag Strap -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M149,103 L181,148 L176,151 L144,105 Z" />
+
+    <!-- Black Gym Bag -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M168,142 C189,137 210,147 210,168 C210,184 189,195 168,189 Z" />
+
+    <!-- Water Bottle Arm -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M108,110 L92,132 L95,143 L110,118 Z" />
+
+    <!-- Blue Water Bottle -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M84,121 H97 V153 H84 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M87,115 H94 V121 H87 Z" />
+
+    <!-- Sparkle Stars and Decorative Flares -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M205,48 L208,54 L214,57 L208,60 L205,66 L202,60 L196,57 L202,54 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M60,65 L63,71 L69,74 L63,77 L60,83 L57,77 L51,74 L57,71 Z" />
+</vector>

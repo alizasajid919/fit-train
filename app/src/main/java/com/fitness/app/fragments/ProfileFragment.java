@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvProfileName, tvProfileEmail, tvProfileGoal, tvProfileStreak;
+    private TextView tvProfileName, tvProfileGoal, tvProfileStreak;
     private TextView tvSummaryWorkouts, tvSummaryCalories, tvSummarySteps, tvSummaryBmi;
     private TextView tvProfileAiTip, tvProfileMotivation;
     private TextView tvProfileGoalTitle, tvProfileGoalPercent;
@@ -59,7 +59,6 @@ public class ProfileFragment extends Fragment {
         // Bind views
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
         tvProfileName = view.findViewById(R.id.tvProfileName);
-        tvProfileEmail = view.findViewById(R.id.tvProfileEmail);
         tvProfileGoal = view.findViewById(R.id.tvProfileGoal);
         tvProfileStreak = view.findViewById(R.id.tvProfileStreak);
 
@@ -128,9 +127,6 @@ public class ProfileFragment extends Fragment {
         if (user == null) return;
 
         tvProfileName.setText(user.getFirstName() + " " + user.getLastName());
-        if (tvProfileEmail != null) {
-            tvProfileEmail.setVisibility(View.GONE);
-        }
 
         String goal = user.getGoal() != null && !user.getGoal().isEmpty() ? user.getGoal() : "Improve Fitness";
         tvProfileGoalTitle.setText(goal);

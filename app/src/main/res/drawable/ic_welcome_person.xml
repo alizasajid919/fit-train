@@ -1,60 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="200dp"
-    android:height="200dp"
-    android:viewportWidth="200"
-    android:viewportHeight="200">
-    
-    <!-- Soft Background Glowing Aura -->
-    <path
-        android:fillColor="#EFF6FF"
-        android:pathData="M100,15C53.06,15 15,53.06 15,100s38.06,85 85,85 85,-38.06 85,-85S146.94,15 100,15z" />
-    
-    <!-- Secondary Outer Ring -->
-    <path
-        android:fillColor="#DBEAFE"
-        android:pathData="M100,30C61.34,30 30,61.34 30,100s31.34,70 70,70 70,-31.34 70,-70S138.66,30 100,30z" />
-    
-    <!-- Character Head -->
-    <path
-        android:fillColor="#1E40AF"
-        android:pathData="M100,48c14.36,0 26,11.64 26,26s-11.64,26 -26,26 -26,-11.64 -26,-26 11.64,-26 26,-26z" />
-    
-    <!-- Character Face Hair Detail -->
-    <path
-        android:fillColor="#0F172A"
-        android:pathData="M84,68c0,-12 8,-20 16,-20s18,5 20,14c-4,-3 -10,-4 -16,-2 -6,2 -10,6 -12,12 -3,-1 -6,-3 -8,-4z" />
-    
-    <!-- Body Torso / Modern Jacket -->
-    <path
-        android:fillColor="#2563EB"
-        android:pathData="M65,114c-12,0 -22,10 -22,22v34h114v-34c0,-12 -10,-22 -22,-22H65z" />
-        
-    <!-- Collar Detail -->
-    <path
-        android:fillColor="#93C5FD"
-        android:pathData="M86,114l14,18 14,-18h-28z" />
+    android:width="260dp"
+    android:height="260dp"
+    android:viewportWidth="260"
+    android:viewportHeight="260">
 
-    <!-- Wave Hand / Arm Greeting Gesture -->
+    <!-- Soft Background Layered Blue Halo Circle 1 -->
+    <path
+        android:fillColor="#F0F9FF"
+        android:pathData="M130,20 C185.23,20 230,64.77 230,120 C230,175.23 185.23,220 130,220 C74.77,220 30,175.23 30,120 C30,64.77 74.77,20 130,20 Z" />
+
+    <!-- Brush Stroke Ring Accent 2 -->
+    <path
+        android:fillColor="#BAE6FD"
+        android:pathData="M130,35 C176.94,35 215,73.06 215,120 C215,166.94 176.94,205 130,205 C83.06,205 45,166.94 45,120 C45,73.06 83.06,35 130,35 Z" />
+
+    <!-- Inner Vibrant Blue Gradient Halo Circle 3 -->
     <path
         android:fillColor="#38BDF8"
-        android:pathData="M140,110c6,-8 16,-18 24,-16 6,2 8,12 4,20 -6,12 -18,22 -26,24l-2,-28z" />
-        
-    <!-- Sparkle Stars -->
-    <path
-        android:fillColor="#F59E0B"
-        android:pathData="M155,45l3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 6,-3z" />
-    <path
-        android:fillColor="#10B981"
-        android:pathData="M45,65l2.5,5 5,2.5 -5,2.5 -2.5,5 -2.5,-5 -5,-2.5 5,-2.5z" />
-    <path
-        android:fillColor="#F97316"
-        android:pathData="M150,140l2,4 4,2 -4,2 -2,4 -2,-4 -4,-2 4,-2z" />
+        android:pathData="M130,50 C168.66,50 200,81.34 200,120 C200,158.66 168.66,190 130,190 C91.34,190 60,158.66 60,120 C60,81.34 91.34,50 130,50 Z" />
 
-    <!-- Fit Badge Pill -->
+    <!-- Female Character Ponytail Hair -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M115,48 C108,45 100,52 98,60 C95,50 106,40 118,42 C125,43 132,48 135,55 C130,52 122,50 115,48 Z" />
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M130,45 C142,42 152,50 155,62 C150,55 140,50 130,45 Z" />
+
+    <!-- Head / Skin Tone -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M125,55 C134.94,55 143,63.06 143,73 C143,82.94 134.94,91 125,91 C115.06,91 107,82.94 107,73 C107,63.06 115.06,55 125,55 Z" />
+
+    <!-- Hair Details / Front Fringe -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M107,70 C107,60 115,55 125,55 C133,55 140,60 142,68 C135,62 125,60 117,64 C112,66 109,68 107,70 Z" />
+
+    <!-- Ear & Wireless Earbud Detail -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M141,72 C142.5,72 144,73.5 144,75 C144,76.5 142.5,78 141,78 Z" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M40,135h44v24H40z" />
+        android:pathData="M143,73 C144,73 145,74 145,75 L144.5,78 H143.5 Z" />
+
+    <!-- Neck -->
     <path
-        android:fillColor="#10B981"
-        android:pathData="M48,142l4,4 8,-8 3,3 -11,11 -7,-7z" />
+        android:fillColor="#FB923C"
+        android:pathData="M120,88 H130 V100 H120 Z" />
+
+    <!-- Modest Blue Athletic Top (Fully Covering Midriff) -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M100,100 C110,96 140,96 150,100 L156,155 H94 L100,100 Z" />
+
+    <!-- Top Collar & Athletic Seam Detail -->
+    <path
+        android:fillColor="#026496"
+        android:pathData="M115,100 C120,104 130,104 135,100 C130,102 120,102 115,100 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M105,105 L108,155 H112 L109,105 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M145,105 L142,155 H138 L141,105 Z" />
+
+    <!-- Blue Leggings / Pants (Lower Body) -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M94,155 H156 L152,225 H130 L125,175 L120,225 H98 L94,155 Z" />
+
+    <!-- Gym Bag Strap over Shoulder -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M138,98 L168,140 L163,143 L134,100 Z" />
+
+    <!-- Black Gym Bag on Right Side -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M155,135 C175,130 195,140 195,160 C195,175 175,185 155,180 Z" />
+    <path
+        android:fillColor="#334155"
+        android:pathData="M165,140 C175,138 185,142 188,152 Z" />
+
+    <!-- Arm Holding Blue Water Bottle -->
+    <path
+        android:fillColor="#FDBA74"
+        android:pathData="M100,104 L85,125 L88,135 L102,112 Z" />
+
+    <!-- Blue Water Bottle -->
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M78,115 H90 V145 H78 Z" />
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M81,110 H87 V115 H81 Z" />
+
+    <!-- Decorative Accent Strokes & Sparkles -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M190,45 L193,51 L199,54 L193,57 L190,63 L187,57 L181,54 L187,51 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M55,60 L57.5,65 L62.5,67.5 L57.5,70 L55,75 L52.5,70 L47.5,67.5 L52.5,65 Z" />
+    <path
+        android:fillColor="#0284C7"
+        android:pathData="M198,60 L204,54 M206,70 L212,70 M202,82 L208,86"
+        android:strokeColor="#0284C7"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+
 </vector>
