@@ -40,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Reschedule challenge notifications
+        // Reschedule challenge & daily goal notifications
         com.fitness.app.utils.ReminderScheduler.rescheduleChallengeReminders(this);
+        com.fitness.app.utils.NotificationScheduler.scheduleAll(this);
 
         // Bottom Navigation Bar Setup (Pure White Background behind Home, Workouts, Diets, Profile)
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         // Setup default fragment load & selected tab restore
         if (savedInstanceState == null) {
             int restoredTabId = prefs.getSelectedTab(R.id.navigation_home);
+            selectTab(restoredTabId);
             bottomNavigation.setSelectedItemId(restoredTabId);
         } else {
             int selectedItemId = bottomNavigation.getSelectedItemId();
@@ -89,9 +91,17 @@ public class MainActivity extends AppCompatActivity {
         String navigateTo = intent.getStringExtra("navigate_to");
         if (navigateTo != null) {
             if ("diets".equalsIgnoreCase(navigateTo)) {
+                selectTab(R.id.navigation_diets);
                 bottomNavigation.setSelectedItemId(R.id.navigation_diets);
             } else if ("workouts".equalsIgnoreCase(navigateTo)) {
+                selectTab(R.id.navigation_workouts);
                 bottomNavigation.setSelectedItemId(R.id.navigation_workouts);
+            } else if ("home".equalsIgnoreCase(navigateTo)) {
+                selectTab(R.id.navigation_home);
+                bottomNavigation.setSelectedItemId(R.id.navigation_home);
+            } else if ("profile".equalsIgnoreCase(navigateTo)) {
+                selectTab(R.id.navigation_profile);
+                bottomNavigation.setSelectedItemId(R.id.navigation_profile);
             }
         }
     }

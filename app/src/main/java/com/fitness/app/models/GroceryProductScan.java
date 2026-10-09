@@ -37,6 +37,10 @@ public class GroceryProductScan implements Serializable {
     private String aiRecommendation;
     private String whyRecommended;
     private String alternativeProducts;
+    private String allergenWarning;
+    private String freshnessDisclaimer;
+    private boolean isProvisionalScore;
+    private String expiryDate;
     private long timestamp;
 
     public GroceryProductScan() {
@@ -119,6 +123,18 @@ public class GroceryProductScan implements Serializable {
 
     public String getAlternativeProducts() { return alternativeProducts; }
     public void setAlternativeProducts(String alternativeProducts) { this.alternativeProducts = alternativeProducts; }
+
+    public String getAllergenWarning() { return allergenWarning; }
+    public void setAllergenWarning(String allergenWarning) { this.allergenWarning = allergenWarning; }
+
+    public String getFreshnessDisclaimer() { return freshnessDisclaimer; }
+    public void setFreshnessDisclaimer(String freshnessDisclaimer) { this.freshnessDisclaimer = freshnessDisclaimer; }
+
+    public boolean isProvisionalScore() { return isProvisionalScore; }
+    public void setProvisionalScore(boolean provisionalScore) { isProvisionalScore = provisionalScore; }
+
+    public String getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(String expiryDate) { this.expiryDate = expiryDate; }
 
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }

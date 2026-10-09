@@ -318,7 +318,7 @@
         android:src="@android:drawable/ic_input_add"
         app:tint="@color/white"
         app:backgroundTint="@color/primary"
-        app:layout_constraintBottom_toTopOf="@id/btnRegenerate"
+        app:layout_constraintBottom_toTopOf="@id/btnRegeneratePlan"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Log a custom meal" />
 

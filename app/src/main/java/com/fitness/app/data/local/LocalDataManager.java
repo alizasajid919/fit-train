@@ -435,6 +435,103 @@ public class LocalDataManager {
         return sharedPreferences.getBoolean(KEY_BODY_SHAMING_PROTECTION, false);
     }
 
+    // Notification Preferences
+    public void setNotificationMasterEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_master_enabled", enabled).apply();
+    }
+
+    public boolean isNotificationMasterEnabled() {
+        return sharedPreferences.getBoolean("key_notif_master_enabled", true);
+    }
+
+    public void setMorningMotivationEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_morning_enabled", enabled).apply();
+    }
+
+    public boolean isMorningMotivationEnabled() {
+        return sharedPreferences.getBoolean("key_notif_morning_enabled", true);
+    }
+
+    public void setMorningMotivationTime(String time) {
+        editor.putString("key_notif_morning_time", time).apply();
+    }
+
+    public String getMorningMotivationTime() {
+        return sharedPreferences.getString("key_notif_morning_time", "08:00");
+    }
+
+    public void setWorkoutReminderEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_workout_enabled", enabled).apply();
+    }
+
+    public boolean isWorkoutReminderEnabled() {
+        return sharedPreferences.getBoolean("key_notif_workout_enabled", true);
+    }
+
+    public void setWorkoutReminderTime(String time) {
+        editor.putString("key_notif_workout_time", time).apply();
+    }
+
+    public String getWorkoutReminderTime() {
+        return sharedPreferences.getString("key_notif_workout_time", "17:00");
+    }
+
+    public void setMealReminderEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_meal_enabled", enabled).apply();
+    }
+
+    public boolean isMealReminderEnabled() {
+        return sharedPreferences.getBoolean("key_notif_meal_enabled", true);
+    }
+
+    public void setHydrationReminderEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_hydration_enabled", enabled).apply();
+    }
+
+    public boolean isHydrationReminderEnabled() {
+        return sharedPreferences.getBoolean("key_notif_hydration_enabled", true);
+    }
+
+    public void setHydrationIntervalHours(int hours) {
+        editor.putInt("key_notif_hydration_interval", hours).apply();
+    }
+
+    public int getHydrationIntervalHours() {
+        return sharedPreferences.getInt("key_notif_hydration_interval", 2);
+    }
+
+    public void setEveningProgressEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_evening_enabled", enabled).apply();
+    }
+
+    public boolean isEveningProgressEnabled() {
+        return sharedPreferences.getBoolean("key_notif_evening_enabled", true);
+    }
+
+    public void setEveningProgressTime(String time) {
+        editor.putString("key_notif_evening_time", time).apply();
+    }
+
+    public String getEveningProgressTime() {
+        return sharedPreferences.getString("key_notif_evening_time", "19:00");
+    }
+
+    public void setGoodNightEnabled(boolean enabled) {
+        editor.putBoolean("key_notif_night_enabled", enabled).apply();
+    }
+
+    public boolean isGoodNightEnabled() {
+        return sharedPreferences.getBoolean("key_notif_night_enabled", true);
+    }
+
+    public void setGoodNightTime(String time) {
+        editor.putString("key_notif_night_time", time).apply();
+    }
+
+    public String getGoodNightTime() {
+        return sharedPreferences.getString("key_notif_night_time", "21:30");
+    }
+
     // Workout Logs
     public void saveWorkoutLog(WorkoutLog log) {
         if (log == null || log.getId() == null) return;

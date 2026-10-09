@@ -235,14 +235,32 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/tvReportTitle"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Product Scan Report"
-                        android:textColor="#6C63FF"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tvReportTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Product Scan Report"
+                            android:textColor="#6C63FF"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditProductReport"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Edit Details ✏️"
+                            android:textColor="#6C63FF"
+                            android:textSize="11sp"
+                            android:textAllCaps="false" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/tvReportProductName"
@@ -261,6 +279,30 @@
                         android:text="Coca-Cola Company • Beverage"
                         android:textColor="@color/gray"
                         android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvReportProvisionalBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ℹ️ Provisional Score (Estimated macros)"
+                        android:textColor="#D97706"
+                        android:textSize="11sp"
+                        android:textStyle="italic"
+                        android:visibility="gone"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tvReportAllergenWarning"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="⚠️ ALLERGEN WARNING!"
+                        android:textColor="#DC2626"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:background="#FEE2E2"
+                        android:padding="8dp"
+                        android:layout_marginTop="6dp"
+                        android:visibility="gone" />
 
                     <!-- Scores & Recommendation -->
                     <LinearLayout
@@ -395,6 +437,24 @@
                         android:layout_height="wrap_content"
                         android:text="• Highly Processed • Suitable for Weight Loss • Not Diabetic Safe"
                         android:textColor="#3B82F6"
+                        android:textSize="11sp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Freshness & Safety Disclaimer -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Freshness &amp; Safety Analysis:"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                    <TextView
+                        android:id="@+id/tvReportFreshness"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Visual assessment only; cannot guarantee food safety."
+                        android:textColor="@color/gray"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
 

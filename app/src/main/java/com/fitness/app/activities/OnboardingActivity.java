@@ -157,7 +157,10 @@ public class OnboardingActivity extends AppCompatActivity {
         renderStep(currentStep);
     }
 
+    private boolean isNavigating = false;
+
     private void renderStep(int step) {
+        this.currentStep = step;
         hideError();
         stepContainer.removeAllViews();
 
@@ -240,12 +243,11 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private void updateNextButtonState() {
+        btnNextStep.setEnabled(true); // Keep clickable so clicks display validation errors if no answer chosen
         if (currentStep >= 3 && currentStep <= 20) {
             boolean valid = isStepValid(currentStep);
-            btnNextStep.setEnabled(valid);
-            btnNextStep.setAlpha(valid ? 1.0f : 0.4f);
+            btnNextStep.setAlpha(valid ? 1.0f : 0.85f);
         } else {
-            btnNextStep.setEnabled(true);
             btnNextStep.setAlpha(1.0f);
         }
     }
@@ -266,9 +268,9 @@ public class OnboardingActivity extends AppCompatActivity {
             case 14: return !dietaryPreference.isEmpty();
             case 15: return !selectedHealthConcerns.isEmpty();
             case 16: return !activityLevel.isEmpty();
-            case 17: return !fitnessExperience.isEmpty();
+            case 17: return fitnessExperience != null && !fitnessExperience.trim().isEmpty();
             case 18: return !workoutLocation.isEmpty();
-            case 19: return workoutDuration > 0 && workoutDaysPerWeek > 0;
+            case 19: return workoutDaysPerWeek > 0;
             case 20: return !preferredWorkoutTime.isEmpty();
             default: return true;
         }
@@ -282,7 +284,9 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private void processNextStep() {
+        if (isNavigating) return;
         if (validateStep(currentStep)) {
+            isNavigating = true;
             if (currentStep < 21) {
                 currentStep++;
                 renderStep(currentStep);
@@ -292,6 +296,7 @@ public class OnboardingActivity extends AppCompatActivity {
             } else if (currentStep == 23) {
                 finishOnboardingAndLaunchHome();
             }
+            new Handler(Looper.getMainLooper()).postDelayed(() -> isNavigating = false, 300);
         }
     }
 
@@ -306,13 +311,13 @@ public class OnboardingActivity extends AppCompatActivity {
                 break;
             case 4: // DOB
                 if (dobString.isEmpty() || age <= 0) {
-                    showError("Please select your date of birth.");
+                    showError("Please select your date of birth to continue.");
                     return false;
                 }
                 break;
             case 5: // Gender
                 if (gender.isEmpty()) {
-                    showError("Please select your gender.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
@@ -330,13 +335,13 @@ public class OnboardingActivity extends AppCompatActivity {
                 break;
             case 8: // Blood Group
                 if (bloodGroup.isEmpty()) {
-                    showError("Please select your blood group.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 9: // Goal
                 if (goal.isEmpty()) {
-                    showError("Please select your primary fitness goal.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
@@ -348,61 +353,64 @@ public class OnboardingActivity extends AppCompatActivity {
                 break;
             case 11: // Target Pace
                 if (targetPace.isEmpty()) {
-                    showError("Please select a target pace.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 12: // Eating Environment
                 if (eatingEnvironment.isEmpty()) {
-                    showError("Please select your primary eating environment.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 13: // Meals Per Day
                 if (mealsPerDay <= 0) {
-                    showError("Please select your daily meal frequency.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 14: // Diet Style
                 if (dietaryPreference.isEmpty()) {
-                    showError("Please select a dietary preference.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 15: // Health Concerns
                 if (selectedHealthConcerns.isEmpty()) {
-                    showError("Please select at least one option or 'None'.");
+                    showError("Please select at least one option to continue.");
                     return false;
                 }
                 break;
             case 16: // Activity Level
                 if (activityLevel.isEmpty()) {
-                    showError("Please select your daily activity level.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
-            case 17: // Experience
-                if (fitnessExperience.isEmpty()) {
-                    showError("Please select your fitness level.");
+            case 17: // Experience (Screen 17 / Step 17)
+                if (fitnessExperience == null || fitnessExperience.trim().isEmpty()) {
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 18: // Workout Location & Equipment
                 if (workoutLocation.isEmpty()) {
-                    showError("Please select your preferred workout location.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
-            case 19: // Workout Schedule
-                if (workoutDuration <= 0 || workoutDaysPerWeek <= 0) {
-                    showError("Please select your workout schedule.");
+            case 19: // Workout Schedule (Question 17)
+                if (workoutDuration <= 0) {
+                    workoutDuration = 30; // Default session duration
+                }
+                if (workoutDaysPerWeek <= 0) {
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
             case 20: // Preferred Workout Time
                 if (preferredWorkoutTime.isEmpty()) {
-                    showError("Please select your preferred workout time.");
+                    showError("Please select an option to continue.");
                     return false;
                 }
                 break;
@@ -451,33 +459,34 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private View createOptionCard(String title, int iconRes, boolean selected, int activeColor) {
+        float density = getResources().getDisplayMetrics().density;
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.HORIZONTAL);
         card.setGravity(Gravity.CENTER_VERTICAL);
-        card.setPadding(20, 16, 20, 16);
+        card.setPadding((int)(20 * density), (int)(16 * density), (int)(20 * density), (int)(16 * density));
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(0, 6, 0, 6);
+        params.setMargins(0, (int)(6 * density), 0, (int)(6 * density));
         card.setLayoutParams(params);
 
         GradientDrawable bg = new GradientDrawable();
-        bg.setCornerRadius(16 * getResources().getDisplayMetrics().density);
+        bg.setCornerRadius(16 * density);
         if (selected) {
             bg.setColor(Color.parseColor("#F0F9FF")); // Soft Ice Blue tint
-            bg.setStroke((int)(2 * getResources().getDisplayMetrics().density), Color.parseColor("#0284C7"));
+            bg.setStroke((int)(2 * density), Color.parseColor("#0284C7"));
         } else {
             bg.setColor(Color.WHITE);
-            bg.setStroke((int)(1 * getResources().getDisplayMetrics().density), Color.parseColor("#E2E8F0"));
+            bg.setStroke((int)(1 * density), Color.parseColor("#E2E8F0"));
         }
         card.setBackground(bg);
 
         ImageView iv = new ImageView(this);
         iv.setImageResource(iconRes);
-        LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams(32, 32);
-        ivParams.setMargins(0, 0, 16, 0);
+        LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams((int)(32 * density), (int)(32 * density));
+        ivParams.setMargins(0, 0, (int)(16 * density), 0);
         iv.setLayoutParams(ivParams);
 
         TextView tv = new TextView(this);
@@ -1430,7 +1439,7 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     // ====================================================================
-    // QUESTION 15 of 18 — FITNESS EXPERIENCE
+    // QUESTION 15 of 18 — FITNESS EXPERIENCE (Step 17)
     // ====================================================================
     private void buildExperienceStep() {
         LinearLayout layout = createVerticalContainer();
@@ -1444,10 +1453,11 @@ public class OnboardingActivity extends AppCompatActivity {
         for (int i = 0; i < displayExp.length; i++) {
             final String raw = rawExp[i];
             final String display = displayExp[i];
-            View card = createOptionCard(display, R.drawable.ic_dumbbell, raw.equalsIgnoreCase(fitnessExperience), 0xFF0284C7);
+            boolean selected = raw.equalsIgnoreCase(fitnessExperience);
+            View card = createOptionCard(display, R.drawable.ic_dumbbell, selected, 0xFF0284C7);
             card.setOnClickListener(v -> {
                 fitnessExperience = raw;
-                animateSelection(card);
+                hideError();
                 renderStep(17);
             });
             layout.addView(card);
@@ -1471,10 +1481,11 @@ public class OnboardingActivity extends AppCompatActivity {
         for (int i = 0; i < displayLoc.length; i++) {
             final String raw = rawLoc[i];
             final String display = displayLoc[i];
-            View card = createOptionCard(display, R.drawable.ic_home, raw.equalsIgnoreCase(workoutLocation), 0xFF0284C7);
+            boolean selected = raw.equalsIgnoreCase(workoutLocation);
+            View card = createOptionCard(display, R.drawable.ic_home, selected, 0xFF0284C7);
             card.setOnClickListener(v -> {
                 workoutLocation = raw;
-                animateSelection(card);
+                hideError();
                 renderStep(18);
             });
             layout.addView(card);
@@ -1510,6 +1521,7 @@ public class OnboardingActivity extends AppCompatActivity {
             btn.setLayoutParams(p);
             btn.setOnClickListener(v -> {
                 workoutDuration = d;
+                hideError();
                 renderStep(19);
             });
             durContainer.addView(btn);
@@ -1520,10 +1532,14 @@ public class OnboardingActivity extends AppCompatActivity {
         int[] daysList = {2, 3, 4, 5, 6};
         for (int days : daysList) {
             String title = days + " Days / Week 📆";
-            View card = createOptionCard(title, R.drawable.ic_calendar_age, workoutDaysPerWeek == days, 0xFF0284C7);
+            boolean selected = workoutDaysPerWeek == days;
+            View card = createOptionCard(title, R.drawable.ic_calendar_age, selected, 0xFF0284C7);
             card.setOnClickListener(v -> {
                 workoutDaysPerWeek = days;
-                animateSelection(card);
+                if (workoutDuration <= 0) {
+                    workoutDuration = 30; // Default session duration if not pre-selected
+                }
+                hideError();
                 renderStep(19);
             });
             layout.addView(card);
@@ -1547,10 +1563,11 @@ public class OnboardingActivity extends AppCompatActivity {
         for (int i = 0; i < displayTimes.length; i++) {
             final String raw = rawTimes[i];
             final String display = displayTimes[i];
-            View card = createOptionCard(display, R.drawable.ic_track_progress, raw.equalsIgnoreCase(preferredWorkoutTime), 0xFF0284C7);
+            boolean selected = raw.equalsIgnoreCase(preferredWorkoutTime);
+            View card = createOptionCard(display, R.drawable.ic_track_progress, selected, 0xFF0284C7);
             card.setOnClickListener(v -> {
                 preferredWorkoutTime = raw;
-                animateSelection(card);
+                hideError();
                 renderStep(20);
             });
             layout.addView(card);

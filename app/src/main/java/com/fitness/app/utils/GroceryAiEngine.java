@@ -179,6 +179,129 @@ public class GroceryAiEngine {
         analyzeProductScan(context, bitmap, null, callback);
     }
 
+    public static int calculateHealthScore(GroceryProductScan scan) {
+        if (scan == null) return 50;
+        if ("Pure Water".equalsIgnoreCase(scan.getProductName()) || (scan.getFoodCategory() != null && scan.getFoodCategory().equalsIgnoreCase("Drink") && scan.getProductName().toLowerCase().contains("water"))) {
+            return 100;
+        }
+        int score = 80; // Base score
+
+        // Sugar penalty
+        double sugar = scan.getSugar();
+        if (sugar > 25) {
+            score -= 30;
+        } else if (sugar > 10) {
+            score -= 15;
+        }
+
+        // Fat penalty
+        double fat = scan.getFat();
+        if (fat > 20) {
+            score -= 15;
+        } else if (fat > 10) {
+            score -= 8;
+        }
+
+        // Sodium penalty
+        double sodium = scan.getSodium();
+        if (sodium > 1000) {
+            score -= 20;
+        } else if (sodium > 500) {
+            score -= 10;
+        }
+
+        // Processing penalty
+        if (scan.isHighlyProcessed()) {
+            score -= 15;
+        }
+
+        // Protein bonus
+        double protein = scan.getProtein();
+        if (protein >= 20) {
+            score += 15;
+        } else if (protein >= 10) {
+            score += 10;
+        }
+
+        // Fiber bonus
+        double fiber = scan.getFiber();
+        if (fiber >= 6) {
+            score += 10;
+        } else if (fiber >= 3) {
+            score += 5;
+        }
+
+        // Organic bonus
+        if (scan.isOrganic()) {
+            score += 5;
+        }
+
+        return Math.max(0, Math.min(100, score));
+    }
+
+    public static int calculateNutritionScore(GroceryProductScan scan) {
+        if (scan == null) return 50;
+        if ("Pure Water".equalsIgnoreCase(scan.getProductName()) || (scan.getFoodCategory() != null && scan.getFoodCategory().equalsIgnoreCase("Drink") && scan.getProductName().toLowerCase().contains("water"))) {
+            return 100;
+        }
+
+        int score = 50;
+        int cals = Math.max(1, scan.getCalories());
+        double prot = scan.getProtein();
+        double fiber = scan.getFiber();
+        double sugar = scan.getSugar();
+
+        // Protein ratio score
+        double protCals = prot * 4.0;
+        double protRatio = protCals / cals;
+        if (protRatio >= 0.3) score += 25;
+        else if (protRatio >= 0.15) score += 15;
+        else if (protRatio >= 0.05) score += 5;
+
+        // Fiber density score
+        if (fiber >= 5) score += 15;
+        else if (fiber >= 2) score += 8;
+
+        // Low sugar ratio
+        double sugarCals = sugar * 4.0;
+        double sugarRatio = sugarCals / cals;
+        if (sugarRatio <= 0.05) score += 15;
+        else if (sugarRatio <= 0.15) score += 5;
+        else if (sugarRatio > 0.35) score -= 15;
+
+        // Micronutrient bonus
+        if (scan.getVitaminsMinerals() != null && !scan.getVitaminsMinerals().equalsIgnoreCase("None") && !scan.getVitaminsMinerals().isEmpty()) {
+            score += 10;
+        }
+
+        return Math.max(0, Math.min(100, score));
+    }
+
+    public static String checkAllergens(String ingredients, User user) {
+        if (user == null || user.getAllergies() == null) return null;
+        String allergies = user.getAllergies().toLowerCase().trim();
+        if (allergies.isEmpty() || allergies.equals("none") || allergies.equals("no") || allergies.equals("n/a")) {
+            return null;
+        }
+        if (ingredients == null || ingredients.isEmpty()) return null;
+
+        String lowerIngs = ingredients.toLowerCase();
+        List<String> matched = new ArrayList<>();
+
+        String[] allergyList = allergies.split("[,;\\|]");
+        for (String alg : allergyList) {
+            String cleanAlg = alg.trim();
+            if (cleanAlg.length() > 1 && lowerIngs.contains(cleanAlg)) {
+                matched.add(cleanAlg);
+            }
+        }
+
+        if (!matched.isEmpty()) {
+            return "⚠️ ALLERGEN WARNING: Contains " + String.join(", ", matched).toUpperCase() + " matching your profile allergy list!";
+        }
+        return null;
+    }
+
     public static void analyzeProductScan(Context context, Bitmap bitmap, User user, ProductScanCallback callback) {
         new Thread(() -> {
             try {
@@ -191,7 +314,7 @@ public class GroceryAiEngine {
 
                 String apiKey = getApiKey(context);
                 if (apiKey != null && !apiKey.trim().isEmpty() && bitmap != null) {
-                    String prompt = "You are an expert AI Food, Drink & Nutrition Recognition System.\n"
+                    String prompt = "You are an expert AI Food, Drink & Nutrition Recognition System with OCR capabilities.\n"
                             + "USER PROFILE CONTEXT:\n"
                             + "- Goal: " + userGoal + "\n"
                             + "- Age: " + age + "\n"
@@ -199,18 +322,21 @@ public class GroceryAiEngine {
                             + "- Dietary Preference: " + dietPref + "\n"
                             + "- Medical Conditions: " + medical + "\n\n"
                             + "FOLLOW THIS SEQUENTIAL ANALYSIS:\n"
-                            + "STEP 1: Identify if the image contains: 'drink', 'food', 'ingredient', 'packaged_food', 'non_food', or 'unclear'.\n"
-                            + "STEP 2: Identify the item name.\n\n"
+                            + "STEP 1: Read all visible printed label text via OCR (brand, product title, ingredients list, nutrition table per 100g/serving, expiration/best before date).\n"
+                            + "STEP 2: Classify item as: 'drink', 'food', 'ingredient', 'packaged_food', 'non_food', or 'unclear'.\n"
+                            + "STEP 3: Extract or estimate nutrition data accurately.\n\n"
                             + "STRICT RULES:\n"
-                            + "1. WATER: If image contains water (bottle, glass, tap, pitcher, mineral water), set productName='Pure Water', foodCategory='Drink', ingredients='Pure Drinking Water', calories=0, protein=0, carbs=0, fat=0, sugar=0, sodium=5. Explain hydration role for goal (" + userGoal + ") and daily target (" + String.format(Locale.US, "%.1f", weight * 35 / 1000.0) + "L). Do NOT classify water as food or assign food calories!\n"
+                            + "1. WATER: If image contains water (bottle, glass, tap, pitcher, mineral water), set productName='Pure Water', foodCategory='Drink', ingredients='Pure Drinking Water', calories=0, protein=0, carbs=0, fat=0, sugar=0, sodium=5.\n"
                             + "2. NON-FOOD OBJECTS: If image contains non-food (phone, shoes, chair, laptop, wall, person, clothes, etc.), set productName='Non-Food Object', foodCategory='Non-Food', healthScore=0, nutritionScore=0, aiRecommendation='Not Applicable', whyRecommended='This image does not contain any food or drink item suitable for nutrition analysis.'\n"
                             + "3. UNCLEAR IMAGES: If image is blurry or unrecognizable, set productName='Unclear Image', foodCategory='Unclear', whyRecommended='I couldn't identify this item clearly. Please upload a clearer image.'\n"
-                            + "4. ACTUAL FOOD/DRINK: Provide precise item identification (e.g. Apple, Banana, Rice, Chicken Breast, Eggs, Milk, Bread, Juice) and tailor portion guidance, best timing, and goal suitability for " + userGoal + ".\n\n"
+                            + "4. ACTUAL FOOD/DRINK: Read label or perform precise visual recognition. Set 'expiryDate' (format 'YYYY-MM-DD' or 'Date not detected'). Set 'isProvisional' to true if nutrition facts were estimated rather than directly read from a clear label.\n\n"
                             + "RETURN A JSON OBJECT WITH THESE EXACT KEYS:\n"
                             + "- 'productName' (string)\n"
                             + "- 'brand' (string)\n"
                             + "- 'foodCategory' (string: 'Drink', 'Fruit', 'Vegetable', 'Meat', 'Dairy', 'Pantry', 'Non-Food', or 'Unclear')\n"
                             + "- 'ingredients' (string)\n"
+                            + "- 'expiryDate' (string: 'YYYY-MM-DD' or 'Date not detected')\n"
+                            + "- 'isProvisional' (boolean)\n"
                             + "- 'calories' (int)\n"
                             + "- 'protein' (double)\n"
                             + "- 'carbs' (double)\n"
@@ -226,8 +352,6 @@ public class GroceryAiEngine {
                             + "- 'isSuitableWeightGain' (boolean)\n"
                             + "- 'isSuitableMuscleGain' (boolean)\n"
                             + "- 'isSuitableDiabetic' (boolean)\n"
-                            + "- 'healthScore' (int 0-100)\n"
-                            + "- 'nutritionScore' (int 0-100)\n"
                             + "- 'aiRecommendation' (string: 'Highly Recommended', 'Recommended', 'Eat in Moderation', 'Avoid', or 'Not Applicable')\n"
                             + "- 'whyRecommended' (string)\n"
                             + "- 'alternativeProducts' (string)";
@@ -258,6 +382,22 @@ public class GroceryAiEngine {
                         scan.setBrand(obj.optString("brand", "Fresh Natural"));
                         scan.setFoodCategory(category);
                         scan.setIngredients(obj.optString("ingredients", productName));
+
+                        String expDate = obj.optString("expiryDate", "Date not detected");
+                        scan.setExpiryDate(expDate);
+                        scan.setProvisionalScore(obj.optBoolean("isProvisional", false));
+                        
+                        String disclaimer = "Visual assessment only; cannot guarantee food safety.";
+                        if (!"Date not detected".equalsIgnoreCase(expDate) && !expDate.isEmpty()) {
+                            disclaimer += " Printed Expiry: " + expDate;
+                        } else {
+                            disclaimer += " (Printed expiry date not detected on packaging)";
+                        }
+                        scan.setFreshnessDisclaimer(disclaimer);
+
+                        // Check profile allergens
+                        String allergenAlert = checkAllergens(scan.getIngredients(), safeUser);
+                        scan.setAllergenWarning(allergenAlert);
 
                         // Force water safety
                         if ("Pure Water".equalsIgnoreCase(productName) || productName.toLowerCase().contains("water") || "Drink".equalsIgnoreCase(category) && productName.toLowerCase().contains("water")) {
@@ -301,8 +441,13 @@ public class GroceryAiEngine {
                             scan.setSuitableWeightGain(obj.optBoolean("isSuitableWeightGain", true));
                             scan.setSuitableMuscleGain(obj.optBoolean("isSuitableMuscleGain", true));
                             scan.setSuitableDiabetic(obj.optBoolean("isSuitableDiabetic", true));
-                            scan.setHealthScore(obj.optInt("healthScore", 80));
-                            scan.setNutritionScore(obj.optInt("nutritionScore", 80));
+                            
+                            // Deterministic calculation in Java
+                            int health = calculateHealthScore(scan);
+                            int nutrition = calculateNutritionScore(scan);
+                            scan.setHealthScore(health);
+                            scan.setNutritionScore(nutrition);
+
                             scan.setAiRecommendation(obj.optString("aiRecommendation", "Recommended"));
                             scan.setWhyRecommended(why);
                             scan.setAlternativeProducts(obj.optString("alternativeProducts", ""));

@@ -210,8 +210,15 @@ public class GroceryScannerActivity extends AppCompatActivity {
             String activeUri = getActiveImageUri();
             if (ivScannedPreview != null) {
                 if (activeUri != null) {
-                    ivScannedPreview.setImageURI(Uri.parse(activeUri));
-                    if (layoutImageActions != null) layoutImageActions.setVisibility(View.VISIBLE);
+                    try {
+                        ivScannedPreview.setImageURI(Uri.parse(activeUri));
+                        if (layoutImageActions != null) layoutImageActions.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ivScannedPreview.setImageResource(R.drawable.onboarding_1);
+                        if (layoutImageActions != null) layoutImageActions.setVisibility(View.GONE);
+                        saveActiveImageUri(null);
+                    }
                 } else {
                     ivScannedPreview.setImageResource(R.drawable.onboarding_1);
                     if (layoutImageActions != null) layoutImageActions.setVisibility(View.GONE);
@@ -595,6 +602,39 @@ public class GroceryScannerActivity extends AppCompatActivity {
             tvBrand.setText(brand + " • " + cat);
         }
         
+        // Allergen Warning
+        TextView tvAllergen = findViewById(R.id.tvReportAllergenWarning);
+        if (tvAllergen != null) {
+            if (report.getAllergenWarning() != null && !report.getAllergenWarning().isEmpty()) {
+                tvAllergen.setText(report.getAllergenWarning());
+                tvAllergen.setVisibility(View.VISIBLE);
+            } else {
+                tvAllergen.setVisibility(View.GONE);
+            }
+        }
+
+        // Provisional Score Badge
+        TextView tvProvisional = findViewById(R.id.tvReportProvisionalBadge);
+        if (tvProvisional != null) {
+            tvProvisional.setVisibility(report.isProvisionalScore() ? View.VISIBLE : View.GONE);
+        }
+
+        // Freshness Disclaimer
+        TextView tvFreshness = findViewById(R.id.tvReportFreshness);
+        if (tvFreshness != null) {
+            String freshText = report.getFreshnessDisclaimer();
+            if (freshText == null || freshText.trim().isEmpty()) {
+                freshText = "Visual assessment only; cannot guarantee food safety.";
+            }
+            tvFreshness.setText(freshText);
+        }
+
+        // Edit Button
+        View btnEdit = findViewById(R.id.btnEditProductReport);
+        if (btnEdit != null) {
+            btnEdit.setOnClickListener(v -> showEditProductScanDialog(report));
+        }
+
         TextView tvHealth = findViewById(R.id.tvReportHealthScore);
         if (tvHealth != null) {
             tvHealth.setText(report.getHealthScore() + "/100");
@@ -646,6 +686,149 @@ public class GroceryScannerActivity extends AppCompatActivity {
         
         TextView tvAlt = findViewById(R.id.tvReportAlternatives);
         if (tvAlt != null) tvAlt.setText(report.getAlternativeProducts() != null ? report.getAlternativeProducts() : "Fresh Whole Foods");
+    }
+
+    private void showEditProductScanDialog(GroceryProductScan report) {
+        if (report == null) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Product Details");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 20, 40, 20);
+
+        final EditText etName = new EditText(this);
+        etName.setHint("Product Name");
+        etName.setText(report.getProductName());
+        layout.addView(etName);
+
+        final EditText etBrand = new EditText(this);
+        etBrand.setHint("Brand");
+        etBrand.setText(report.getBrand());
+        layout.addView(etBrand);
+
+        final EditText etCategory = new EditText(this);
+        etCategory.setHint("Category (e.g. Drink, Fruit, Meat, Dairy, Pantry)");
+        etCategory.setText(report.getFoodCategory());
+        layout.addView(etCategory);
+
+        final EditText etCalories = new EditText(this);
+        etCalories.setHint("Calories (kcal)");
+        etCalories.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        etCalories.setText(String.valueOf(report.getCalories()));
+        layout.addView(etCalories);
+
+        final EditText etProtein = new EditText(this);
+        etProtein.setHint("Protein (g)");
+        etProtein.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etProtein.setText(String.valueOf(report.getProtein()));
+        layout.addView(etProtein);
+
+        final EditText etCarbs = new EditText(this);
+        etCarbs.setHint("Carbs (g)");
+        etCarbs.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etCarbs.setText(String.valueOf(report.getCarbs()));
+        layout.addView(etCarbs);
+
+        final EditText etFat = new EditText(this);
+        etFat.setHint("Fat (g)");
+        etFat.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etFat.setText(String.valueOf(report.getFat()));
+        layout.addView(etFat);
+
+        final EditText etSugar = new EditText(this);
+        etSugar.setHint("Sugar (g)");
+        etSugar.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etSugar.setText(String.valueOf(report.getSugar()));
+        layout.addView(etSugar);
+
+        final EditText etSodium = new EditText(this);
+        etSodium.setHint("Sodium (mg)");
+        etSodium.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etSodium.setText(String.valueOf(report.getSodium()));
+        layout.addView(etSodium);
+
+        final EditText etIngredients = new EditText(this);
+        etIngredients.setHint("Ingredients");
+        etIngredients.setText(report.getIngredients());
+        layout.addView(etIngredients);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            try {
+                String name = etName.getText().toString().trim();
+                if (!name.isEmpty()) report.setProductName(name);
+                report.setBrand(etBrand.getText().toString().trim());
+                report.setFoodCategory(etCategory.getText().toString().trim());
+
+                try { report.setCalories(Integer.parseInt(etCalories.getText().toString().trim())); } catch (Exception ignored) {}
+                try { report.setProtein(Double.parseDouble(etProtein.getText().toString().trim())); } catch (Exception ignored) {}
+                try { report.setCarbs(Double.parseDouble(etCarbs.getText().toString().trim())); } catch (Exception ignored) {}
+                try { report.setFat(Double.parseDouble(etFat.getText().toString().trim())); } catch (Exception ignored) {}
+                try { report.setSugar(Double.parseDouble(etSugar.getText().toString().trim())); } catch (Exception ignored) {}
+                try { report.setSodium(Double.parseDouble(etSodium.getText().toString().trim())); } catch (Exception ignored) {}
+
+                String ings = etIngredients.getText().toString().trim();
+                report.setIngredients(ings);
+
+                // User manually corrected details -> clear provisional flag
+                report.setProvisionalScore(false);
+
+                // Recalculate deterministic scores
+                int health = GroceryAiEngine.calculateHealthScore(report);
+                int nutrition = GroceryAiEngine.calculateNutritionScore(report);
+                report.setHealthScore(health);
+                report.setNutritionScore(nutrition);
+
+                // Re-check allergens
+                String allergen = GroceryAiEngine.checkAllergens(ings, currentUser);
+                report.setAllergenWarning(allergen);
+
+                new Thread(() -> {
+                    dao.insertProductScan(report);
+
+                    // Update scanned ingredients DB list
+                    dao.clearScannedIngredients();
+                    long now = System.currentTimeMillis();
+                    String[] splitIngs = ings.split(",");
+                    for (String s : splitIngs) {
+                        String trim = s.trim();
+                        if (!trim.isEmpty()) {
+                            dao.insertScannedIngredient(new ScannedIngredient(
+                                    UUID.randomUUID().toString(),
+                                    trim,
+                                    report.getFoodCategory() != null ? report.getFoodCategory() : "General",
+                                    98,
+                                    "1 unit",
+                                    (int)(report.getCalories() / Math.max(1, splitIngs.length)),
+                                    report.getProtein() / Math.max(1, splitIngs.length),
+                                    report.getCarbs() / Math.max(1, splitIngs.length),
+                                    report.getFat() / Math.max(1, splitIngs.length),
+                                    report.getFiber() / Math.max(1, splitIngs.length),
+                                    report.getSugar() / Math.max(1, splitIngs.length),
+                                    report.getSodium() / Math.max(1, splitIngs.length),
+                                    report.getVitaminsMinerals() != null ? report.getVitaminsMinerals() : "None",
+                                    "None",
+                                    "Fresh",
+                                    "",
+                                    now
+                            ));
+                        }
+                    }
+
+                    runOnUiThread(() -> {
+                        displayProductReportCard(report);
+                        Toast.makeText(GroceryScannerActivity.this, "Scan report updated! ✏️", Toast.LENGTH_SHORT).show();
+                    });
+                }).start();
+            } catch (Exception e) {
+                Toast.makeText(GroceryScannerActivity.this, "Error updating report: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     private void triggerAiRecipeGeneration(List<ScannedIngredient> ingredients) {

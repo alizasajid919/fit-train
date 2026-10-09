@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAF9F5"
@@ -23,26 +23,17 @@
         <ImageView
             android:id="@+id/ivWelcomeIllustration"
             android:layout_width="260dp"
-            android:layout_height="220dp"
-            android:src="@drawable/ic_welcome_illustration"
+            android:layout_height="240dp"
+            android:src="@drawable/ic_fittrain_logo"
             android:scaleType="fitCenter"
-            android:layout_marginBottom="32dp"
-            android:contentDescription="Welcome Illustration" />
-
-        <TextView
-            android:id="@+id/tvWelcomeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="#0F172A"
-            android:textSize="32sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="24dp"
+            android:contentDescription="FitTrain Official Logo" />
 
         <TextView
             android:id="@+id/tvWelcomeSlogan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@string/slogan"
             android:textColor="#64748B"

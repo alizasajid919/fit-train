@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="600dp"
+    android:height="600dp"
+    android:viewportWidth="600"
+    android:viewportHeight="600">
+
+    <!-- Head Circle -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M370,60 C389.33,60 405,75.67 405,95 C405,114.33 389.33,130 370,130 C350.67,130 335,114.33 335,95 C335,75.67 350.67,60 370,60 Z" />
+
+    <!-- Upper Dark Navy Arch -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M160,224 C206.67,160 276.67,131 381.67,142.67 C434.17,148.5 475,136.83 515,131 C445,189.33 357.5,218.5 287.5,212.67 C229.17,206.83 189.17,230.17 160,224 Z" />
+
+    <!-- Main Vibrant Blue Arch & Flow -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M287.5,212.67 C363.33,201 450.83,166 515,131 C445,189.33 369.17,236 281.67,317.67 C229.17,387.67 188.33,463.5 141.67,370.17 C205.83,294.33 246.67,241.83 287.5,212.67 Z" />
+
+    <!-- Dark Navy Base Leg -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M281.67,317.67 C239.17,376 198.33,440.17 141.67,370.17 C188.33,311.83 235,259.33 287.5,212.67 C258.33,253.5 240.83,288.5 281.67,317.67 Z" />
+
+    <!-- Lower Vibrant Blue Accent Wing -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M264.17,300.17 C322.5,276.83 380.83,241.83 415.83,218.5 C380.83,259.33 322.5,294.33 264.17,300.17 Z" />
+
+    <!-- BRAND TEXT: FIT (Dark Navy #0F172A) -->
+
+    <!-- Letter 'F' -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M100,480 H140 V504 H120 V520 H136 V540 H120 V560 H100 Z" />
+
+    <!-- Letter 'I' -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M152,480 H172 V560 H152 Z" />
+
+    <!-- Letter 'T' -->
+    <path
+        android:fillColor="#0F172A"
+        android:pathData="M184,480 H232 V504 H218 V560 H198 V504 H184 Z" />
+
+    <!-- BRAND TEXT: TRAIN (Vibrant Blue #2563EB) -->
+
+    <!-- Letter 'T' -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M250,480 H298 V504 H284 V560 H264 V504 H250 Z" />
+
+    <!-- Letter 'R' -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M310,480 H345 C358,480 366,488 366,500 C366,512 357,518 345,520 L368,560 H344 L324,524 H330 V502 H330 Z M330,480 H330 V502 H340 C345,502 348,498 348,491 C348,484 345,480 340,480 Z" />
+
+    <!-- Letter 'A' -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M378,560 L402,480 H422 L446,560 H424 L419,542 H405 L400,560 Z M409,524 H415 L412,500 Z" />
+
+    <!-- Letter 'I' -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M458,480 H478 V560 H458 Z" />
+
+    <!-- Letter 'N' -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M490,480 H508 L526,528 V480 H544 V560 H526 L508,512 V560 H490 Z" />
+
+</vector>
